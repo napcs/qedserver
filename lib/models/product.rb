@@ -9,4 +9,10 @@ class Product < ActiveRecord::Base
     where(["name like ? or description like ?", term, term]) 
   }
   
+  scope :paginate, 
+    lambda{ |page, per_page| 
+      limit(per_page.to_i).offset((page.to_i-1) * per_page.to_i)
+    }
+  
+  
 end

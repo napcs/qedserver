@@ -57,12 +57,12 @@ Fork, change, send a pull request. Please, please, please write specs!
 
 Roadmap
 -----------
-* Paginated results
 * Product updating
 * Other requests?
 
 History
 ------
+0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
 0.1.0 - Intitial release.
 
 License

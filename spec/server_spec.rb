@@ -14,10 +14,12 @@ describe "QED Server" do
   
   describe "when working with products" do
     before(:each) do
+      @product = Product.create! :name => "Camera", :price => 50.00, :description => "Camera description"
+      
      Product.create! :name => "iMac", :price => 1500.00, :description => "iMac description"
-     @product = Product.create! :name => "Camera", :price => 50.00, :description => "Camera description"
      
     end
+      
     it "displays the products page at /products" do
       get "/products"
       last_response.body.should include("Products")
@@ -28,16 +30,46 @@ describe "QED Server" do
       last_response.body.should include("Camera")
       last_response.body.should_not include("iMac")
     end
-  
+    
     it "displays the camera but not the iMac when we go to /products.json?q=camera" do
       get "/products.json", {:q => "camera"}
       last_response.body.should include("Camera")
       last_response.body.should_not include("iMac")
     end
   
+    it "displays only the first 10 records" do
+      Product.create :name => "iMac 27 inch", :price => 1799.00, :description => "Description of the iMac 27 inch"
+      Product.create :name => "iPad 2 64GB Wifi+3G", :price => 829.99, :description => "Description of the iPad 2"
+      Product.create :name => "iPod Touch 64GB", :price => 829.99, :description => "Description of the iPod Touch"
+      Product.create :name => "iPod Shuffle", :price => 49.99, :description => "Description of the iPod Shuffle"
+      Product.create :name => "Apple TV", :price => 99.99, :description => "Description of the Apple TV"
+      Product.create :name => "iPad 2 Smart Cover", :price => 29.99, :description => "Description of iPad Smart Cover"
+      Product.create :name => "iPad 2 Smart Cover - Leather", :price => 59.99, :description => "Description of iPad Smart Cover - Leather"
+      Product.create :name => "Amazon Kindle Wi-Fi Only", :price => 139.99, :description => "Description of Kindle Wi-Fi Version"
+      Product.create :name => "Amazon Kindle 3G", :price => 139.99, :description => "Description of Kindle 3G Version"
+      get "/products.json"
+      last_response.body.should_not include("Camera")
+    end
+    
+    it "displays the last 2 records on page 2" do
+      Product.create :name => "iMac 27 inch", :price => 1799.00, :description => "Description of the iMac 27 inch"
+      Product.create :name => "iPad 2 64GB Wifi+3G", :price => 829.99, :description => "Description of the iPad 2"
+      Product.create :name => "iPod Touch 64GB", :price => 829.99, :description => "Description of the iPod Touch"
+      Product.create :name => "iPod Shuffle", :price => 49.99, :description => "Description of the iPod Shuffle"
+      Product.create :name => "Apple TV", :price => 99.99, :description => "Description of the Apple TV"
+      Product.create :name => "iPad 2 Smart Cover", :price => 29.99, :description => "Description of iPad Smart Cover"
+      Product.create :name => "iPad 2 Smart Cover - Leather", :price => 59.99, :description => "Description of iPad Smart Cover - Leather"
+      Product.create :name => "Amazon Kindle Wi-Fi Only", :price => 139.99, :description => "Description of Kindle Wi-Fi Version"
+      Product.create :name => "Amazon Kindle 3G", :price => 139.99, :description => "Description of Kindle 3G Version"
+      get "/products.json?page=2"
+      last_response.body.should_not include("Amazon Kindle Wi-Fi Only")
+      last_response.body.should include("Camera")
+    end
+    
+  
     it "shows the products as JSON at /products.json" do
       get "/products.json"
-      last_response.body.should == Product.all.to_json
+      last_response.body.should == Product.order("created_at desc").to_json
     end
     
     it "displays the products rss feed at /products.rss" do

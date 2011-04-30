@@ -110,4 +110,13 @@ like this:
 
 You'll get back only products that have "camera" in the name or description.
 
+### Pagination
+
+Results come back 10 pages at a time. Use the `page` query parameter to get additional results.
+
+    `http://localhost:8080/products.json?page=2
+    
+This works with RSS, XML, and JSON, with or without keywords.
+
+
 

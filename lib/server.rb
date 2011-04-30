@@ -23,6 +23,19 @@ set :public, PUBLIC_PATH
 
 set :markdown, :layout_engine => :haml, :layout => :layout
 
+helpers do
+  def pagination_links(count, per_page, url)
+    pages = (count / per_page)
+    pages+= 1 if count % per_page != 0
+    
+    output = "<div class='pagination_links'>"
+    pages.times do |page|
+      output << "<a href='#{url}?page=#{page + 1}'>#{page + 1}</a>"
+    end
+    
+    output << "</div>"
+  end
+end
 
 # The home page with information about the server itself
 # renders index.html.haml
@@ -53,12 +66,17 @@ end
 # Responds with HTML, JSON, or XML
 # Renders products.html.haml
 get "/products" do
-  
+  @per_page = 10
+  @products_count = Product.count
   @products = if params[:q]
     Product.with_keyword(params[:q])
   else
-    Product.all
+    Product.order("created_at desc")
   end
+  
+  page = params[:page] || 1
+  
+  @products = @products.paginate(page, @per_page) 
   
   respond_to do |format|
     format.html do
@@ -124,7 +142,10 @@ post "/products" do
     message = "The product was not saved."
     respond_to do |format|
       format.html do
-        @products = Product.all
+        @per_page = 10
+        @products_count = Product.count
+        @products = Product.paginate(1,10).order("created_at desc")
+        
         @message = message
         haml :products
       end

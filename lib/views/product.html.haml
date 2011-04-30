@@ -1,0 +1,11 @@
+%h2=@product.name
+.price=@product.price
+.description
+  =Maruku.new(@product.description).to_html
+
+%p
+  %a{:href => "/products"} Back to Products
+  
+%p
+  %a{:href => "/products/#{@product.id}.json"} JSON or
+  %a{:href => "/products/#{@product.id}.xml"} XML

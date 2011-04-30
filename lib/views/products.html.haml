@@ -1,0 +1,38 @@
+%h2 Products
+-if flash[:notice]
+  #notice= flash[:notice]
+-if @message
+  #message= @message
+  
+%form{:method => "POST", :action => "/products"}
+  %fieldset
+    %legend New Project
+    %ol
+      %li 
+        %label{:for => "product_name"} Name
+        %input{:name=>"product[name]", :id=>"product_name", :value => @product.name}
+      %li
+        %label{:for=>"product_price"} Price
+        %input{:id=>"product_price", :name=>"product[price]", :type=>"text"}
+
+      %li
+        %label{:for => "product_description"} Description
+        %textarea{:id=>"product-description", :name=>"product[description]"}
+
+  %input{:type=>"submit", :value => "Add Product"}
+%hr
+
+%table
+  -@products.each do |product|
+    %tr
+      %td=product.name
+      %td 
+        %a{:href=>"/products/#{product.id}"} Details
+      %td
+        %form{:method=>"POST", :action => "/products/#{product.id}"}
+          %input{:type=>"hidden", :name=>"_method", :value=>"delete"}
+          %input{:type=>"submit", :value=>"Delete"}
+
+%p
+  %a{:href=> "/products.json"} JSON or
+  %a{:href=> "/products.xml"} XML

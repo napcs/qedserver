@@ -1,0 +1,80 @@
+$radius: 5px
+$shadow_color: #ddd
+$wrap_shadow_color: #333
+$border_color: #000
+$link_color: #393D48
+$body_color: #888
+
+@mixin rounded
+  border: 1px solid $border_color
+  border-radius: $radius
+  -moz-border-radius: $radius
+  -webkit-border-radius: $radius
+
+@mixin shadow($color)
+  -moz-box-shadow: ($radius -3) ($radius -3) ($radius -2) $color
+  -webkit-box-shadow: ($radius - 3) ($radius - 3) ($radius - 2) $color
+  padding: $radius $radius $radius ($radius * 3)
+  border: 1px solid $shadow_color
+
+body
+  background-color: #393D48
+  color: $body_color
+  
+a
+  color: $link_color
+
+section
+  margin-bottom: 40px
+
+section, header, footer
+  display: block
+  
+header, footer
+  text-align: center
+    
+#wrap
+  width:  940px
+  margin: 0 auto
+  padding: 10px
+  @include rounded  
+  @include shadow($wrap_shadow_color) 
+  background-color: #fff
+
+pre
+  overflow: hidden
+  @include shadow($shadow_color)
+  width: 90% 
+  background-color: #eee 
+  
+p, h2, h3
+  margin:  0 0 20px 0
+  line-height: 20px
+  
+fieldset
+  
+  ol
+    padding: 0
+    margin: 0
+    list-style: none
+
+  ol li
+    padding: 0
+    clear: both
+    margin: 0 0 10px 0
+
+  label
+    width: 150px 
+    float: left
+
+  input
+    width: 250px
+    border: 1px solid #888
+    
+  textarea
+    clear: both
+    width: 400px
+    height: 100px
+    float:  left
+    border: 1px solid #888
+    

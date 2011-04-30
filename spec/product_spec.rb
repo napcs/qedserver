@@ -13,8 +13,7 @@ describe Product do
     it "finds Camera in the name or in the description" do
       Product.with_keyword("camera").length.should == 3
     end
-        
+              
   end
-  
   
 end

@@ -17,6 +17,18 @@ unless Product.any?
   Product.create :name => "iPad 2 Smart Cover - Leather", :price => 59.99, :description => "Description of iPad Smart Cover - Leather"
   Product.create :name => "Amazon Kindle Wi-Fi Only", :price => 139.99, :description => "Description of Kindle Wi-Fi Version"
   Product.create :name => "Amazon Kindle 3G", :price => 139.99, :description => "Description of Kindle 3G Version"
-  
-  
+  Product.create :name => "Apple Magic Mouse", :price => 69.00, :description => "Description of Apple Magic Mouse"
+  Product.create :name => "Apple Keyboard with Numeric Keypad", :price => 49.00, :description => "Description of Apple Keyboard with Numeric Keypad"
+  Product.create :name => "Apple Magic Trackpad", :price => 69.00, :description => "Description of Apple Magic Trackpad"
+  Product.create :name => "Airport Extreme Base Station", :price => 179.00, :description => "Description of Airport Extreme Base Station"
+  Product.create :name => "Apple Wireless Keyboard", :price => 69.00, :description => "Description of Apple Wireless Keyboard"
+  Product.create :name => "Mini DisplayPort to VGA Adapter", :price => 29.00, :description => "Description of Mini DisplayPort to VGA Adapter"
+  Product.create :name => "Mini DisplayPort to DVI Adapter", :price => 29.00, :description => "Description of Mini DisplayPort to DVI Adapter"
+  Product.create :name => "Mini DVI to VGA Adapter", :price => 29.00, :description => "Description of Mini DVI to VGA Adapter"
+  Product.create :name => "DVI to VGA Adapter", :price => 29.00, :description => "Description of DVI to VGA Adapter"
+  Product.create :name => "Canon Rebel XS Kit (Black)", :price => 549.95, :description => "Description of Canon Rebel XS Kit (Black)"
+  Product.create :name => "AirPort Express Base Station", :price => 99.00, :description => "Description of AirPort Express Base Station"
+  Product.create :name => "Time Capsule - 1TB", :price => 299.00, :description => "Description of Time Capsule - 1TB"
+  Product.create :name => "Time Capsule - 2TB", :price => 499.00, :description => "Description of Time Capsule - 2TB"
+
 end

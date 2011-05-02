@@ -7,7 +7,10 @@ QEDServer solves those pesky problems for you so you can focus on sharpening you
 
 You put your files in the "public" folder that QEDServer creates, visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend without worrying about server setup or same-origin-policy issues.
 
-Additionally, QEDServer provides a web interface of its own that you can use to manage the stock data and add your own records. And when you restart QEDServer, the database gets reset so you always have a clean environment when you come back.
+Additionally, QEDServer provides a web interface of its own that you can use to manage the stock data and add your own records. 
+
+And if you need a fresh start, just delete the `products.sqlite3` file and restart QEDServer. The database will be recreated
+so you'll have a clean environment again.
 
 Setup and Usage
 ------
@@ -58,10 +61,11 @@ Fork, change, send a pull request. Please, please, please write specs!
 Roadmap
 -----------
 * Product updating
-* Other requests?
+* Product categories so we'll have an association for data binding, etc.
 
 History
 ------
+0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
 0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
 0.1.0 - Intitial release.
 

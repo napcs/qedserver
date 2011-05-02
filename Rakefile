@@ -8,7 +8,7 @@ end
 desc "Create a zip file for distribution to end users"
 task :package => :war do
   FileUtils.cp "END_USER_README.md", "README.txt"
-  sh "zip -9 webserver.zip LICENSE README.txt server.sh server.bat webserver.war"
+  sh "zip -9 webserver.zip LICENSE README.txt server.sh server.bat fresh_server.sh fresh_server.bat webserver.war"
   FileUtils.rm "README.txt"
 end
 

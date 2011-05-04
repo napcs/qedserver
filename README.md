@@ -46,11 +46,11 @@ That will also grab `END_USER_README.md` and throw it in the archive.
 ### The files
 QED Server is just a Sinatra application wrapped by Warbler, so to customize it, just replace the guts. Add your own models, change the routes around, do what you need to do.
 
-`lib/server.rb` is the main Sinatra application.
-`lib/configuration.rb` is the code that sets up the database connections and location of the public directory by looking at where the user started up the app. 
-`lib/seed_data.rb` is just a Ruby script that loads data into the database when the server starts.
-`lib/views` contains the view files for the various pages
-`lib/models` contains the ActiveRecord models this app uses.
+* `lib/server.rb` is the main Sinatra application.
+* `lib/configuration.rb` is the code that sets up the database connections and location of the public directory by looking at where the user started up the app. 
+* `lib/seed_data.rb` is just a Ruby script that loads data into the database when the server starts.
+* `lib/views` contains the view files for the various pages
+* `lib/models` contains the ActiveRecord models this app uses.
 
 
 Contributing
@@ -65,9 +65,10 @@ Roadmap
 
 History
 ------
-0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
-0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
-0.1.0 - Intitial release.
+* 0.3.1 - User interface tweaks, navigation, error messages
+* 0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
+* 0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
+* 0.1.0 - Intitial release.
 
 License
 --------

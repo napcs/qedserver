@@ -10,9 +10,13 @@
       %nav
         %ul
           %li
+            %a{:href => "/"} Home
+          %li
             %a{:href => "/products" } Products
           %li
             %a{:href => "/help" } Help
+          %li
+            %a{:href => "/index.html"} Public index
             
       %section#main
         -if flash[:notice]

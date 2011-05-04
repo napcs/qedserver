@@ -1,4 +1,4 @@
-QED_SERVER_VERSION="0.3.0"
+QED_SERVER_VERSION="0.3.1"
 DBFILE =  File.expand_path(".", ENV_JAVA['user.dir']) + "/products.sqlite3"
 PUBLIC_PATH = File.expand_path(".", ENV_JAVA['user.dir']) + ("/public")
 

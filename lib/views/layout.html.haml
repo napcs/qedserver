@@ -7,9 +7,29 @@
     #wrap
       %header
         %h1 QEDServer
-    
-      #main
+      %nav
+        %ul
+          %li
+            %a{:href => "/products" } Products
+          %li
+            %a{:href => "/help" } Help
+            
+      %section#main
+        -if flash[:notice]
+          #notice= flash[:notice]
+        -if @message
+          #message= @message
+      
         =yield
     
       %footer
-        %h5 Copyright &copy; 2011 Brian P. Hogan
+        %h5 
+          QEDServer v
+          =QED_SERVER_VERSION
+          Copyright &copy; 2011 Brian P. Hogan
+        %h5 
+          %a{:href=>"http://qedserver.napcs.com/"} QEDServer Home Page
+          |
+          %a{:href=>"http://github.com/napcs/qedserver/"} QEDServer Source
+          
+          

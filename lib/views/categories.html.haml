@@ -1,0 +1,36 @@
+%h2 Categories
+
+=error_messages_for @category
+
+%form{:method => "POST", :action => "/categories"}
+  %fieldset
+    %legend New Category
+    =haml :_category_form
+    
+    %input{:type=>"submit", :value => "Add Category"}
+%hr
+
+%p 
+  View as 
+  %a{:href=> "/categories.json"} JSON
+  or
+  %a{:href=> "/categories.xml"} XML
+
+%table
+  %tr
+    %th Name
+    %th{:colspan => "3"} &nbsp;
+    
+  -@categories.each do |category|
+    %tr{:id => "category_#{category.id}"}
+      %td=category.name
+      %td
+        %a{:href => "/categories/#{category.id}"} View
+      %td
+        %a{:href => "/categories/#{category.id}/edit"} Edit
+      %td
+        %form.delete{:method=>"POST", :action => "/categories/#{category.id}"}
+          %input{:type=>"hidden", :name=>"_method", :value=>"delete"}
+          %input{:type=>"submit", :value=>"Delete"}
+
+=pagination_links(@categories_count, @per_page, "/categories")

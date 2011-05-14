@@ -1,0 +1,16 @@
+%h2=@category.name
+
+%p
+  There are
+  =@category.products.count
+  products in this category.
+  %a{:href => "/categories/#{@category.id}/products"} View them.
+
+%p
+  %a{:href => "/categories"} Back to Categories
+  
+%p
+  %a{:href => "/categories/#{@category.id}/edit"} Edit 
+  or view as
+  %a{:href => "/categories/#{@category.id}.json"} JSON or
+  %a{:href => "/categories/#{@category.id}.xml"} XML

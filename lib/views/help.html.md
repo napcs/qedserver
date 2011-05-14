@@ -76,15 +76,17 @@ The API
 
 The API that's currently implemented is:
 
+### Products
 * `GET` http://localhost:8080/products.json fetches a JSON feed of the products
 * `GET` http://localhost:8080/products.xml fetches an XML feed of the products
 * `GET` http://localhost:8080/product/1.json fetches the product with the ID of 1 as JSON
 * `GET` http://localhost:8080/product/1.xml fetches the product with the ID of 1 as XML
-* `POST` http://localhost:8080/products.json creates new records. The fields need to be nested, so name your form fields `product[name]`, etc.
+* `POST` http://localhost:8080/products.json creates a new product. The fields need to be nested, so name your form fields `product[name]`, etc.
+* `PUT` http://localhost:8080/products/1.json modifies the existing product with the id of 1. You'll need to post data in the nested format `product[name]`, etc.
 * `DELETE` http://localhost:8080/products/1.json deletes the product with the ID of 1.
 * `GET` http://localhost:8080/products.rss fetches an RSS 2.0 feed of the products
 
-### Creating products
+#### Creating and updating products
 To create products, send a `POST` request to http://localhost:8080/products. The
 web server expects to find the parameters nested. 
 
@@ -94,14 +96,12 @@ When a product is created successfully via JSON, you'll get this response:
 
     {success: true, message: "Created Camera."}
 
-
-
-### Deleting products
+#### Deleting products
 You can delete products by constructing a `DELETE` request to  http://localhost:8080/products/1.json where `1` is the ID of the product you want to remove. You'll get a JSON response back that looks like this:
 
     {success: true, message: "Camera was deleted."}
     
-### Searching for products
+#### Searching for products
 
 Searching for products is quite easy. You simply send a GET request to http://localhost:8080/products.json with a query paramter called `q` 
 like this:
@@ -110,7 +110,7 @@ like this:
 
 You'll get back only products that have "camera" in the name or description.
 
-### Pagination
+#### Pagination
 
 Results come back 10 pages at a time. Use the `page` query parameter to get additional results.
 
@@ -118,5 +118,27 @@ Results come back 10 pages at a time. Use the `page` query parameter to get addi
     
 This works with RSS, XML, and JSON, with or without keywords.
 
+### Categories
 
+* `GET` http://localhost:8080/categories.json fetches a JSON feed of the categories
+* `GET` http://localhost:8080/categories.xml fetches an XML feed of the categories
+* `GET` http://localhost:8080/categories/1.json fetches the categoy with the ID of 1 as JSON
+* `GET` http://localhost:8080/categories/1.xml fetches the category with the ID of 1 as XML
+* `POST` http://localhost:8080/categories.json creates a new category. The fields need to be nested, so name your form fields `category[name]`, etc.
+* `PUT` http://localhost:8080/categories/1.json modifies the existing category with the id of 1. You'll need to post data in the nested format `category[name]`, etc.
+* `DELETE` http://localhost:8080/categories/1.json deletes the category with the ID of 1.
+* `GET` http://localhost:8080/categories.rss fetches an RSS 2.0 feed of the categories
+* `GET` http://localhost:8080/categories/1/products.json fetches products in the category with the ID of 1
+* `GET` http://localhost:8080/categories/1/products.xml fetches products in the category with the ID of 1
+
+Creating, updating, deleting, pagination, and searching work the same as with Products.
+
+#### Pagination and Searching
+
+When looking at products within categories, you can apply the same pagination and querying as you would with products.
+
+* `http://localhost:8080/categories/1/products.json?page=2`
+* `http://localhost:8080/categories/1/products.json?page=2&q=iPad`
+    
+This works with RSS, XML, and JSON, with or without keywords.
 

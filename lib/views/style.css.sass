@@ -70,12 +70,13 @@ p, h2, h3
   
 fieldset
   padding: ($measure /2)
+  margin-bottom: $measure
   ol
     padding: 0
     margin: 0
     list-style: none
 
-  ol li
+  ol li.inline
     padding: 0
     clear: both
     margin: 0 0 ($measure / 2) 0
@@ -83,17 +84,24 @@ fieldset
     label
       width: 150px 
       float: left
-
+      padding: 4px
+      
     input
       width: 250px
       border: 1px solid $border_color
+      padding: 4px
     
     textarea
       clear: both
       width: 400px
       height: 100px
-      float:  left
       border: 1px solid $border_color
+      padding: 4px
+      
+      
+    fieldset
+      clear: both
+      float: left
     
 nav
   margin-bottom: $measure

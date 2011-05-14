@@ -1,0 +1,10 @@
+=error_messages_for @category
+  
+%form{:method => "POST", :action => "/categories/#{@category.id}/update"}
+  %input{:type=>"hidden", :name=>"_method", :value=>"put"}
+
+  %fieldset
+    %legend Edit Category
+    =haml :_category_form
+
+    %input{:type=>"submit", :value => "Save Category"}

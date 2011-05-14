@@ -1,0 +1,14 @@
+=error_messages_for @product
+  
+%form{:method => "POST", :action => "/products/#{@product.id}/update"}
+  %input{:type=>"hidden", :name=>"_method", :value=>"put"}
+
+  %fieldset
+    %legend Edit Product
+    =haml :_product_form
+
+    %input{:type=>"submit", :value => "Save Product"}
+  
+%form.delete{:method=>"POST", :action => "/products/#{@product.id}"}
+  %input{:type=>"hidden", :name=>"_method", :value=>"delete"}
+  %input{:type=>"submit", :value=>"Delete"}

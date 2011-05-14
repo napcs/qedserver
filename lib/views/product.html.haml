@@ -3,9 +3,14 @@
 .description
   =Maruku.new(@product.description).to_html
 
+.categories
+  =@product.categories.collect{|c| c.name}.join(", ")
+
 %p
   %a{:href => "/products"} Back to Products
   
 %p
+  %a{:href => "/products/#{@product.id}/edit"} Edit 
+  or view as
   %a{:href => "/products/#{@product.id}.json"} JSON or
   %a{:href => "/products/#{@product.id}.xml"} XML

@@ -51,7 +51,8 @@ QED Server is just a Sinatra application wrapped by Warbler, so to customize it,
 * `lib/seed_data.rb` is just a Ruby script that loads data into the database when the server starts.
 * `lib/views` contains the view files for the various pages
 * `lib/models` contains the ActiveRecord models this app uses.
-
+* `lib/controllers` contains the routes and responders for the main parts of the app
+* `lib/helpers` has all the helper functions used in the views
 
 Contributing
 -----------
@@ -65,6 +66,7 @@ Roadmap
 
 History
 ------
+* 0.4.0 - Edit/update of products, creation and modification of categories, and association of products to categories, cleanup of user interface and stylesheets, changed startup to be less verbose, and added reloading in development mode, making it much easier to develop.
 * 0.3.1 - User interface tweaks, navigation, error messages
 * 0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
 * 0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.

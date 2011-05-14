@@ -4,6 +4,10 @@
 class Product < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
+  
+  has_many :product_categories
+  has_many :categories, :through => :product_categories
+  
   scope :with_keyword, lambda{|word|
     term = "%#{word}%"
     where(["name like ? or description like ?", term, term]) 

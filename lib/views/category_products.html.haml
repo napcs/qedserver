@@ -1,0 +1,16 @@
+%h2="Products in '#{@category.name}'"
+%p 
+  View as 
+  %a{:href=> "/categories/#{@category.id}/products.json"} JSON
+  or
+  %a{:href=> "/categories/#{@category.id}/products.xml"} XML
+  
+%table
+  -@products.each do |product|
+    %tr{:id => "product_#{product.id}"}
+      %td=product.name
+      %td=product.price
+      %td 
+        %a{:href=>"/products/#{product.id}"} Details
+
+=pagination_links(@products_count, @per_page, "/categories/#{@category.id}/products")

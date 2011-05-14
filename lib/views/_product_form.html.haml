@@ -1,0 +1,25 @@
+%ol
+  %li.inline 
+    %label{:for => "product_name"} Name
+    %input{:name=>"product[name]", :id=>"product_name", :value => @product.name}
+  %li.inline
+    %label{:for=>"product_price"} Price
+    %input{:id=>"product_price", :name=>"product[price]", :value => @product.price, :type=>"text"}
+  %li.inline
+    %label{:for => "product_description"} Description
+    %textarea{:id=>"product-description", :name=>"product[description]"}= @product.description
+  %li
+    %fieldset
+      %legend Categories
+      %ol
+        - Category.all.each do |category|
+          %li
+            %label
+              -if @product.category_ids.include?(category.id)
+                %input{:type=>"checkbox", :value=>category.id, :checked => "checked", :name => "product[category_ids][]"} 
+                =category.name
+              -else
+                %input{:type=>"checkbox", :value=>category.id, :name => "product[category_ids][]"}
+                =category.name
+          
+        %input{:type=>"hidden",  :name => "product[category_ids][]", :value=> "" }

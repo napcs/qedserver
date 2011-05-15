@@ -1,3 +1,3 @@
 echo Starting QED server...
 @del products.sqlite3
-@java -Xmx256M -jar webserver.war
+@java -Xmx256M -jar webserver.war --debug=1

@@ -7,29 +7,26 @@ require 'haml'
 require 'sass'
 require 'rack-flash'
 require 'sinatra/respond_to'
-require 'lib/models/product'
-require 'lib/models/category'
-require 'lib/models/product_category'
-
-require 'lib/configuration'
-require 'lib/seed_data'
 require 'builder'
 require 'maruku'
 
-
+# QEDServer requires
+require 'lib/models/product'
+require 'lib/models/category'
+require 'lib/models/product_category'
+require 'lib/configuration'
+require 'lib/seed_data'
+require 'lib/helpers'
+require 'lib/extensions/jsonp'
 
 # Sinatra setup
 Sinatra::Application.register Sinatra::RespondTo
 enable :sessions
 use Rack::Flash
 set :public, PUBLIC_PATH
-
 set :markdown, :layout_engine => :haml, :layout => :layout
 
-require 'lib/helpers'
-
 puts "Server started. Press CTRL+C to stop."
-
 
 # The home page with information about the server itself
 # renders index.html.haml

@@ -5,7 +5,7 @@ You've just come across a great new client-side library that makes building rich
 
 QEDServer solves those pesky problems for you so you can focus on sharpening your front-end skills. In one small package, you get a simple web server that hosts a small "product catalog" web application and a database full of existing products. You can immediately start writing code against its RESTLike API that responds with JSON and XML.
 
-You put your files in the "public" folder that QEDServer creates, visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend without worrying about server setup or same-origin-policy issues.
+You put your files in the `public` folder that QEDServer creates, visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend without worrying about server setup or same-origin-policy issues.
 
 Additionally, QEDServer provides a web interface of its own that you can use to manage the stock data and add your own records. 
 
@@ -47,6 +47,7 @@ That will also grab `END_USER_README.md` and throw it in the archive.
 QED Server is just a Sinatra application wrapped by Warbler, so to customize it, just replace the guts. Add your own models, change the routes around, do what you need to do.
 
 * `lib/server.rb` is the main Sinatra application.
+* `lib/extensions/` contains extensions to Ruby classes.
 * `lib/configuration.rb` is the code that sets up the database connections and location of the public directory by looking at where the user started up the app. 
 * `lib/seed_data.rb` is just a Ruby script that loads data into the database when the server starts.
 * `lib/views` contains the view files for the various pages
@@ -59,18 +60,9 @@ Contributing
 Fork, change, send a pull request. Please, please, please write specs!
 
 
-Roadmap
------------
-* Product updating
-* Product categories so we'll have an association for data binding, etc.
-
 History
 ------
-* 0.4.0 - Edit/update of products, creation and modification of categories, and association of products to categories, cleanup of user interface and stylesheets, changed startup to be less verbose, and added reloading in development mode, making it much easier to develop.
-* 0.3.1 - User interface tweaks, navigation, error messages
-* 0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
-* 0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
-* 0.1.0 - Intitial release.
+See HISTORY for the change log.
 
 License
 --------

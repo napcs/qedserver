@@ -79,6 +79,12 @@ describe "QED Server" do
       last_response.body.should == Product.order("created_at desc").to_json
     end
     
+    it "shows the products as JSON-P with a foo callback function at /products.json?callback=foo" do
+      get "/products.json?callback=foo"
+      last_response.body.should == Product.order("created_at desc").to_json(:callback => "foo")
+    end
+    
+    
     it "displays the products rss feed at /products.rss" do
       get "/products.rss"
       last_response.body.should include("QED Products")
@@ -125,6 +131,11 @@ describe "QED Server" do
       it "shows the product as JSON at /products/1.json" do
         get "/products/#{@product.id}.json"
         last_response.body.should == @product.to_json
+      end
+      
+      it "shows the product as JSON-p with a foo callback at /products/1.json?callback=foo" do
+        get "/products/#{@product.id}.json?callback=foo"
+        last_response.body.should == @product.to_json(:callback => "foo")
       end
       
       it "shows the product as XML at /products/1.xml" do
@@ -190,6 +201,11 @@ describe "QED Server" do
     it "displays the categories page as JSON" do
       get "/categories.json"
       last_response.body.should == Category.order("created_at desc").to_json
+    end
+    
+    it "shows the categories as JSON-P with a foo callback function at /categories.json?callback=foo" do
+      get "/categories.json?callback=foo"
+      last_response.body.should == Category.order("created_at desc").to_json(:callback => "foo")
     end
     
     it "displays the categories rss feed at /categories.rss" do
@@ -305,6 +321,11 @@ describe "QED Server" do
         last_response.body.should == @category.to_json
       end
       
+      it "shows the category as JSON-p with a foo callback at /categories/1.json?callback=foo" do
+        get "/categories/#{@category.id}.json?callback=foo"
+        last_response.body.should == @category.to_json(:callback => "foo")
+      end
+      
       it "shows the category as XML at /categories/1.xml" do
         get "/categories/#{@category.id}.xml"
         last_response.body.should == @category.to_xml
@@ -372,6 +393,25 @@ describe "QED Server" do
       last_response.body.should include("QED Products in #{@category.name}")
     end
     
+    it "shows the product as JSON at /categories/1/products/1.json" do
+      @product = @category.products.create! :name => "iMac", :price => 1500.00, :description => "iMac description"
+      get "/categories/#{@category.id}/products/#{@product.id}.json"
+      last_response.body.should == @product.to_json
+    end
+    
+    it "shows the product as JSON-p with a foo callback at /categories/1/products/1.json?callback=foo" do
+      @product = @category.products.create! :name => "iMac", :price => 1500.00, :description => "iMac description"
+      get "/categories/#{@category.id}/products/#{@product.id}.json?callback=foo"
+      last_response.body.should == @product.to_json(:callback => "foo")
+    end
+    
+    it "shows the product as XML at /categories/1/products/1.xml" do
+      @product = @category.products.create! :name => "iMac", :price => 1500.00, :description => "iMac description"
+      get "/categories/#{@category.id}/products/#{@product.id}.xml"
+      last_response.body.should == @product.to_xml
+    end
+
+
     it "displays the camera but not the iMac when we go to /categories/1/products?q=camera" do
       @product = @category.products.create! :name => "Camera", :price => 50.00, :description => "Camera description"
       @category.products.create! :name => "iMac", :price => 1500.00, :description => "iMac description"

@@ -19,7 +19,9 @@ get "/categories/:id/products" do
     format.html do
       haml :category_products
     end
-    format.json  { @products.to_json }
+    format.json do
+      params[:callback] ? @products.to_json(:callback => params[:callback]) : @products.to_json
+    end
     format.xml { @products.to_xml }  
     format.rss do
       builder do |xml|
@@ -44,6 +46,17 @@ get "/categories/:id/products" do
        end
       
     end
+  end  
+end
+
+get "/categories/:category_id/products/:id" do
+  @category = Category.find(params[:category_id])
+  @product = @category.products.find(params[:id])
+  respond_to do |format|
+    format.html {haml :product }
+    format.json  do 
+      params[:callback] ? @product.to_json(:callback => params[:callback]) : @product.to_json
+    end
+    format.xml { @product.to_xml }  
   end
-  
 end

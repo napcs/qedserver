@@ -20,21 +20,23 @@ If we visit http://localhost:8080/products.json we'll get a JSON representation 
 the products in our database.
 
     [
-      {"product": 
-        {
-          "created_at":"2011-04-27T17:23:59-05:00",
-          "id":1,
-          "name":"Camera",
-          "updated_at":"2011-04-27T17:23:59-05:00"
-        }
+      {
+        "created_at":"2011-05-23T09:10:57-05:00",
+        "description":"Description of Camera",
+        "id":1,
+        "image_url":null,
+        "name":"Nikon D90 Digial Camera",
+        "price":"500.0",
+        "updated_at":"2011-05-23T09:10:57-05:00"
       },
-      {"product":
-        {
-          "created_at":"2011-04-27T17:23:59-05:00",
-          "id":2,
-          "name":"Macbook Pro",
-          "updated_at":"2011-04-27T17:23:59-05:00"
-        }
+      {
+        "created_at":"2011-05-23T09:10:57-05:00",
+        "description":"Description of the Macbook 13",
+        "id":2,
+        "image_url":null,
+        "name":"Macbook 13 inch",
+        "price":"999.0",
+        "updated_at":"2011-05-23T09:10:57-05:00"
       }
     ]
 
@@ -51,7 +53,7 @@ to our products region that triggers the AJAX request.
            var ul = $("<ul></ul>"); // create a new unordered list
          
            $.each(products, function(index, product){
-             var li = $("<li>" + product["product"]["name"] + "</li>");
+             var li = $("<li>" + product["name"] + "</li>");
              ul.append(li);  // add the listitem to the unordered list
            });
          
@@ -142,3 +144,14 @@ When looking at products within categories, you can apply the same pagination an
     
 This works with RSS, XML, and JSON, with or without keywords.
 
+### JSON-P Support
+
+You can get the JSON results back as JSON-P if you append a callback query parameter to the request. The result will be wrapped by the callback function you specify.
+
+Right now we only support this for the following API endpoints.
+
+* `GET` http://localhost:8080/products.json?callback=jsonpcallback
+* `GET` http://localhost:8080/products/1.json?callback=jsonpcallback
+* `GET` http://localhost:8080/categories.json?callback=jsonpcallback
+* `GET` http://localhost:8080/categories/1/products.json?callback=jsonpcallback
+* `GET` http://localhost:8080/categories/1/products/1.json?callback=jsonpcallback

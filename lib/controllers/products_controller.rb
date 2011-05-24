@@ -19,7 +19,9 @@ get "/products" do
       @product = Product.new  
       haml :products
     end
-    format.json  { @products.to_json }
+    format.json do
+      params[:callback] ? @products.to_json(:callback => params[:callback]) : @products.to_json
+    end
     format.xml { @products.to_xml }  
     format.rss do
       builder do |xml|
@@ -53,7 +55,7 @@ get "/products/:id/edit" do
   @product = Product.find(params[:id])
   respond_to do |format|
     format.html {haml :product_edit }
-    format.json  { @product.to_json }
+    format.json { @product.to_json }
     format.xml { @product.to_xml }  
   end
 end
@@ -90,7 +92,9 @@ get "/products/:id" do
   @product = Product.find(params[:id])
   respond_to do |format|
     format.html {haml :product }
-    format.json  { @product.to_json }
+    format.json  do 
+      params[:callback] ? @product.to_json(:callback => params[:callback]) : @product.to_json
+    end
     format.xml { @product.to_xml }  
   end
 end

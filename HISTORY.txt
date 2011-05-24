@@ -1,0 +1,6 @@
+* 0.5.0 - Removed root element from JSON responses to support Backbone.js and other frameworks. Added JSON-P support. Pass the `?callback=foo` query param to have JSON-P returned instead.
+* 0.4.0 - Edit/update of products, creation and modification of categories, and association of products to categories, cleanup of user interface and stylesheets, changed startup to be less verbose, and added reloading in development mode, making it much easier to develop.
+* 0.3.1 - User interface tweaks, navigation, error messages
+* 0.3.0 - Changed behavior of database. Now it uses the existing database and if you want to reset things, you need to delete the `products.sqlite3` file.
+* 0.2.0 - Pagination support, default ordering is now newest first, which works better for RSS feeds.
+* 0.1.0 - Intitial release.

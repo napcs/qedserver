@@ -21,7 +21,9 @@ get "/categories" do
       @category = Category.new  
       haml :categories
     end
-    format.json  { @categories.to_json }
+    format.json do
+      params[:callback] ? @categories.to_json(:callback => params[:callback]) : @categories.to_json
+    end
     format.xml { @categories.to_xml }  
     format.rss do
       builder do |xml|
@@ -91,7 +93,9 @@ get "/categories/:id" do
   @category = Category.find(params[:id])
   respond_to do |format|
     format.html {haml :category }
-    format.json  { @category.to_json }
+    format.json do
+      params[:callback] ? @category.to_json(:callback => params[:callback]) : @category.to_json
+    end
     format.xml { @category.to_xml }  
   end
 end

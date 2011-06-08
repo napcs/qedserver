@@ -63,8 +63,9 @@ end
 # Update a product.
 # Respond with HTML or JSON.
 put "/products/:id/update" do
+  data = params[:product] || JSON.parse(request.body.read) rescue {}
   @product = Product.find(params[:id])
-  @product.update_attributes(params[:product])
+  @product.update_attributes(data)
   if @product.save
     message = "Updated #{@product.name}"
     respond_to do |format|
@@ -81,7 +82,10 @@ put "/products/:id/update" do
         @message = message
         haml :product_edit
       end
-      format.json { {:success => false, :message => message}.to_json }
+      format.json do 
+        status "500"
+        {:success => false, :message => message, :errors => @product.errors}.to_json
+      end
     end
   end
 end
@@ -102,7 +106,8 @@ end
 # Create a new product.
 # Respond with HTML or JSON.
 post "/products" do
-  @product = Product.new(params[:product])
+  data = params[:product] || JSON.parse(request.body.read) rescue {}
+  @product = Product.new(data)
   if @product.save
     message = "Created #{@product.name}"
     respond_to do |format|
@@ -123,7 +128,10 @@ post "/products" do
         @message = message
         haml :products
       end
-      format.json { {:success => false, :message => message}.to_json }
+      format.json do 
+        status "500"
+        {:success => false, :message => message, :errors => @product.errors}.to_json
+      end
     end
   end
 end

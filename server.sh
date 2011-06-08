@@ -1,1 +1,2 @@
-java -Xmx256M -jar webserver.war --debug=1
+#!/bin/sh
+java -Xmx256M -jar webserver.war --debug=1 --httpPort=8080

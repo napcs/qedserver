@@ -64,8 +64,9 @@ end
 # Update a category.
 # Respond with HTML or JSON.
 put "/categories/:id/update" do
+  data = params[:category] || JSON.parse(request.body.read)   
   @category = Category.find(params[:id])
-  @category.update_attributes(params[:category])
+  @category.update_attributes(data)
   if @category.save
     message = "Updated #{@category.name}"
     respond_to do |format|
@@ -82,7 +83,10 @@ put "/categories/:id/update" do
         @message = message
         haml :category_edit
       end
-      format.json { {:success => false, :message => message}.to_json }
+      format.json do
+        status "500"
+        {:success => false, :message => message, :errors => @category.errors}.to_json
+      end
     end
   end
 end
@@ -107,7 +111,10 @@ end
 # Create a new product.
 # Respond with HTML or JSON.
 post "/categories" do
-  @category = Category.new(params[:category])
+  puts params[:category]
+  
+  data = params[:category] || JSON.parse(request.body.read) rescue {}
+  @category = Category.new(data)
   if @category.save
     message = "Created #{@category.name}"
     respond_to do |format|
@@ -128,7 +135,10 @@ post "/categories" do
         
         haml :categories
       end
-      format.json { {:success => false, :message => message}.to_json }
+      format.json do
+        status "500"
+        {:success => false, :message => message, :errors => @category.errors}.to_json
+      end
     end
   end
 end

@@ -199,14 +199,14 @@ If you visit <a href='http://localhost:8080/product_list.html'>http://localhost:
 
             <li><code>POST</code> <a href=
             'http://localhost:8080/products.json'>http://localhost:8080/products.json</a>
-            creates a new product. The fields need to be nested, so name
-            your form fields <code>product[name]</code> , etc.</li>
+            creates a new product. The fields need to be nested if you form-encode the data, so name your form fields <code>product[name]</code>, etc. No nesting is required if you send the JSON in the request body.</li>
+            
 
             <li><code>PUT</code> <a href=
             'http://localhost:8080/products/1.json'>http://localhost:8080/products/1.json</a>
-            modifies the existing product with the id of 1. You'll need
+            modifies the existing product with the id of 1. If you form-encode the data, you'll need
             to post data in the nested format <code>product[name]</code>
-            , etc.</li>
+            , etc. If you send JSON in the request body, no nesting is required.</li>
 
             <li><code>DELETE</code> <a href=
             'http://localhost:8080/products/1.json'>http://localhost:8080/products/1.json</a>
@@ -223,9 +223,9 @@ If you visit <a href='http://localhost:8080/product_list.html'>http://localhost:
           <a href=
           'http://localhost:8080/products'>http://localhost:8080/products</a>
           . The<br>
-          web server expects to find the parameters nested.</p>
+          web server expects to find the parameters nested if you form-encode the data. </p>
           <pre><code>&lt;input type="text" name="product[name]"&gt;</code></pre>
-
+          <p>No nesting is required if you send the JSON in the request body.</p>
           <p>When a product is created successfully via JSON, you'll get
           this response:</p>
           <pre><code>{success: true, message: "Created Camera."}</code></pre>
@@ -283,14 +283,14 @@ If you visit <a href='http://localhost:8080/product_list.html'>http://localhost:
 
             <li><code>POST</code> <a href=
             'http://localhost:8080/categories.json'>http://localhost:8080/categories.json</a>
-            creates a new category. The fields need to be nested, so name
-            your form fields <code>category[name]</code> , etc.</li>
+            creates a new category. The fields need to be nested if you form-encode the data, so name
+            your form fields <code>category[name]</code> , etc. No nesting is required if you send the JSON data in the request body.</li>
 
             <li><code>PUT</code> <a href=
             'http://localhost:8080/categories/1.json'>http://localhost:8080/categories/1.json</a>
-            modifies the existing category with the id of 1. You'll need
+            modifies the existing category with the id of 1. If you form-encode the data, you'll need
             to post data in the nested format <code>category[name]</code>
-            , etc.</li>
+            , etc. Nesting of data is not required if you send the JSON data in the request body.</li>
 
             <li><code>DELETE</code> <a href=
             'http://localhost:8080/categories/1.json'>http://localhost:8080/categories/1.json</a>

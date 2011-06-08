@@ -27,6 +27,7 @@ end
 
 desc "create the war file" 
 task :war do
+  FileUtils.rm_rf "public"
   sh "jruby -S warble compiled gemjar executable war"
 end
 

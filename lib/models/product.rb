@@ -5,6 +5,8 @@ class Product < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   
+  attr_accessible :name, :description, :category_ids, :price, :image_url
+  
   has_many :product_categories
   has_many :categories, :through => :product_categories
   

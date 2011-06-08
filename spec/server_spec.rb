@@ -105,15 +105,24 @@ describe "QED Server" do
         end
       end
       
+      describe "with JSON in the body of the request" do
+        it "displays the success message" do
+          post "/products.json", {:name => "Foo"}.to_json
+          last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+        end
+      end
+      
       describe "with JSON" do
         it "displays the success message" do
           post "/products.json", {:product => {:name => "Foo"}}
           last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
         end
+        
 
         it "displays the error message when not created" do
           post "/products.json"
-          last_response.body.should == {:success => false, :message => "The product was not saved."}.to_json
+          p=Product.create
+          last_response.body.should == {:success => false, :message => "The product was not saved.", :errors => p.errors}.to_json
 
         end
       end
@@ -170,6 +179,13 @@ describe "QED Server" do
         end
       end
       
+      describe "with JSON in the request body" do
+        it "displays the success message" do
+          put "/products/#{@product.id}/update.json", {:name => "Bar"}.to_json
+          last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
+        end
+      end
+      
       describe "with JSON" do
         it "displays the success message" do
           put "/products/#{@product.id}/update.json", {:product => {:name => "Bar"}}
@@ -178,7 +194,8 @@ describe "QED Server" do
 
         it "displays the error message when not created" do
           put "/products/#{@product.id}/update.json", {:product => {:name => ""}} 
-          last_response.body.should == {:success => false, :message => "The product was not saved."}.to_json
+          p = Product.create
+          last_response.body.should == {:success => false, :message => "The product was not saved.", :errors => p.errors}.to_json
 
         end
       end
@@ -293,6 +310,14 @@ describe "QED Server" do
         end
       end
       
+      describe "with JSON in the request body" do
+        it "displays the success message" do
+           post "/categories.json", {:name => "Foo"}.to_json
+           last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+         end
+
+      end
+      
       describe "with JSON" do
         it "displays the success message" do
           post "/categories.json", {:category => {:name => "Foo"}}
@@ -301,7 +326,8 @@ describe "QED Server" do
 
         it "displays the error message when not created" do
           post "/categories.json"
-          last_response.body.should == {:success => false, :message => "The category was not saved."}.to_json
+          c = Category.create  # fails, but this is just to get the error messages
+          last_response.body.should == {:success => false, :message => "The category was not saved.", :errors => c.errors}.to_json
 
         end
       end
@@ -366,7 +392,8 @@ describe "QED Server" do
 
         it "displays the error message when not created" do
           put "/categories/#{@category.id}/update.json", {:category => {:name => ""}} 
-          last_response.body.should == {:success => false, :message => "The category was not saved."}.to_json
+          c=Category.create(:name => "")
+          last_response.body.should == {:success => false, :message => "The category was not saved.", :errors => c.errors}.to_json
 
         end
       end

@@ -59,6 +59,10 @@ Contributing
 -----------
 Fork, change, send a pull request. Please, please, please write specs!
 
+Roadmap
+-------
+* Configuration file to set db location and file location
+* Modify startup scripts to accept a port as an option
 
 History
 ------

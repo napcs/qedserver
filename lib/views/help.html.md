@@ -83,8 +83,8 @@ The API that's currently implemented is:
 * `GET` http://localhost:8080/products.xml fetches an XML feed of the products
 * `GET` http://localhost:8080/product/1.json fetches the product with the ID of 1 as JSON
 * `GET` http://localhost:8080/product/1.xml fetches the product with the ID of 1 as XML
-* `POST` http://localhost:8080/products.json creates a new product. The fields need to be nested, so name your form fields `product[name]`, etc.
-* `PUT` http://localhost:8080/products/1.json modifies the existing product with the id of 1. You'll need to post data in the nested format `product[name]`, etc.
+* `POST` http://localhost:8080/products.json creates a new product. The fields need to be nested if you form-encode the data, so name your form fields `product[name]`, etc. No nesting is required if you send the JSON in the request body.
+* `PUT` http://localhost:8080/products/1.json modifies the existing product with the id of 1. If you form-encode the data, you'll need to post data in the nested format `product[name]`, etc. If you send JSON in the request body, no nesting is required.
 * `DELETE` http://localhost:8080/products/1.json deletes the product with the ID of 1.
 * `GET` http://localhost:8080/products.rss fetches an RSS 2.0 feed of the products
 
@@ -94,6 +94,8 @@ web server expects to find the parameters nested.
 
     <input type="text" name="product[name]">
     
+No nesting is required if you send the JSON in the request body.
+
 When a product is created successfully via JSON, you'll get this response:
 
     {success: true, message: "Created Camera."}
@@ -126,8 +128,8 @@ This works with RSS, XML, and JSON, with or without keywords.
 * `GET` http://localhost:8080/categories.xml fetches an XML feed of the categories
 * `GET` http://localhost:8080/categories/1.json fetches the categoy with the ID of 1 as JSON
 * `GET` http://localhost:8080/categories/1.xml fetches the category with the ID of 1 as XML
-* `POST` http://localhost:8080/categories.json creates a new category. The fields need to be nested, so name your form fields `category[name]`, etc.
-* `PUT` http://localhost:8080/categories/1.json modifies the existing category with the id of 1. You'll need to post data in the nested format `category[name]`, etc.
+* `POST` http://localhost:8080/categories.json creates a new category. The fields need to be nested if you form-encode the data, so name your form fields `category[name]`, etc. No nesting is required if you send the JSON in the request body.
+* `PUT` http://localhost:8080/categories/1.json modifies the existing category with the id of 1. If you form-encode the data, you'll need to post data in the nested format `category[name]`, etc. If you send JSON in the request body, no nesting is required.
 * `DELETE` http://localhost:8080/categories/1.json deletes the category with the ID of 1.
 * `GET` http://localhost:8080/categories.rss fetches an RSS 2.0 feed of the categories
 * `GET` http://localhost:8080/categories/1/products.json fetches products in the category with the ID of 1

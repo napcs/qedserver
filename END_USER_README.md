@@ -47,5 +47,7 @@ If you visit  http://localhost:8080/help you'll see the current API as well as a
 
 Point your browser to http://localhost:8080/products to manage the database.
 
+## Changing the Port
 
+Edit the startup scripts to specify the port you'd like to use. It's the `httpPort` option.
 

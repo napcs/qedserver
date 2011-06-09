@@ -1,6 +1,6 @@
 =error_messages_for @category
   
-%form{:method => "POST", :action => "/categories/#{@category.id}/update"}
+%form{:method => "POST", :action => "/categories/#{@category.id}"}
   %input{:type=>"hidden", :name=>"_method", :value=>"put"}
 
   %fieldset

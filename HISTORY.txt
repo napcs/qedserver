@@ -1,3 +1,4 @@
+* 0.5.6 - Fixed update API to use a correct RESTful URL. Updated binary to use JRuby 1.6.2.
 * 0.5.5 - Added support for JSON in the request body to support Backbone.js's default model behavior. Returns proper 500 status codes for create and update failures with JSON, and places error messages in the JSON responses when errors occur.
 * 0.5.0 - Removed root element from JSON responses to support Backbone.js and other frameworks. Added JSON-P support. Pass the `?callback=foo` query param to have JSON-P returned instead.
 * 0.4.0 - Edit/update of products, creation and modification of categories, and association of products to categories, cleanup of user interface and stylesheets, changed startup to be less verbose, and added reloading in development mode, making it much easier to develop.

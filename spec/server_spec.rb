@@ -168,32 +168,32 @@ describe "QED Server" do
       
       describe "with HTML" do
         it "displays the success message" do
-          put "/products/#{@product.id}/update", {:product => {:name => "Bar"}}
+          put "/products/#{@product.id}", {:product => {:name => "Bar"}}
           follow_redirect!
           last_response.body.should include("Updated Bar")
         end
 
         it "displays the error message when not created" do
-          put "/products/#{@product.id}/update", {:product => {:name => ""}}  
+          put "/products/#{@product.id}", {:product => {:name => ""}}  
           last_response.body.should include("The product was not saved.")
         end
       end
       
       describe "with JSON in the request body" do
         it "displays the success message" do
-          put "/products/#{@product.id}/update.json", {:name => "Bar"}.to_json
+          put "/products/#{@product.id}.json", {:name => "Bar"}.to_json
           last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
         end
       end
       
       describe "with JSON" do
         it "displays the success message" do
-          put "/products/#{@product.id}/update.json", {:product => {:name => "Bar"}}
+          put "/products/#{@product.id}.json", {:product => {:name => "Bar"}}
           last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
         end
 
         it "displays the error message when not created" do
-          put "/products/#{@product.id}/update.json", {:product => {:name => ""}} 
+          put "/products/#{@product.id}.json", {:product => {:name => ""}} 
           p = Product.create
           last_response.body.should == {:success => false, :message => "The product was not saved.", :errors => p.errors}.to_json
 
@@ -373,25 +373,25 @@ describe "QED Server" do
       
       describe "with HTML" do
         it "displays the success message" do
-          put "/categories/#{@category.id}/update", {:category => {:name => "Bar"}}
+          put "/categories/#{@category.id}", {:category => {:name => "Bar"}}
           follow_redirect!
           last_response.body.should include("Updated Bar")
         end
 
         it "displays the error message when not created" do
-          put "/categories/#{@category.id}/update", {:category => {:name => ""}}  
+          put "/categories/#{@category.id}", {:category => {:name => ""}}  
           last_response.body.should include("The category was not saved.")
         end
       end
       
       describe "with JSON" do
         it "displays the success message" do
-          put "/categories/#{@category.id}/update.json", {:category => {:name => "Bar"}}
+          put "/categories/#{@category.id}.json", {:category => {:name => "Bar"}}
           last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
         end
 
         it "displays the error message when not created" do
-          put "/categories/#{@category.id}/update.json", {:category => {:name => ""}} 
+          put "/categories/#{@category.id}.json", {:category => {:name => ""}} 
           c=Category.create(:name => "")
           last_response.body.should == {:success => false, :message => "The category was not saved.", :errors => c.errors}.to_json
 

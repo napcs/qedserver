@@ -1,6 +1,6 @@
 =error_messages_for @product
   
-%form{:method => "POST", :action => "/products/#{@product.id}/update"}
+%form{:method => "POST", :action => "/products/#{@product.id}"}
   %input{:type=>"hidden", :name=>"_method", :value=>"put"}
 
   %fieldset

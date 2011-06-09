@@ -63,7 +63,7 @@ end
 
 # Update a category.
 # Respond with HTML or JSON.
-put "/categories/:id/update" do
+put "/categories/:id" do
   data = params[:category] || JSON.parse(request.body.read)   
   @category = Category.find(params[:id])
   @category.update_attributes(data)

@@ -62,7 +62,7 @@ end
 
 # Update a product.
 # Respond with HTML or JSON.
-put "/products/:id/update" do
+put "/products/:id" do
   data = params[:product] || JSON.parse(request.body.read) rescue {}
   @product = Product.find(params[:id])
   @product.update_attributes(data)

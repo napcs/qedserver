@@ -31,15 +31,13 @@ This will run 'rackup' and load the server at http://localhost:9292. It's quicke
 
 When you want to build your own package, use
     
-    rake war
+    rake package_jetty
 
-That will generate webserver.war, which you can launch with
+That will generate the sandbox. You can launch QEDServer from the sandbox folder.
 
-    java -jar webserver.war
+    java -jar start.jar
     
-There's a `server.sh` and a `server.bat` file that you can package with
-
-    rake package
+This also creates the zip file for distribution.
     
 That will also grab `END_USER_README.md` and throw it in the archive.
 

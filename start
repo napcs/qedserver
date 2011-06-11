@@ -1,1 +1,1 @@
-jruby -S rackup
+jruby -S bundle exec rackup

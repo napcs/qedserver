@@ -54,9 +54,9 @@ get "/index" do
 end
 
 get "/env" do
-  
-  @rack_env = ENV.keys.collect{|a| a + " : " + ENV[a]}.compact
-  @java_env = ENV_JAVA.keys.collect{|a| a + " : " + ENV_JAVA[a]}.compact
+  @qed_env = ENV.keys.collect{|a| a + " : " + ENV[a]}.compact
+  @qed_java_env = ENV_JAVA.keys.collect{|a| a + " : " + ENV_JAVA[a]}.compact
+  erb :env
 end
 
 require 'lib/controllers/categories_products_controller'

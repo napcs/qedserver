@@ -5,11 +5,13 @@ ENV['RACK_ENV'] ||= "development"
 
 puts "Using #{ENV['RACK_ENV']} environment"
 
-DBFILE =  File.expand_path(".", ENV_JAVA['user.dir']) + "/products.sqlite3"
-PUBLIC_PATH = File.expand_path(".", ENV_JAVA['user.dir']) + ("/public")
+DBFILE =  File.expand_path(".", ENV_JAVA['user.dir'] + "/../products.sqlite3")
+PUBLIC_PATH = File.expand_path(".", ENV_JAVA['user.dir'] + ("/../public"))
 
 # Public Folder setup
 FileUtils.mkdir_p PUBLIC_PATH
+
+puts "Serving files from #{PUBLIC_PATH}"
 
 configure(:development) do |c|
   require "sinatra/reloader"
@@ -21,6 +23,8 @@ ActiveRecord::Base.establish_connection(
 :adapter => "jdbcsqlite3",
 :database => DBFILE
 )
+
+puts "Using database file at #{DBFILE}"
 
 ActiveRecord::Base.include_root_in_json = false
 

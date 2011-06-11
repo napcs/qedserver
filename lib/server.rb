@@ -53,6 +53,12 @@ get "/index" do
   haml :default
 end
 
+get "/env" do
+  
+  @rack_env = ENV.keys.collect{|a| a + " : " + ENV[a]}.compact
+  @java_env = ENV_JAVA.keys.collect{|a| a + " : " + ENV_JAVA[a]}.compact
+end
+
 require 'lib/controllers/categories_products_controller'
 require 'lib/controllers/products_controller'
 require 'lib/controllers/categories_controller'

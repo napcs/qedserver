@@ -10,7 +10,7 @@ task :bundle do
 end
 
 desc "Create a zip file for distribution to end users"
-task :package => :war do
+task :package => :war_exec do
   FileUtils.cp "END_USER_README.md", "README.txt"
   sh "zip -9 #{QEDZIPFILE} LICENSE HISTORY.txt README.txt server.sh server.bat fresh_server.sh fresh_server.bat webserver.war"
   FileUtils.rm "README.txt"
@@ -25,8 +25,33 @@ RSpec::Core::RakeTask.new do |t|
   # Put spec opts in a file named .rspec in root
 end
 
-desc "create the war file" 
+
+task :jettify => :war do
+  FileUtils.rm_rf "sandbox"
+  FileUtils.mkdir "sandbox"
+  FileUtils.cp_r "jetty", "sandbox/webserver"
+  FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
+  FileUtils.cp "webserver.war", "sandbox/webserver/webapps/webserver.war"
+  FileUtils.cp "jetty_config/server.bat", "sandbox"
+  FileUtils.cp "jetty_config/server.sh", "sandbox"
+  FileUtils.cp "jetty_config/fresh_server.bat", "sandbox"
+  FileUtils.cp "jetty_config/fresh_server.sh", "sandbox"
+  FileUtils.cp "END_USER_README.md", "sandbox/README.txt"
+  %w{LICENSE HISTORY.txt}.each do |f|
+    FileUtils.cp f, "sandbox/#{f}"
+  end
+  
+  Dir.chdir "sandbox" do
+    sh "zip -9 #{QEDZIPFILE} *"
+  end
+end
+
 task :war do
+  sh "jruby -S warble compiled gemjar war"
+end
+
+desc "create the war file" 
+task :war_exec do
   FileUtils.rm_rf "public"
   sh "jruby -S warble compiled gemjar executable war"
 end

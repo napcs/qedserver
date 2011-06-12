@@ -1,0 +1,35 @@
+<assembly>
+  <id>assembly</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+      <unpackOptions>
+        <excludes>
+        <exclude>javax/servlet/http/Local*</exclude>
+        <exclude>javax/servlet/http/No*</exclude>
+        <exclude>javax/servlet/resources/**</exclude>
+        <exclude>javax/servlet/jsp/**</exclude>
+        <exclude>org/mortbay/jetty/handler/**</exclude>
+        <exclude>org/mortbay/jetty/servlet/**</exclude>
+        <exclude>org/mortbay/xml/**</exclude>
+        <exclude>org/mortbay/jetty/xbean/**</exclude>
+        <exclude>org/mortbay/jetty/deployer/**</exclude>
+        <exclude>org/mortbay/jetty/webapp/**</exclude>
+        <exclude>org/mortbay/jetty/resource/**</exclude>
+        <exclude>org/mortbay/jetty/Server*</exclude>
+        <exclude>org/mortbay/util/ajax/**</exclude>
+        <exclude>org/mortbay/servlet/**</exclude>
+        <exclude>org/mortbay/proxy/AsyncProxyServlet*</exclude>
+        <exclude>META-INF/maven/**</exclude>
+          <exclude>jetty-sslengine.xml</exclude>
+        </excludes>
+      </unpackOptions>
+    </dependencySet>
+  </dependencySets>
+</assembly>

@@ -1,0 +1,315 @@
+jetty6 (6.1-SNAPSHOT-1) unstable; urgency=low
+
+  * Initial Release for jetty 6
+
+ -- Greg Wilkins <gregw@mortbay.com>  Thu, 08 Nov 2007 18:23:39 +1100
+
+jetty (5.1.14-1) unstable; urgency=low
+
+  * New upstream release.
+    - Removed debian/patches/cve-2007-6969.patch. Applied upstream.
+  * Added recognition of installed libcommons-el-java to debian/start.config.
+    Closes: #352093.
+  * Fixed short and long service description in debian/jetty.init.
+    Closes: #446788.
+  * Removed libapache2-mod-webapp from Suggests.
+  * Added watch file.
+
+ -- Michael Koch <konqueror@gmx.de>  Wed, 24 Oct 2007 14:14:45 +0200
+
+jetty (5.1.10-4) unstable; urgency=low
+
+  * Added patch to fix CVE-2006-6969. Thanks to Greg Wilkins for the patch.
+    Closes: #445283.
+  * Updated debian/patches/jdk-1.2-src-encoding.patch to make it work with
+    current ecj.
+
+ -- Michael Koch <konqueror@gmx.de>  Fri, 05 Oct 2007 07:34:55 +0200
+
+jetty (5.1.10-3) unstable; urgency=low
+
+  * Fix debian/jetty.init to permit removal without purge and offer a new
+    NO_START option in /etc/default/jetty. Closes: #356067.
+    Thanks to Loic Minier for the patch.
+  * Added additional paths to JDK_DIRS in debian/jetty.init.
+    Closes: #405851.
+  * (Build-)Depends on java-gcj-compat.
+  * Moved debhelper from Build-Depends-Indep to Build-Depends.
+  * Removed Build-Depends on libtomcat5-java and replace Depends on
+    libtomcat5-java by libtomcat5.5-java.
+  * Added LSB section in debian/jetty.init.
+  * Removed extra license file from /usr/share/doc/jetty.
+  * Added myself to Uploaders.
+
+ -- Michael Koch <konqueror@gmx.de>  Tue, 24 Jul 2007 20:40:27 +0200
+
+jetty (5.1.10-2) unstable; urgency=low
+
+  * Fix in init script for new version of su (closes #367491).
+  * Create logfile if not existing. Aknolwedge NMU (closes #356066).
+
+ -- Philipp Meier <meier@fnogol.de>  Tue, 30 May 2006 10:46:21 +0200
+
+jetty (5.1.10-1) unstable; urgency=low
+
+  * New upstream release
+  * Sercurity fixes for windows
+  * Fixed path aliasing with // on windows.
+  * Fix for AJP13 with multiple headers
+  * Fix for AJP13 with encoded path
+  * Remove null dispatch attributes from getAttributeNames
+  * Put POST content default back to iso_8859_1. GET is UTF-8
+    still
+
+ -- Philipp Meier <meier@fnogol.de>  Tue, 30 May 2006 10:40:18 +0200
+
+jetty (5.1.8-3) unstable; urgency=low
+
+  * Enhance dependencies. 
+
+ -- Philipp Meier <meier@fnogol.de>  Fri, 16 Dec 2005 10:53:48 +0100
+
+jetty (5.1.8-2) unstable; urgency=low
+
+  * Add dependeny on apache2-util for log rotation. Closes: #343177.
+
+ -- Philipp Meier <meier@fnogol.de>  Tue, 13 Dec 2005 14:28:09 +0100
+
+jetty (5.1.8-1) unstable; urgency=low
+
+  * New upstream release
+
+  From 5.1.8:
+
+  * Fixed space in URL issued created in 5.1.6
+
+  From 5.1.7:
+
+  * improved server stats
+  * char encoding for MultiPartRequest
+  * fixed merging of POST params in dispatch query string.
+  * protect from NPE in dispatcher getValues
+  * Updated to 2.6.2 xerces
+  * JSP file servlet mappings copy JspServlet init params.
+  * Prefix servlet context logs with org.mortbay.jetty.context
+  * better support for URI character encodings
+  * use commons logging jar instead of api jar.
+
+ -- Philipp Meier <meier@fnogol.de>  Wed,  7 Dec 2005 11:06:10 +0100
+
+jetty (5.1.6-1) unstable; urgency=high
+
+  * New upstream release
+  * Fixed JSP visibility security issue in upstream.
+  * Fix location of jasper since upgrade to tomcat5. Closes: #333010.
+
+ -- Philipp Meier <meier@fnogol.de>  Wed, 30 Nov 2005 15:20:47 +0100
+
+jetty (5.1.5rc1-5) unstable; urgency=low
+
+  Patch from Oyvind Harboe <oyvind.harboe@zylin.com>:
+
+  * increased default amount of memory available to 256Mbyte.
+    the advantage of having more heap available is that more
+    applications will be able to run without modification to
+    the standard Jetty configuration.
+  * added -Djava.library.path=/usr/lib to VM arguments. This is
+    requried to make e.g. the librxtx-java package work.
+  * Closes: #32960.
+
+ -- Philipp Meier <meier@fnogol.de>  Thu, 22 Sep 2005 16:13:16 +0200
+
+jetty (5.1.5rc1-4) unstable; urgency=low
+
+  Patch from Oyvind Harboe <oyvind.harboe@zylin.com>:
+
+  * Fixed rc script /etc/init.d/jetty. "stop" could leave dangling
+    /var/run/jetty.pid. Fixed this by adding "--oknodo" to 
+    "start-stop-daemon --stop" command. 
+  * Removed trailing "/" from LOGDIR which caused
+    /var/log/out.log not to be created.
+  * /etc/init.d/jetty start will now deal more gracefully with a 
+    dangling /var/run/jetty.pid. A dangling jetty.pid is detected
+    and ignored.
+  * Closes: #326176.
+
+ -- Philipp Meier <meier@fnogol.de>  Fri,  2 Sep 2005 13:40:59 +0200
+
+jetty (5.1.5rc1-3) unstable; urgency=low
+
+  * Removed -v from ant opts during build.
+  * Remove pid file on stop. Closes: #325667
+  * Fix location of ant-1.6.jar in start.config. Closes: #324472.
+
+ -- Philipp Meier <meier@fnogol.de>  Tue, 30 Aug 2005 13:37:15 +0200
+
+jetty (5.1.5rc1-2) unstable; urgency=low
+
+  * Builds with kaffe.
+  * Adds patch to exclude Sun JSSE if not available.
+
+ -- Philipp Meier <meier@fnogol.de>  Sat, 27 Aug 2005 14:21:12 +0200
+
+jetty (5.1.5rc1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Philipp Meier <meier@fnogol.de>  Fri, 26 Aug 2005 12:53:50 +0200
+
+jetty (5.1.4-1) unstable; urgency=low
+
+  * New upstream release
+  * Added myself to Uploaders in control.
+  * Standards-Version bumbed to 3.6.2
+  * Removed debian/watch which will not work with sourceforge
+  * Manage changes to upstream with cdbs simple-patchsys
+  * Fixed rc script /etc/init.d/jetty
+  * Adjusted new location of servlet.jar. Closes: #280139.
+
+ -- Philipp Meier <meier@fnogol.de>  Fri, 12 Aug 2005 18:14:28 +0200
+
+jetty (5.0.0-3) unstable; urgency=low
+
+  * Package is now maintained by pkg-java. Maintainer was updated.
+  * Disable validation of xml files in start.config by default.
+    Closes: #298731.
+  * Add /usr/lib/j2sdk1.5-sun to JAVA_HOME_DIRS in debian/rules
+
+ -- Philipp Meier <meier@fnogol.de>  Thu, 30 Jun 2005 14:32:31 +0200
+
+jetty (5.0.0-2.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Transition to liblog4j1.2-java.  Closes: #306761.
+
+ -- Matej Vela <vela@debian.org>  Mon,  2 May 2005 12:12:12 +0200
+
+jetty (5.0.0-2) unstable; urgency=low
+
+  * Shipping working default configuration in /etc/jetty/jetty.xml.
+    Closes: #278134
+
+ -- Philipp Meier <meier@fnogol.de>  Mon, 25 Oct 2004 11:52:25 +0200
+
+jetty (5.0.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Philipp Meier <meier@fnogol.de>  Thu, 16 Sep 2004 00:40:41 +0200
+
+jetty (4.2.22-2) unstable; urgency=low
+
+  * New upstream release
+  * Changed mantainer email
+
+ -- Philipp Meier <meier@fnogol.de>  Wed, 25 Aug 2004 18:14:56 +0200
+
+jetty (4.2.21-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Philipp Meier <meier@meisterbohne.de>  Mon, 23 Aug 2004 15:23:25 +0200
+
+jetty (4.2.19-1) unstable; urgency=high
+
+  * New upstream release.
+  * Fixed DOS attack problem
+
+ -- Philipp Meier <meier@meisterbohne.de>  Fri, 19 Mar 2004 17:55:45 +0100
+
+jetty (4.2.18-1) unstable; urgency=low
+
+  * New upstream release.
+  * Package description of jetty-extra lists the 
+    extensions provided. Closes: #232824
+
+ -- Philipp Meier <meier@meisterbohne.de>  Mon,  1 Mar 2004 13:54:01 +0100
+
+jetty (4.2.15-1) unstable; urgency=low
+
+  * Adds missing javadoc to /usr/share/doc/
+  * Removes invalid libxdoclet-java from Build-Depends.
+  * Fixed clean target in upstreams extra build file. Building
+    jetty twice from the debianized source should work now.
+
+ -- Philipp Meier <meier@meisterbohne.de>  Thu, 15 Jan 2004 14:00:13 +0100
+
+jetty (4.2.15) unstable; urgency=low
+
+  * New upstream release
+  * New additional package jetty-extra.
+  * Updated standards version from 3.5.10 to 3.6.0
+  * Build target directory are no longer in debian because
+    the customization of the build process does not really pay off.
+
+ -- Philipp Meier <meier@meisterbohne.de>  Wed, 14 Jan 2004 14:00:01 +0100
+
+jetty (4.2.12-2) unstable; urgency=low
+
+  * Fixes start.config to make jetty run with kaffe
+  * Updated standards version from 3.5.8 to 3.5.10
+
+ -- Philipp Meier <meier@meisterbohne.de>  Fri, 29 Aug 2003 14:43:40 +0200
+
+jetty (4.2.12-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Philipp Meier <meier@meisterbohne.de>  Tue, 12 Aug 2003 14:07:56 +0200
+
+jetty (4.2.11-7) unstable; urgency=low
+
+  * Adds alternative dependency on j2sdk1.4
+  * Fixes typos in debian/TODO
+  * Adds ant to classpath because jasper needs it. 
+
+ -- Philipp Meier <meier@meisterbohne.de>  Thu,  7 Aug 2003 20:34:19 +0200
+
+jetty (4.2.11-6) unstable; urgency=low
+
+  * Removes DH_VERBOSE from debian/rules
+  * /etc/jetty will be removed on purge
+  * Add build-dependency on j2sdk1.4
+
+ -- Philipp Meier <meier@meisterbohne.de>  Wed, 23 Jul 2003 15:38:05 +0200
+
+jetty (4.2.11-5) unstable; urgency=low
+
+  * Fix for /etc/default/jetty which was misplaced
+  * Fixes messed-up corrections for javadoc tags. Introduced before.
+
+ -- Philipp Meier <meier@meisterbohne.de>  Wed, 23 Jul 2003 01:11:42 +0200
+
+jetty (4.2.11-4) unstable; urgency=low
+
+  * Jetty depends on j2re1.4 until build process of jetty 
+    with java < 1.4 works.
+  * Fixes in build process 
+
+ -- Philipp Meier <meier@meisterbohne.de>  Thu, 17 Jul 2003 12:56:14 +0200
+
+jetty (4.2.11-3) unstable; urgency=low
+
+  * Creates /usr/share/java/webapps if necessary
+  * Not longer uses symlinks in ext but a debianized start.config
+  * Changed to multiline logging.
+  * Removed demo webapps and provides a preliminary debian jetty root
+  * Fixes /etc/defaults/jetty to be /etc/default/jetty
+
+ -- Philipp Meier <meier@meisterbohne.de>  Thu, 17 Jul 2003 12:56:03 +0200
+
+jetty (4.2.11-2) unstable; urgency=low
+
+  * Adds build dependencies on libmx4j-java and iblog4j-java
+  * Removes comment about "Tomcat 4" from /etc/jetty.init 
+  * Renamed debian/{pre,post}{inst,rm} to debian/jetty.*
+  * Enables javac.debug to provide useful stackstraces
+
+ -- Philipp Meier <meier@meisterbohne.de>  Tue, 15 Jul 2003 21:50:36 +0200
+
+jetty (4.2.11-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Philipp Meier <meier@meisterbohne.de>  Mon, 14 Jul 2003 13:21:36 +0200
+

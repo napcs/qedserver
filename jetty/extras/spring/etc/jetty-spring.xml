@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server with Spring                          -->
+<!-- This file is the equivalent of jetty.xml, but written in spring -->
+<!-- XmlBeanFactory format.                                          -->
+<!-- The modules/spring/src/org/mortbay/spring/Main.java may be used -->
+<!-- to run this file - or any other spring infrastructure that      -->
+<!-- accepts uses an XmlBeanFactory                                  -->
+<!-- =============================================================== -->
+
+<beans>
+
+  <bean id="Server" class="org.mortbay.jetty.Server" init-method="start" destroy-method="stop">
+  
+    <property name="threadPool">  
+      <bean id="ThreadPool" class="org.mortbay.thread.BoundedThreadPool">
+        <property name="minThreads" value="10"/>
+        <property name="lowThreads" value="50"/>
+        <property name="maxThreads" value="250"/>
+      </bean>
+    </property>
+    
+    <property name="connectors">
+      <list>
+        <bean id="Connector" class="org.mortbay.jetty.nio.SelectChannelConnector">
+          <property name="port" value="8080"/>
+          <property name="maxIdleTime" value="30000"/>
+          <property name="acceptors" value="2"/>
+          <property name="confidentialPort" value="8443"/>
+        </bean>
+      </list>
+    </property>
+    
+    <property name="handler">
+      <bean id="handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+        <property name="handlers">
+          <list>
+             <bean id="contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection">
+               <property name="handlers">
+                 <list>
+                   <bean class="org.mortbay.jetty.webapp.WebAppContext">
+                     <property name="contextPath" value="/test"/>
+                     <property name="war" value="webapps/test"/>
+                   </bean>
+                 </list>
+               </property>
+             </bean>
+             <bean id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+             <bean id="requestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
+          </list>
+        </property>
+      </bean>
+    </property>
+    
+    <property name="userRealms">
+      <list>
+        <bean class="org.mortbay.jetty.security.HashUserRealm">
+            <property name="name" value="Test Realm"/>
+            <property name="config" value="etc/realm.properties"/>
+        </bean>
+      </list>
+    </property>
+    
+  </bean>
+
+</beans>

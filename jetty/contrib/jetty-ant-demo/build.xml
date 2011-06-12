@@ -1,0 +1,28 @@
+<project name="Test application" basedir=".">
+
+  <import file="../../bin/jetty-tasks.xml"/>
+
+  <target name="jetty.run">
+    <jetty tempDirectory="${project.outputDirectory}">
+      <connectors>
+        <selectChannelConnector port="8090" />
+      </connectors>
+      
+      <systemProperties>
+        <systemProperty name="testProperty" value="true" />
+      </systemProperties>
+      <webApp name="Test Web Application 1" warfile="webapp/" contextpath="/testapp1" scanIntervalSeconds="5">
+        <scanTargets dir="webapp">
+          <include name="scan-test" />
+        </scanTargets>
+        <classes dir="webapp" includes="scan-test/te*.txt" />
+      </webApp>
+      <webApp name="Test Web Application 2" warfile="webapp2/" contextpath="/testapp2" scanIntervalSeconds="5">
+        <scanTargets dir="webapp2">
+          <include name="scan-test" />
+        </scanTargets>
+      </webApp>
+      <webApp name="Test Web Application 3" warfile="webapp.war" contextpath="/testapp2" />
+    </jetty>
+  </target>
+</project>

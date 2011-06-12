@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>jetty-setuid</artifactId>
+        <groupId>org.mortbay.jetty</groupId>
+        <version>6.1.26</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>libsetuid</artifactId>
+    <name>Jetty SetUID Native</name>
+    <url>http://jetty.mortbay.org</url>
+    <packaging>so</packaging>
+    <build>
+        <finalName>libsetuid</finalName>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jni-implementation</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <copy failonerror="false" 
+file="src/main/native/org_mortbay_setuid_SetUID.c"
+                                      todir="target/generated"/>
+
+                            </tasks>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-native-library</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <copy failonerror="false" 
+file="target/libsetuid.so"
+                                      todir="../../target"/>
+                                <copy failonerror="false" 
+file="target/libsetuid.so"
+                                      todir="../../../../lib/ext"/>
+                                      
+                                
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <javahOS>linux</javahOS>
+                    <compilerStartOptions>
+                        <compilerStartOption>-fPIC -O</compilerStartOption>
+                    </compilerStartOptions>
+                    <sources>
+                        <source>
+                            <directory>target/generated</directory>
+                            <fileNames>
+                                
+<fileName>org_mortbay_setuid_SetUID.c</fileName>
+                            </fileNames>
+                        </source>
+                    </sources>
+                    <linkerStartOptions>
+                        
+<linkerStartOption>${jetty-setuid-linkerStartOption}</linkerStartOption>
+                    </linkerStartOptions>
+                    <linkerEndOptions>
+                        <linkerEndOptions>-o 
+${project.build.directory}/libsetuid.so</linkerEndOptions>
+                    </linkerEndOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javah</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <classNames>
+                                
+<className>org.mortbay.setuid.SetUID</className>
+                            </classNames>
+                            
+<outputDirectory>target/generated</outputDirectory>
+                        </configuration>
+                        <goals>
+                            <goal>javah</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+        
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-setuid-java</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

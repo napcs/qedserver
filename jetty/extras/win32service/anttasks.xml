@@ -1,0 +1,58 @@
+<project name="Jetty Win32 Wrapper" default="deploy-win32-wrapper" basedir=".">
+
+    <target name="download-if-not-found">
+        <echo>Checking if wrapper-windows-x86-32-${serviceWrapperVersion}.zip Download is required</echo>
+        <condition property="need.download">
+            <available file="target/wrapper-windows-x86-32-${serviceWrapperVersion}.zip" type="file" property="src.present"/>
+        </condition>
+        <antcall target="dontDownload"/>
+        <antcall target="download"/>
+    </target>
+
+    <target name="dontDownload" if="need.download">
+        <echo>No Need To Download</echo>
+        <echo>File Found: target/wrapper-windows-x86-32-${serviceWrapperVersion}.zip</echo>
+    </target>
+
+    <target name="download" unless="need.download">
+        <echo>Download Is Required</echo>
+        <echo>Downloading Java Service Wrapper URL: ${serviceWrapperURL}/wrapper-windows-x86-32-${serviceWrapperVersion}.zip</echo>
+        
+        <get src="${serviceWrapperURL}/wrapper-windows-x86-32-${serviceWrapperVersion}.zip" dest="target/wrapper-windows-x86-32-${serviceWrapperVersion}.zip" />
+        
+    </target>
+    
+    <target name="deploy">
+        <unzip src="target/wrapper-windows-x86-32-${serviceWrapperVersion}.zip" dest="target/unziped" />
+        <copy failonerror="true" file="target/unziped/wrapper-windows-x86-32-${serviceWrapperVersion}/bin/wrapper.exe" tofile="../../bin/Jetty-Service.exe" />
+        <copy failonerror="true" file="target/unziped/wrapper-windows-x86-32-${serviceWrapperVersion}/lib/wrapper.jar" todir="../../lib/win32" />
+        <copy failonerror="true" file="target/unziped/wrapper-windows-x86-32-${serviceWrapperVersion}/lib/wrapper.dll" todir="../../lib/win32" />
+
+        <copy failonerror="true" file="target/${project.artifactId}-${project.version}.${project.packaging}" todir="../../lib/win32" />
+        <copy failonerror="true" file="src/main/config/etc/jetty-win32-service.xml" todir="../../etc" />
+        <copy failonerror="true" file="src/main/resources/jetty-service.conf" todir="../../bin" />
+    </target>
+
+    
+    <target name="deploy-win32-wrapper">    
+        <antcall target="download-if-not-found"/>
+        <antcall target="deploy"/>
+        
+    </target>
+    
+    <target name="clean-win32-wrapper">
+        <echo>Removing Jetty Win32 Wrapper Files</echo>
+        <delete failonerror="false" file="target/wrapper-windows-x86-${serviceWrapperVersion}.zip"/>
+        <delete failonerror="false" file="target/unziped"/>
+        <delete failonerror="false" file="../../lib/win32/${project.artifactId}-${project.version}.${project.packaging}"/>
+        <delete failonerror="false" file="../../etc/jetty-win32-service.xml"/>
+        <delete failonerror="false" file="../../bin/Jetty-Service.exe"/>
+        <delete failonerror="false" file="../../bin/jetty-service.conf"/>
+        <delete failonerror="false" file="../../lib/win32/wrapper.jar"/>
+        <delete failonerror="false" file="../../lib/win32/wrapper.dll"/>
+    </target>
+    
+ 
+                
+</project>
+

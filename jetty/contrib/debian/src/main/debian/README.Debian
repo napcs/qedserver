@@ -1,0 +1,21 @@
+jetty6 for Debian
+----------------
+
+This debian package installs Jetty 6 into /usr/share/jetty6
+and other directories under /var and /etc, which are linked to
+from the /usr/share/jetty6 directory.
+
+The configuration of the server is in /etc/jetty6. The configuration
+files listed in /etc/jetty6/jetty.conf are passed to the command
+line of Jetty when it is started by /etc/init.d/jetty6
+
+Webapps can be deployed by placing them in /var/lib/jetty6/webapps
+(linked from /usr/share/jetty6/webapps)
+Additional contexts can be configured and (hot) deployed via the 
+/etc/jetty6/contexts directory (linked from /usr/share/jetty6/contexts).
+
+This packaging is heavily based on the work done by Philipp Meier <meier@meisterbohne.de>
+and Michael Koch <konqueror@gmx.de>.
+
+-- 
+Greg Wilkins <gregw@mortbay.com> Thu Nov  8 18:10:06 EST 2007

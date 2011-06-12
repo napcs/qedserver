@@ -1,0 +1,68 @@
+<project name="deployextension"  default="deploy.j2ee.web"  basedir=".">
+	<property name="pause.deploy" value="2"/>
+	<property name="pause.undeploy" value="2"/>
+    <property name="annotationConfig" value="org.mortbay.jetty.annotations.Configuration"/>
+    <property name="nonAnnotationConfig" value="org.mortbay.jetty.plus.webapp.Configuration"/>
+
+	<target name="deploy.j2ee.web">
+		<jar destfile="${project.working.dir}/${module.name}.war"> 
+			<zipfileset dir="${module.dir}">
+	        	<include name="**/*.*"/>
+				<exclude name="**/*.war"/>
+			</zipfileset>
+		</jar> 
+		
+		<echo>
+		  context Root = ${contextRoot}
+	      context Path = ${contextPath}
+	    </echo>
+		<!-- if eclipse passes just the name -->
+        <condition property="contextPath" value="/${contextRoot}">
+        	<not><contains string="${contextRoot}" substring="/"/></not>
+        </condition>
+		<echo>
+		 After just name test, contextPath=${contextPath}
+		</echo>
+		
+		<!-- if eclipse passes us double slash use single slash -->
+        <condition property="contextPath" value="/">
+        	<equals arg1="${contextRoot}" arg2="//"/>
+        </condition>
+		<echo>
+		 After double slash test, contextPath=${contextPath}
+		</echo>
+		<!-- if the contextRoot isn't set, and isn't a slash, fallback to module name -->
+        <condition property="contextPath" value="/${module.name}">
+          <not>
+            <isset property="contextPath"/>
+          </not>
+        </condition>
+		<echo>
+		after third test, contextPath=${contextPath} and module name=${module.name}
+	    </echo>
+
+        <!-- optionally use annotations -->
+        <condition property="useAnnotations" value="${annotationConfig}">
+          <istrue value="${supportAnnotations}"/>
+        </condition>
+        <condition property="useAnnotations" value="${nonAnnotationConfig}">
+             <isfalse value="${supportAnnotations}"/>
+        </condition>
+  		<move file="${project.working.dir}/${module.name}.war" todir="${jettyHome}/webapps"/>
+        <copy file="template.xml" tofile="${jettyHome}/contexts/${module.name}.xml" overwrite="true" filtering="on">
+            <filterset>
+              <filter token="ANNOTATION_CONFIG" value="${useAnnotations}"/>
+              <filter token="CONTEXT_PATH" value="${contextPath}"/>
+              <filter token="MODULE_WAR" value="${jettyHome}/webapps/${module.name}.war"/>
+            </filterset>
+        </copy>
+	</target>
+	
+	
+	<target name="undeploy.j2ee.web">
+		<delete file="${jettyHome}/contexts/${module.name}.xml" failonerror="false"/>
+		<delete file="${jettyHome}/webapps/${module.name}.war" failonerror="false"/>
+	</target>
+	
+	
+</project>

@@ -1,0 +1,8 @@
+usr/share/jetty6
+usr/share/jetty6/lib
+usr/share/jetty6/lib/annotations
+usr/share/jetty6/lib/ext
+usr/share/jetty6/lib/management
+usr/share/jetty6/lib/naming
+usr/share/jetty6/lib/plus
+etc/jetty6

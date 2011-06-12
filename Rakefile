@@ -25,8 +25,8 @@ RSpec::Core::RakeTask.new do |t|
   # Put spec opts in a file named .rspec in root
 end
 
-
-task :package_jetty  do
+desc "create customized version of Jetty for our use"
+task :config_jetty  do
   FileUtils.rm_rf "sandbox"
   FileUtils.mkdir "sandbox"
   FileUtils.cp_r "jetty", "sandbox/webserver"
@@ -34,12 +34,25 @@ task :package_jetty  do
   FileUtils.rm_rf "sandbox/webserver/webapps/"
   FileUtils.mkdir "sandbox/webserver/contexts"
   FileUtils.mkdir "sandbox/webserver/webapps"
-  FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
-  FileUtils.cp "webserver.war", "sandbox/webserver/webapps/webserver.war"
+  FileUtils.cp "jetty_config/slf4j-log4j12-1.6.1.jar", "sandbox/webserver/lib/slf4j-log4j12-1.6.1.jar"
+  FileUtils.cp "jetty_config/log4j-1.2.16.jar", "sandbox/webserver/lib/log4j-1.2.16.jar"
+  FileUtils.cp "jetty_config/slf4j-api-1.6.1.jar", "sandbox/webserver/lib/slf4j-api-1.6.1.jar"
+  FileUtils.cp "jetty_config/log4j.properties", "sandbox/webserver/resources/log4j.properties"
   FileUtils.cp "jetty_config/server.bat", "sandbox"
   FileUtils.cp "jetty_config/server.sh", "sandbox"
   FileUtils.cp "jetty_config/fresh_server.bat", "sandbox"
   FileUtils.cp "jetty_config/fresh_server.sh", "sandbox"
+end
+
+desc "inject QEDServer into Jetty"
+task :inject_qed do
+  FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
+  FileUtils.cp "webserver.war", "sandbox/webserver/webapps/webserver.war"
+end
+
+desc "Package QEDServer as a zipfile"
+task :package_jetty => [:war, :config_jetty, :inject_qed] do
+ 
   FileUtils.cp "END_USER_README.md", "sandbox/README.txt"
   %w{LICENSE HISTORY.txt}.each do |f|
     FileUtils.cp f, "sandbox/#{f}"

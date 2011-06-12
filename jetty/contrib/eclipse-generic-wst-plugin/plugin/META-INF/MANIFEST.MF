@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jetty Server Adaptor Plug-in
+Bundle-SymbolicName: org.mortbay.jetty.serveradaptor;singleton:=true
+Bundle-Version: 1.0.2
+Bundle-Vendor: Mort Bay Consulting
+Bundle-Description: Generic Server adaptor for Jetty
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Require-Bundle: org.eclipse.wst.common.project.facet.core,
+ org.eclipse.wst.server.core,
+ org.eclipse.wst.server.ui,
+ org.eclipse.jst.common.project.facet.core,
+ org.eclipse.jst.server.core,
+ org.eclipse.jst.server.generic.core,
+ org.eclipse.jst.server.generic.ui,
+ org.eclipse.jst.server.ui

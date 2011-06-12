@@ -1,0 +1,76 @@
+<project name="Jetty Source RPM" default="download-if-not-found" basedir=".">
+
+    <target name="zip-if-not-found">
+        <condition property="need.download">
+            <available file="${project.build.directory}/rpm/SOURCES/jetty-${project.version}-src.zip" type="file" property="src.present"/>
+        </condition>
+        <antcall target="dontZip"/>
+        <antcall target="zip"/>
+    </target>
+
+    <target name="dontZip" if="need.zip">
+        <echo>No Need To Zip Source</echo>
+    </target>
+
+    <target name="zip" unless="need.zip">
+      <mkdir dir="${project.build.directory}/jetty"/>
+      <copy todir="${project.build.directory}/jetty">
+        <fileset dir="../..">
+          <include name="**/pom.xml"/>
+          <exclude name="webapps/test-jaas/**"/>
+        </fileset>
+      </copy>
+      
+      <replace dir="${project.build.directory}/jetty" token="6.1.26" value="${project.version}">
+        <include name="**/pom.xml"/>
+      </replace>
+
+      <zip destfile="${project.build.directory}/rpm/SOURCES/jetty-${project.version}-src.zip">
+        <zipfileset dir="${project.build.directory}/jetty" prefix="jetty-${project.version}"/>
+        <zipfileset dir="../.." prefix="jetty-${project.version}">
+          <exclude name="**/target/**"/>
+          <exclude name="**/pom.xml"/>
+          <exclude name="webapps/**"/>
+          <exclude name="lib/**"/>
+          <exclude name="logs/**"/>
+          <exclude name="**/.*/**"/>
+          <include name="README.txt"/>
+          <include name="VERSION.txt"/>
+          <include name="webapps/README.TXT"/>
+          <include name="contexts/**"/>
+          <include name="etc/**"/>
+          <include name="bin/**"/>
+          <include name="javadoc/**"/>
+          <include name="patches/**"/>
+          <include name="resources/**"/>
+          <include name="LICENSES/**"/>
+          <include name="modules/servlet-api-2.5/**"/>
+          <include name="modules/util/**"/>
+          <include name="modules/util5/**"/>
+          <include name="modules/jetty/**"/>
+          <include name="modules/jsp-api-2.1/**"/>
+          <include name="modules/jsp-2.1/**"/>
+          <include name="modules/start/**"/>
+          <include name="modules/naming/**"/>
+          <include name="modules/html/**"/>
+          <include name="extras/servlet-tester/**"/>
+          <include name="extras/sslengine/**"/>
+          <include name="extras/ajp/**"/>
+          <include name="extras/client/**"/>
+          <include name="examples/test-webapp/**"/>
+          <include name="examples/tests/**"/>
+          <include name="contrib/cometd/**"/>
+          <include name="contrib/jetty-rewrite-handler/**"/>
+        </zipfileset>
+        <zipfileset dir="../.." prefix="jetty-${project.version}">
+          <exclude name="**/.*/**"/>
+          <include name="modules/jsp-api-2.1/target/glassfish/**"/>
+          <include name="modules/jsp-api-2.1/target/generated-sources/**"/>
+          <include name="modules/jsp-2.1/target/glassfish/**"/>
+          <include name="modules/jsp-2.1/target/generated-sources/**"/>
+        </zipfileset>         
+      </zip>
+    </target>
+                
+</project>
+

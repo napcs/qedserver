@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.terracotta.org/config http://www.terracotta.org/schema/terracotta-4.xsd">
+
+    <system>
+        <configuration-model>production</configuration-model>
+    </system>
+
+    <servers>
+        <server>
+            <data>%(user.dir)/target/terracotta/server-data</data>
+            <logs>%(user.dir)/target/terracotta/server-logs</logs>
+            <statistics>%(user.dir)/target/terracotta/server-stats</statistics>
+        </server>
+    </servers>
+
+    <clients>
+        <dso>
+            <debugging>
+                <instrumentation-logging>
+                    <locks>true</locks>
+                </instrumentation-logging>
+                <runtime-logging>
+                    <lock-debug>true</lock-debug>
+                    <field-change-debug>true</field-change-debug>
+                </runtime-logging>
+                <runtime-output-options>
+                    <auto-lock-details>true</auto-lock-details>
+                </runtime-output-options>
+            </debugging>
+        </dso>
+        <logs>%(user.dir)/target/terracotta/client-logs</logs>
+        <statistics>%(user.dir)/target/terracotta/client-stats</statistics>
+    </clients>
+
+    <application>
+        <dso>
+            <instrumented-classes>
+                <include>
+                    <class-expression>org.mortbay.terracotta.servlet.TerracottaSessionManager$SessionData</class-expression>
+                </include>
+                <include>
+                    <class-expression>org.mortbay.terracotta.servlet.TerracottaSessionManager$MutableLong</class-expression>
+                </include>
+            </instrumented-classes>
+
+            <roots>
+                <!--
+                Root field[s] for org.mortbay.terracotta.servlet.TerracottaSessionManager
+                are created programmatically since they need custom root names.
+                -->
+                <root>
+                    <field-name>org.mortbay.terracotta.servlet.TerracottaSessionIdManager._sessionIds</field-name>
+                    <root-name>sessionIds</root-name>
+                </root>
+            </roots>
+
+        </dso>
+    </application>
+
+</tc:tc-config>

@@ -1,0 +1,634 @@
+Index: pom.xml
+===================================================================
+--- pom.xml	(revision 2399)
++++ pom.xml	(working copy)
+@@ -122,23 +122,6 @@
+     <testSourceDirectory>src/test/java</testSourceDirectory>
+     <outputDirectory>target/classes</outputDirectory>
+     <testOutputDirectory>target/test-classes</testOutputDirectory>
+-    <extensions>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh-external</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-	<groupId>org.apache.maven.wagon</groupId>
+-	<artifactId>wagon-webdav</artifactId>
+-	<version>${maven-wagon-version}</version>
+-      </extension>
+-    </extensions>
+     <defaultGoal>install</defaultGoal>
+     <resources>
+       <resource>
+@@ -160,12 +143,7 @@
+           <target>1.4</target>
+         </configuration>
+       </plugin>
+-      <plugin>
+-        <artifactId>maven-release-plugin</artifactId>
+-        <configuration>
+-          <tagBase>https://svn.codehaus.org/jetty/jetty/tags</tagBase>
+-        </configuration>
+-      </plugin>
++     
+ 
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+@@ -176,44 +154,14 @@
+             <manifestEntries>
+               <mode>development</mode>
+               <url>${pom.url}</url>
+-	      <implementation-version>${pom.version}</implementation-version>
++         
+ 	      <package>org.mortbay</package>
+             </manifestEntries>
+           </archive>
+         </configuration>
+       </plugin>
+ 
+-      <plugin>
+-	<inherited>true</inherited>
+-	<groupId>org.apache.maven.plugins</groupId>
+-	<artifactId>maven-source-plugin</artifactId>
+-	<executions>
+-	  <execution>
+-	    <id>attach-sources</id>
+-	    <goals>
+-	      <goal>jar</goal>
+-	    </goals>
+-	  </execution>
+-	</executions>
+-      </plugin>
+ 
+-      <!-- plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-clover-plugin</artifactId>
+-        <configuration>
+-	  <jdk>1.5</jdk>
+-        </configuration>
+-        <executions>
+-          <execution>
+-            <phase>pre-site</phase>
+-            <goals>
+-              <goal>instrument</goal>
+-              <goal>aggregate</goal>
+-            </goals>
+-          </execution>
+-        </executions>
+-      </plugin -->
+-
+     </plugins>
+     <pluginManagement>
+       <plugins>
+@@ -236,43 +184,43 @@
+     <module>modules/jetty</module>
+     <module>modules/jsp-api-2.1</module>
+     <module>modules/jsp-2.1</module>
+-    <module>modules/jsp-api-2.0</module>
+-    <module>modules/jsp-2.0</module>
+-    <module>modules/management</module>
++    <!--module>modules/jsp-api-2.0</module-->
++    <!--module>modules/jsp-2.0</module-->
++    <!--module>modules/management</module-->
+     <module>modules/start</module>
+-    <module>modules/maven-plugin</module>
+-    <module>modules/jspc-maven-plugin</module>
++    <!--module>modules/maven-plugin</module-->
++    <!--module>modules/jspc-maven-plugin</module-->
+     <module>modules/naming</module>
+-    <module>modules/plus</module>
++    <!--module>modules/plus</module-->
+     <module>modules/html</module>
+-    <module>modules/annotations</module>
++    <!--module>modules/annotations</module-->
+ 
+-    <module>extras/servlet-tester</module>
+-    <module>extras/xbean</module>
+-    <module>extras/spring</module>
+-    <module>extras/sslengine</module>
+-    <module>extras/ajp</module>
+-    <module>extras/win32service</module>
++    <module>extras/servlet-tester</module>
++    <!--module>extras/xbean</module-->
++    <!--module>extras/spring</module-->
++    <module>extras/sslengine</module>
++    <module>extras/ajp</module>
++    <!--module>extras/win32service</module-->
+     <!--module>extras/gwt</module-->
+-    <module>extras/threadpool</module>
+-    <module>extras/client</module>
++    <!--module>extras/threadpool</module-->
++    <!--module>extras/client</module-->
+ 
+     <module>examples/test-webapp</module>
+-    <module>examples/test-jaas-webapp</module>
+-    <module>examples/test-jndi-webapp</module>
+-    <module>examples/embedded</module>
+-    <!-- <module>examples/spring-ebj3-demo</module> -->
+-    <module>examples/tests</module>
++    <!--module>examples/test-jaas-webapp</module-->
++    <!--module>examples/test-jndi-webapp</module-->
++    <!--module>examples/embedded</module-->
++    <!--module>examples/spring-ebj3-demo</module-->
++    <!--module>examples/tests</module-->
+ 
+ 
+     <module>contrib/cometd</module>
+-    <module>contrib/jetty-ant</module>
++    <!--module>contrib/jetty-ant</module-->
+     <module>contrib/jetty-rewrite-handler</module>
+     <!--module>contrib/grizzly</module-->
+     <!--module>contrib/wadi</module-->
+     <!--module>contrib/terracotta</module-->
+ 
+-    <module>extras/setuid</module>
++    <!--module>extras/setuid</module-->
+   </modules>
+ 
+   <reporting>
+@@ -368,6 +316,5 @@
+     <slf4j-version>1.3.1</slf4j-version>
+     <maven-bundle-plugin-version>1.4.0</maven-bundle-plugin-version>
+     <maven-jar-plugin-version>2.2</maven-jar-plugin-version>
+-    <maven-wagon-version>1.0-beta-2</maven-wagon-version>
+   </properties>
+ </project>
+Index: modules/plus/pom.xml
+===================================================================
+--- modules/plus/pom.xml	(revision 2399)
++++ modules/plus/pom.xml	(working copy)
+@@ -61,6 +61,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -81,6 +82,7 @@
+            </execution>
+         </executions>
+       </plugin>
++      
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+@@ -91,6 +93,7 @@
+          </archive>
+        </configuration>
+       </plugin>
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/jsp-2.1/pom.xml
+===================================================================
+--- modules/jsp-2.1/pom.xml	(revision 2399)
++++ modules/jsp-2.1/pom.xml	(working copy)
+@@ -87,8 +87,7 @@
+         </executions>
+       </plugin>
+       <plugin>
+-        <groupId>org.codehaus.mojo</groupId>
+-        <artifactId>dependency-maven-plugin</artifactId>
++        <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <phase>install</phase>
+@@ -113,6 +113,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -132,6 +133,7 @@
+            </execution>
+         </executions>
+       </plugin>
++      
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+@@ -142,6 +144,8 @@
+           </archive>
+         </configuration>
+       </plugin>
++      
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/annotations/pom.xml
+===================================================================
+--- modules/annotations/pom.xml	(revision 2399)
++++ modules/annotations/pom.xml	(working copy)
+@@ -56,6 +56,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -77,6 +78,7 @@
+            </execution>
+         </executions>
+       </plugin>
++      
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+@@ -87,6 +89,8 @@
+           </archive>
+         </configuration>
+       </plugin>
++      
++      -->
+       <plugin>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+Index: modules/servlet-api-2.5/pom.xml
+===================================================================
+--- modules/servlet-api-2.5/pom.xml	(revision 2399)
++++ modules/servlet-api-2.5/pom.xml	(working copy)
+@@ -66,6 +66,7 @@
+         </configuration>
+       </plugin>
+ 
++<!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -99,6 +100,8 @@
+           </archive>
+         </configuration>
+       </plugin>
++      
++      -->
+ 
+     </plugins>
+   </build>
+Index: modules/jetty/pom.xml
+===================================================================
+--- modules/jetty/pom.xml	(revision 2399)
++++ modules/jetty/pom.xml	(working copy)
+@@ -58,6 +58,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -89,6 +90,7 @@
+           </archive>
+         </configuration>
+       </plugin>
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/jsp-api-2.1/pom.xml
+===================================================================
+--- modules/jsp-api-2.1/pom.xml	(revision 2399)
++++ modules/jsp-api-2.1/pom.xml	(working copy)
+@@ -75,6 +75,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -108,6 +109,7 @@
+           </archive>
+         </configuration>
+       </plugin>
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/naming/pom.xml
+===================================================================
+--- modules/naming/pom.xml	(revision 2399)
++++ modules/naming/pom.xml	(working copy)
+@@ -60,6 +60,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -81,6 +82,7 @@
+            </execution>
+         </executions>
+       </plugin>
++     
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+@@ -92,8 +92,7 @@
+         </configuration>
+       </plugin>
+       <plugin>
+-        <groupId>org.codehaus.mojo</groupId>
+-        <artifactId>dependency-maven-plugin</artifactId>
++        <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>copy-deps</id>
+@@ -113,6 +115,7 @@
+           </execution>
+         </executions>
+       </plugin>	  
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+@@ -123,9 +126,18 @@
+     </dependency>
+     <dependency>
+       <groupId>org.mortbay.jetty</groupId>
++      <artifactId>servlet-api-2.5</artifactId>
++      <version>${project.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.mortbay.jetty</groupId>
++      <artifactId>jetty-util</artifactId>
++      <version>${project.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.mortbay.jetty</groupId>
+       <artifactId>jetty</artifactId>
+       <version>${project.version}</version>
+-      <scope>provided</scope>
+     </dependency>
+     <dependency>
+       <groupId>javax.mail</groupId>
+@@ -149,8 +148,7 @@
+ 	  <build>
+ 	    <plugins>
+ 		  <plugin>
+-		    <groupId>org.codehaus.mojo</groupId>
+-			<artifactId>dependency-maven-plugin</artifactId>
++		    <artifactId>maven-dependency-plugin</artifactId>
+ 			<executions>
+ 			  <execution>
+ 			    <id>copy-deps-below1.6</id>
+Index: modules/management/pom.xml
+===================================================================
+--- modules/management/pom.xml	(revision 2399)
++++ modules/management/pom.xml	(working copy)
+@@ -83,6 +83,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -104,6 +105,7 @@
+            </execution>
+         </executions>
+       </plugin>
++     
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+@@ -114,6 +116,7 @@
+           </archive>
+         </configuration>
+       </plugin>
++       -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/util/pom.xml
+===================================================================
+--- modules/util/pom.xml	(revision 2399)
++++ modules/util/pom.xml	(working copy)
+@@ -65,6 +65,7 @@
+           </execution>
+         </executions>
+       </plugin>
++      <!--
+       <plugin>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>maven-bundle-plugin</artifactId>
+@@ -86,6 +87,7 @@
+            </execution>
+         </executions>
+       </plugin>
++      
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+@@ -96,6 +98,7 @@
+           </archive>
+         </configuration>
+       </plugin>
++      -->
+     </plugins>
+   </build>
+   <dependencies>
+Index: examples/test-webapp/pom.xml
+===================================================================
+--- examples/test-webapp/pom.xml	(revision 2399)
++++ examples/test-webapp/pom.xml	(working copy)
+@@ -71,33 +71,6 @@
+           </excludes>
+         </configuration>
+       </plugin>
+-      <plugin>
+-        <groupId>org.mortbay.jetty</groupId>
+-        <artifactId>maven-jetty-plugin</artifactId>
+-        <version>${project.version}</version>
+-        <configuration>
+-          <stopPort>8087</stopPort>
+-          <stopKey>foo</stopKey>
+-          <scanIntervalSeconds>1</scanIntervalSeconds>
+-          <!-- contextPath>/test</contextPath -->
+-          <webAppConfig>
+-            <contextPath>/test</contextPath>
+-            <tempDirectory>${project.build.directory}/work</tempDirectory>
+-            <sessionHandler implementation="org.mortbay.jetty.servlet.SessionHandler">
+-              <sessionManager implementation="org.mortbay.jetty.servlet.HashSessionManager">
+-                <storeDirectory>${basedir}/target/sessions</storeDirectory>
+-                <!-- savePeriod>5</savePeriod -->
+-              </sessionManager>
+-            </sessionHandler>
+-          </webAppConfig>
+-          <userRealms>
+-            <userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
+-              <name>Test Realm</name>
+-              <config>../../etc/realm.properties</config>
+-            </userRealm>
+-          </userRealms>
+-        </configuration>
+-      </plugin>
+       <!-- uncomment to precompile jsps -->
+       <!-- plugin>
+           <groupId>org.mortbay.jetty</groupId>
+Index: contrib/cometd/demo/pom.xml
+===================================================================
+--- contrib/cometd/demo/pom.xml	(revision 688)
++++ contrib/cometd/demo/pom.xml	(working copy)
+@@ -15,20 +15,6 @@
+ 
+   <build>
+     <defaultGoal>install</defaultGoal>
+-    <plugins>
+-      <plugin>
+-        <groupId>org.mortbay.jetty</groupId>
+-        <artifactId>maven-jetty-plugin</artifactId>
+-        <version>${project.version}</version>
+-        <configuration>
+-        <scanIntervalSeconds>2</scanIntervalSeconds>
+-	    <contextPath>/</contextPath>         
+-	      <scanTargets>
+-            <scanTarget>src/main/webapp/WEB-INF/filters.json</scanTarget>  
+-	      </scanTargets>
+-        </configuration>
+-      </plugin>
+-    </plugins>
+   </build>
+   <dependencies>
+     <dependency>
+Index: contrib/cometd/api/pom.xml
+===================================================================
+--- contrib/cometd/api/pom.xml	(revision 688)
++++ contrib/cometd/api/pom.xml	(working copy)
+@@ -13,23 +13,6 @@
+     </license>
+   </licenses>
+   <build>
+-    <extensions>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh-external</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-	<groupId>org.apache.maven.wagon</groupId>
+-	<artifactId>wagon-webdav</artifactId>
+-	<version>${maven-wagon-version}</version>
+-      </extension>
+-    </extensions>
+     <defaultGoal>install</defaultGoal>
+     <plugins>
+       <plugin>
+@@ -41,24 +24,4 @@
+       </plugin>
+     </plugins>
+   </build>
+-  <distributionManagement>
+-    <repository>
+-      <id>codehaus.org</id>
+-      <name>Jetty Repository</name>
+-      <url>dav:https://dav.codehaus.org/repository/jetty/</url>
+-    </repository>
+-    <snapshotRepository>
+-      <id>codehaus.org</id>
+-      <name>Jetty Snapshot Repository</name>
+-      <url>dav:https://dav.codehaus.org/snapshots.repository/jetty/</url>
+-    </snapshotRepository>
+-    <site>
+-      <id>codehaus.org</id>
+-      <url>dav:https://dav.codehaus.org/jetty/</url>
+-    </site>
+-  </distributionManagement>
+-
+-  <properties>
+-    <maven-wagon-version>1.0-beta-2</maven-wagon-version>
+-  </properties>
+ </project>
+Index: contrib/cometd/pom.xml
+===================================================================
+--- contrib/cometd/pom.xml	(revision 688)
++++ contrib/cometd/pom.xml	(working copy)
+@@ -13,23 +13,6 @@
+     </license>
+   </licenses>
+   <build>
+-    <extensions>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh-external</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-        <groupId>org.apache.maven.wagon</groupId>
+-        <artifactId>wagon-ssh</artifactId>
+-        <version>${maven-wagon-version}</version>
+-      </extension>
+-      <extension>
+-	<groupId>org.apache.maven.wagon</groupId>
+-	<artifactId>wagon-webdav</artifactId>
+-	<version>${maven-wagon-version}</version>
+-      </extension>
+-    </extensions>
+     <defaultGoal>install</defaultGoal>
+     <plugins>
+       <plugin>
+@@ -50,33 +33,15 @@
+       </dependency>
+     </dependencies>
+   </dependencyManagement>
+-  <distributionManagement>
+-    <repository>
+-      <id>codehaus.org</id>
+-      <name>Jetty Repository</name>
+-      <url>dav:https://dav.codehaus.org/repository/jetty/</url>
+-    </repository>
+-    <snapshotRepository>
+-      <id>codehaus.org</id>
+-      <name>Jetty Snapshot Repository</name>
+-      <url>dav:https://dav.codehaus.org/snapshots.repository/jetty/</url>
+-    </snapshotRepository>
+-    <site>
+-      <id>codehaus.org</id>
+-      <url>dav:https://dav.codehaus.org/jetty/</url>
+-    </site>
+-  </distributionManagement>
+   <modules>
+     <module>api</module>
+     <module>bayeux</module>
+-    <module>client</module>
+     <module>demo</module>
+     <module>install</module>
+   </modules>
+ 
+   <properties>
+     <junit-version>3.8.2</junit-version>
+-    <maven-wagon-version>1.0-beta-2</maven-wagon-version>
+     <cometd-api-version>0.9.20080221</cometd-api-version>
+   </properties>
+ </project>
+Index: extras/sslengine/src/test/java/org/mortbay/jetty/security/SSLEngineTest.java
+===================================================================
+--- extras/sslengine/src/test/java/org/mortbay/jetty/security/SSLEngineTest.java	(revision 688)
++++ extras/sslengine/src/test/java/org/mortbay/jetty/security/SSLEngineTest.java	(working copy)
+@@ -86,7 +86,7 @@
+         Server server=new Server();
+         SslSelectChannelConnector connector=new SslSelectChannelConnector();
+ 
+-        String keystore = System.getProperty("user.dir")+File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator+"keystore";
++        String keystore = System.getProperty("user.dir")+File.separator+"extras"+File.separator+"sslengine"+File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator+"keystore";
+         
+         connector.setPort(0);
+         connector.setKeystore(keystore);
+

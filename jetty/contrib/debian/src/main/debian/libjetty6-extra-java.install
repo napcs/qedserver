@@ -1,0 +1,12 @@
+lib/annotations/jetty-annotations-${PROJECT.VERSION}.jar usr/share/jetty6/lib/annotations
+lib/annotations/geronimo-annotation_1.0_spec-1.0.jar usr/share/jetty6/lib/annotations
+lib/ext/jetty-ajp-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/ext/jetty-client-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/ext/jetty-html-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/ext/jetty-java5-threadpool-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/ext/jetty-servlet-tester-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/ext/jetty-sslengine-${PROJECT.VERSION}.jar usr/share/jetty6/lib/ext
+lib/management/jetty-management-${PROJECT.VERSION}.jar usr/share/jetty6/lib/management
+lib/naming/jetty-naming-${PROJECT.VERSION}.jar usr/share/jetty6/lib/naming
+lib/plus/jetty-plus-${PROJECT.VERSION}.jar usr/share/jetty6/lib/plus
+etc/jetty-extra.conf       etc/jetty6

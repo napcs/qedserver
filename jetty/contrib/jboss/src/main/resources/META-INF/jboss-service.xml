@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+  <!-- ==================================================================== -->
+  <!-- Web Container                                                        -->
+  <!-- ==================================================================== -->
+
+  <!--
+     | Be sure to check that the configuration values are valid for your
+     | environment.
+   -->
+
+  <mbean code="org.jboss.jetty.JettyService" 
+         name="jboss.web:service=WebServer" xmbean-dd="META-INF/webserver-xmbean.xml">
+
+    <!-- ================================================================= -->
+    <!-- Your webdefault.xml file - The default settings for every webapp  -->
+    <!-- deployed by Jetty. Make systemwide changes here to your webapps   -->
+    <!-- configurations.                                                   -->
+    <!-- ================================================================= -->
+
+    <attribute name="WebDefaultResource">webdefault.xml</attribute>
+
+    <!-- ================================================================== -->
+    <!-- If true, .war files are unpacked to a temporary directory. This    -->
+    <!-- is useful with JSPs.                                               -->
+    <!-- ================================================================== -->
+
+    <attribute name="UnpackWars">true</attribute>
+
+    <!-- ================================================================== -->
+    <!-- If true, Jetty will register MBeans representative of every Servlet-->
+    <!-- and Filter within each WebApp immediately. This will slow down your-->
+    <!-- development iterations.                                            -->
+    <!-- ================================================================== -->
+
+    <attribute name="SupportJSR77">true</attribute>
+
+    <!-- ================================================================== -->
+    <!-- If true, Jetty first delegates loading a class to the webapp's     -->
+    <!-- parent class loader (a la Java 2). If false, Jetty follows the     -->
+    <!--  Servlet 2.3 specification, and tries the webapp's own loader      -->
+    <!-- first (for "non-system" classes)                                   -->
+    <!-- ================================================================== -->
+
+    <attribute name="Java2ClassLoadingCompliance">false</attribute>
+
+    <!-- ================================================================= -->
+    <!-- If you require JAAS authentication, configure the name of the     -->
+    <!-- attribute in which you expect to find the JAAS active subject:    -->
+    <!-- ================================================================= -->
+
+    <attribute name="SubjectAttributeName">j_subject</attribute>
+
+
+    <!-- ================================================================= -->
+    <!-- The name of the security realm to use if none is defined in       -->
+    <!-- jboss-web.xml                                                     -->
+    <!-- ================================================================= -->
+    <attribute name="DefaultSecurityDomain">java:/jaas/other</attribute>
+
+    <!-- ================================================================= -->
+    <!-- Configuring Jetty. The XML fragment contained in the              -->
+    <!-- name="ConfigurationElement" attribute is a Jetty-style            -->
+    <!-- configuration specification.  It is used to configure Jetty with  -->
+    <!-- a listener on port 8080, and a HTTP request log location.         -->
+    <!-- The placement here of other Jetty XML configuration statements    -->
+    <!-- for deploying webapps etc is not encouraged: if you REALLY NEED   -->
+    <!-- something extra, place it in WEB-INF/jetty-web.xml files          -->
+    <!-- ================================================================= -->
+
+    <attribute name="ConfigurationElement">
+      <Configure class="org.mortbay.jetty.Server">
+
+    <!-- =========================================================== -->
+    <!-- Server Thread Pool                                          -->
+    <!-- =========================================================== -->
+    <Set name="ThreadPool">
+      <New class="org.mortbay.thread.QueuedThreadPool">
+        <Set name="minThreads">10</Set>
+        <Set name="lowThreads">20</Set>
+        <Set name="maxThreads">200</Set>
+        <Set name="SpawnOrShrinkAt">2</Set>
+      </New>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Connectors.                                                 -->
+    <!-- =========================================================== -->
+    <Call name="addConnector">
+      <Arg>
+          <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+            <Set name="port"><SystemProperty name="jetty.port" default="8080"/></Set>
+            <Set name="maxIdleTime">30000</Set>
+            <Set name="Acceptors">2</Set>
+            <Set name="confidentialPort">8443</Set>
+          </New>
+      </Arg>
+    </Call>
+
+    <!-- Call name="addConnector">
+        <Arg>
+            <New class="org.mortbay.jetty.ajp.Ajp13SocketConnector">
+                <Set name="port">8009</Set>
+            </New>
+        </Arg>
+    </Call -->
+
+    <Set name="handler">
+
+    <!-- Uncomment for statistics
+      <New id="StatsHandler" class="org.mortbay.jetty.handler.StatisticsHandler">
+       <Set name="handlers">
+    -->
+      <New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.mortbay.jetty.Handler">
+           <Item>
+             <New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"/>
+           </Item>
+           <Item>
+             <New id="DefaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+           </Item>
+           <Item>
+             <New id="RequestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    <!-- Uncomment for statistics
+      </Set>
+     </New>
+    -->
+    </Set>
+
+
+      </Configure>
+     </attribute>
+  </mbean>
+</server>

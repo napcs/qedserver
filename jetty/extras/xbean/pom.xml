@@ -1,0 +1,129 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>org.mortbay.jetty</groupId>
+    <version>6.1.26</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.mortbay.jetty</groupId>
+  <artifactId>jetty-xbean</artifactId>
+  <name>Jetty XBean</name>
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*Test.java</include>
+          <include>org/mortbay/**/*.xml</include>
+        </includes>
+        <excludes>
+          <exclude>**/Abstract*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete failonerror="false" includeemptydirs="true">
+                  <fileset dir="../../lib/" includes="xbean/**" />
+                </delete>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copyjar</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy failonerror="false" file="target/${project.artifactId}-${project.version}.${project.packaging}" todir="../../lib/xbean" />
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>genxsd</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <taskdef classname="org.apache.xbean.spring.generator.MappingGeneratorTask" name="mapping">
+                  <classpath>
+                    <pathelement path="${basedir}/target/classes" />
+                    <path refid="maven.runtime.classpath" />
+                  </classpath>
+                </taskdef>
+                <mkdir dir="${basedir}/target/xbean-src-to-parse" />
+                <copy todir="${basedir}/target/xbean-src-to-parse">
+                  <fileset dir="${basedir}/src/main/java/org/mortbay/jetty/xbean" />
+                  <fileset dir="${basedir}/../../modules/jetty/src/main/java/org/mortbay/jetty">
+                    <include name="*.java" />
+                    <include name="bio/**/*.java" />
+                    <include name="deployer/**/*.java" />
+                    <include name="nio/**/*.java" />
+                    <include name="handler/**/*.java" />
+                    <include name="webapp/**/*.java" />
+                  </fileset>
+                  <fileset dir="${basedir}/../../modules/plus/src/main/java/org/mortbay/jetty/plus">
+                    <include name="jaas/**/*.java" />
+                  </fileset>
+                </copy>
+                <mkdir dir="${basedir}/target/generated/" />
+                <mapping namespace="http://mortbay.com/schemas/jetty/1.0" srcdir="${basedir}/target/xbean-src-to-parse" destFile="target/jetty.xsd" metaInfDir="${basedir}/target/generated/" />
+                <copy todir="${basedir}/target/classes">
+                  <fileset dir="${basedir}/target/generated" />
+                </copy>
+                <copy todir="${basedir}/../../project-website/project-site/src/site/resources">
+                  <fileset dir="target">
+                    <include name="jetty.xsd" />
+                    <include name="jetty.xsd.html" />
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+      <version>2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-plus</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.2.8</version>
+    </dependency>
+  </dependencies>
+</project>

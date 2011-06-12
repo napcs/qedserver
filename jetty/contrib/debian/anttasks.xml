@@ -1,0 +1,72 @@
+<project name="Jetty Debian" default="build-deb" basedir=".">
+	<target name="build-deb">
+		<copy todir="${project.build.directory}/jetty6-${project.version}">
+			<fileset dir="../..">
+				<include name="lib/**"/>
+		                <include name="etc/**"/>
+		                <include name="bin/**"/>
+		                <include name="contexts/**"/>
+		                <include name="webapps/**"/>
+		                <include name="javadoc/**"/>
+		                <include name="resources/**"/>
+                                <include name="LICENSES/**"/>
+                                <include name="start.jar"/>
+                                <include name="*.txt"/>
+		                <exclude name="**/.svn"/>
+                                <exclude name="LICENSES/cla-*"/>
+                                <exclude name="LICENSES/ccla-*"/>
+			</fileset>
+	       </copy>
+               <copy todir="${project.build.directory}/jetty6-${project.version}">
+                        <fileset dir="src/main">
+                                <include name="etc/**"/>
+                                <include name="debian/**"/>
+                                <exclude name="**/.svn"/>
+                        </fileset>
+	       </copy>
+		
+	       <copy file="../../bin/jetty.sh" tofile="${project.build.directory}/jetty6-${project.version}/debian/jetty6.init"/>
+		
+	       <replace dir="${project.build.directory}/jetty6-${project.version}" token="$${PROJECT.VERSION}" value="${project.version}">
+		  <include name="debian/**"/>
+	       </replace>
+		
+	       <chmod perm="755" file="${project.build.directory}/jetty6-${project.version}/debian/rules"/>
+	      
+	       <exec dir="${project.build.directory}/jetty6-${project.version}" failifexecutionfails="true" executable="dpkg-buildpackage" >
+	       	<arg value="-rfakeroot"/>
+	       </exec>
+	       	
+	       <exec dir="${project.build.directory}" failifexecutionfails="true" executable="dpkg-deb">
+	       	<arg value="-b"/>
+	        <arg value="jetty6-${project.version}/debian/libjetty6-java"/>
+	       	<arg value="libjetty6-java_${project.version}_all.deb"/>
+	       </exec>
+                
+               <exec dir="${project.build.directory}" failifexecutionfails="true" executable="dpkg-deb">
+                <arg value="-b"/>
+                <arg value="jetty6-${project.version}/debian/libjetty6-extra-java"/>
+                <arg value="libjetty6-extra-java_${project.version}_all.deb"/>
+               </exec>
+                
+               <exec dir="${project.build.directory}" failifexecutionfails="true" executable="dpkg-deb">
+                <arg value="-b"/>
+                <arg value="jetty6-${project.version}/debian/jetty6"/>
+                <arg value="jetty6_${project.version}_all.deb"/>
+               </exec>
+                
+               <exec dir="${project.build.directory}" failifexecutionfails="true" executable="dpkg-deb">
+                <arg value="-b"/>
+                <arg value="jetty6-${project.version}/debian/jetty6-examples"/>
+                <arg value="jetty6-examples_${project.version}_all.deb"/>
+               </exec>
+                
+               <exec dir="${project.build.directory}" failifexecutionfails="true" executable="dpkg-deb">
+                <arg value="-b"/>
+                <arg value="jetty6-${project.version}/debian/libjetty6-jsp-java"/>
+                <arg value="libjetty6-jsp-java_${project.version}_all.deb"/>
+               </exec>
+	       
+	</target>     
+</project>
+

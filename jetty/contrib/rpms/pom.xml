@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"> 
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.mortbay.jetty</groupId>
+  <artifactId>rpms</artifactId>
+  <version>6.1.26</version>
+  <name>Jetty SRC-RPM</name>
+  <packaging>pom</packaging>
+  
+  <repositories>
+    <repository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+    
+  </pluginRepositories>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>genarate-rpm-sources</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                    <configuration>
+                      <tasks>
+                      
+                        <!-- Make JPackage RPM Source Dir -->
+                        <mkdir dir="${project.build.directory}/rpm"/>
+                        <mkdir dir="${project.build.directory}/rpm/BUILD"/>
+                        <mkdir dir="${project.build.directory}/rpm/RPMS"/>
+                        <mkdir dir="${project.build.directory}/rpm/RPMS/i386"/>
+                        <mkdir dir="${project.build.directory}/rpm/RPMS/i586"/>
+                        <mkdir dir="${project.build.directory}/rpm/RPMS/noarch"/>
+                        <mkdir dir="${project.build.directory}/rpm/SOURCES"/>
+                        <mkdir dir="${project.build.directory}/rpm/SPECS"/>
+                        <mkdir dir="${project.build.directory}/rpm/SRPMS"/>
+                        <mkdir dir="${project.build.directory}/rpm/tmp"/>
+                        
+                        
+                        
+                        <!-- Copy .rpmmacros -->
+                        <copy file="src/rpmmacros" tofile="${project.build.directory}/.rpmmacros"/>
+                        
+                        <!-- Copy files -->
+                        <copy file="src/jetty6.spec" todir="${project.build.directory}/rpm/SPECS"/>
+                        <copy file="src/jetty6-settings.xml" todir="${project.build.directory}/rpm/SOURCES"/>
+                        <copy file="src/jetty6-jpp-depmap.xml" todir="${project.build.directory}/rpm/SOURCES"/>
+                        <copy file="src/start.config" todir="${project.build.directory}/rpm/SOURCES"/>
+                        <copy file="src/jetty.conf" todir="${project.build.directory}/rpm/SOURCES"/>
+                        <copy file="src/jetty6.patch" todir="${project.build.directory}/rpm/SOURCES"/>
+                        <copy file="src/etc/javadoc.css" todir="${project.build.directory}/rpm/SOURCES"/>
+
+			<!-- set version -->
+                        <replace file="${project.build.directory}/rpm/SPECS/jetty6.spec" token="@@@VERSION@@@" value="${project.version}"/>
+                        
+                        <!-- zip source code -->
+                        <ant antfile="anttasks.xml" target="zip-if-not-found">
+                            <property name="project.build.directory" value="${project.build.directory}" />
+                            <property name="project.groupId" value="${project.groupId}" />
+                            <property name="project.artifactId" value="${project.artifactId}" />
+                            <property name="project.version" value="${project.version}" />
+                        </ant>
+                        
+                      </tasks>
+                    </configuration>
+                  </execution>	
+                  
+                  <execution>
+                    <id>tar-gz</id>
+                    <phase>install</phase>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                    <configuration>
+                      <tasks>
+                        <tar 
+                            tarfile="${project.build.directory}/jetty-source-rpm.tar" 
+                            basedir="${project.build.directory}"
+                            excludes="jetty-source-rpm.tar, jetty-source-rpm.tar.gz, jetty/"
+                        />
+                        <gzip 
+                            zipfile="${project.build.directory}/jetty-source-rpm.tar.gz" 
+                            src="${project.build.directory}/jetty-source-rpm.tar"
+                        />
+                        
+                      </tasks>
+                    </configuration>
+                  </execution>	
+                  
+                </executions>
+            </plugin>
+            
+    </plugins>
+  </build>
+  
+  
+    
+  
+</project>

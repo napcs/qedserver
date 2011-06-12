@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:ServerRuntime
+        xmlns:tns="http://eclipse.org/jst/server/generic/ServerTypeDefinition"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://eclipse.org/jst/server/generic/ServerTypeDefinition ServerTypeDefinitionSchema.xsd "
+        name="Jetty6.x" version="v6.x">
+    <property
+        id="jettyHome"
+        label="Jetty Home:"
+        type="directory"
+        context="runtime"
+        default="/your_server_root/jetty" />
+    <property
+        id="jettyConfig"
+        label="Config Files:"
+        type="string"        
+        context="server"
+        default="${jettyHome}/etc/jetty.xml"/>
+    <property id="serverAddress"
+        label="Host:"
+        type="string"
+        context="server"
+        default="127.0.0.1" />
+    <property id="port"
+        label="Port:"
+        type="string"
+        context="server"
+        default="8080"/>
+    <property id="stopPort"
+        label="Stop Port"
+        type="string"
+        context="server"
+        default="8079"/>
+    <property id="deployDir"
+        label="Deploy Directory:"
+        type="string"
+        context="server"
+        default="${jettyHome}/webapps"/>
+    <property id="supportAnnotations"
+        label="Annotation Support:"
+        type="boolean"
+        context="server"
+        default="false"/>
+
+    <port>
+        <no>${port}</no>
+        <name>Http</name>
+        <protocol>http</protocol>
+    </port>
+
+    <module>
+        <type>jst.web</type>
+        <publishDir>${deployDir}</publishDir>
+        <publisherReference>org.eclipse.jst.server.generic.antpublisher</publisherReference>
+    </module>
+    
+    <start>
+        <mainClass>org.mortbay.start.Main</mainClass>
+        <workingDirectory>${jettyHome}</workingDirectory>
+        <programArguments>${jettyConfig}</programArguments>
+        <vmParameters>-Djetty.home=${jettyHome} -Djetty.port=${port} -Djetty.host=${serverAddress} -DSTOP.PORT=${stopPort} -DSTOP.KEY=secret</vmParameters>
+        <classpathReference>jetty.start</classpathReference>
+     </start>
+
+     <stop>
+        <mainClass>org.mortbay.start.Main</mainClass>
+        <workingDirectory>${jettyHome}</workingDirectory>
+        <programArguments>--stop</programArguments>
+        <vmParameters>-Djetty.home="${jettyHome}" -DSTOP.PORT="${stopPort}" -DSTOP.KEY=secret</vmParameters>
+        <classpathReference>jetty.shutdown</classpathReference>
+     </stop>
+     
+     <publisher id="org.eclipse.jst.server.generic.antpublisher">
+       <publisherdata>
+         <dataname>build.file</dataname>
+         <datavalue>/buildfiles/build.xml</datavalue>
+       </publisherdata>
+      <publisherdata>
+        <dataname>target.publish.jst.web</dataname>
+        <datavalue>deploy.j2ee.web</datavalue>
+      </publisherdata>
+      <publisherdata>
+        <dataname>target.unpublish.jst.web</dataname>
+        <datavalue>undeploy.j2ee.web</datavalue>
+      </publisherdata>
+     </publisher>
+     
+     <classpath id="jetty.start" >
+       <archive path="${jettyHome}/start.jar" />
+     </classpath>
+     
+     <classpath id="jetty.shutdown" >
+       <archive path="${jettyHome}/start.jar" />
+     </classpath>
+     
+</tns:ServerRuntime>

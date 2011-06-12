@@ -1,0 +1,23 @@
+#!/bin/sh -e
+
+case "$1" in
+    configure)
+	if ! id jetty > /dev/null 2>&1 ; then
+	    adduser --system --home /usr/share/jetty6 --no-create-home \
+		--ingroup nogroup --disabled-password --shell /bin/false \
+		jetty
+	fi
+	chown -R jetty:adm /var/cache/jetty6 /var/log/jetty6 /var/lib/jetty6
+	chmod 750 /var/log/jetty6
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+	echo "$0 called with unknown argument \`$1'" >&2
+	exit 1
+    ;;
+esac
+
+#DEBHELPER#

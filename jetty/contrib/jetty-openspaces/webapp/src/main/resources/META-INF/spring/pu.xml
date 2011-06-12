@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-sla="http://www.openspaces.org/schema/sla"
+       xmlns:os-jms="http://www.openspaces.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+       http://www.openspaces.org/schema/jms http://www.openspaces.org/schema/jms/openspaces-jms.xsd
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/sla/openspaces-sla.xsd">
+    
+    <os-sla:sla cluster-schema="partitioned" 
+                number-of-instances="2"
+                max-instances-per-vm="1">
+    </os-sla:sla>
+    
+    <!--
+    Spring propery configurer which allows us to use system properties (such as user.name).
+    -->
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    </bean>
+    
+    <!--
+    Enables the usage of @GigaSpaceContext annotation based injection.
+    -->
+    <os-core:giga-space-context/>
+    
+    <!--
+    A bean representing a space (an IJSpace implementation).
+    <os-core:space id="space" url="jini://*/*/space"/>
+    -->
+    <os-core:space id="space" url="/./space" />
+    
+    <!--
+        Defines a local Jini transaction manager.
+    -->
+    <os-core:local-tx-manager id="transactionManager" space="space"/>
+
+    <!--
+    OpenSpaces simplified space API built on top of IJSpace/JavaSpace.
+    -->
+    <os-core:giga-space id="gigaSpace" space="space" tx-manager="transactionManager"/>
+    
+    
+    <bean id="jetty" class="org.openspaces.webapp.GigaServer" init-method="start" destroy-method="stop">      
+        <property name="threadPool">
+            <bean class="org.mortbay.thread.QueuedThreadPool">
+                <property name="minThreads" value="10"/>
+                <property name="maxThreads" value="200"/>
+                <property name="lowThreads" value="20"/>
+            </bean>
+        </property>       
+        <property name="connectors">
+            <list>
+                <bean class="org.mortbay.jetty.nio.SelectChannelConnector">
+                    <property name="port" value="0"/>
+                    <property name="maxIdleTime" value="300000"/>
+                    <property name="acceptors" value="2"/>
+                    <property name="statsOn" value="false"/>
+                    <property name="confidentialPort" value="8443"/>
+                    <property name="lowResourcesConnections" value="20000"/>
+                    <property name="lowResourcesMaxIdleTime" value="5000"/>
+                </bean>
+            </list>
+        </property>
+        <property name="handler">
+            <bean class="org.mortbay.jetty.handler.HandlerCollection">
+                <property name="handlers">
+                    <list>
+                        <bean class="org.mortbay.jetty.handler.ContextHandlerCollection"/>
+                        <bean class="org.mortbay.jetty.handler.DefaultHandler"/>
+                    </list>
+                </property>
+            </bean>
+	    </property>
+    </bean>
+    
+    <bean id="webapp" class="org.openspaces.webapp.GigaWebApp" init-method="deploy" destroy-method="undeploy" depends-on="gigaSpace">
+    	<property name="server" ref="jetty"/>
+    	<property name="contextPath" value="/"/> 
+        <property name="webapp" value="test.war"/> 
+    </bean>
+    
+</beans>

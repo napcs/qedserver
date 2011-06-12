@@ -1,0 +1,7 @@
+webapps/cometd.war        var/lib/jetty6/webapps
+webapps/test              var/lib/jetty6/webapps
+webapps/test-jaas         var/lib/jetty6/webapps
+contexts/test.d           etc/jetty6/contexts
+contexts/test.xml         etc/jetty6/contexts
+contexts/test-jndi.d      etc/jetty6/contexts
+contexts/test-jndi.xml    etc/jetty6/contexts

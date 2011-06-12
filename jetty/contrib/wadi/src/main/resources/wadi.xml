@@ -1,0 +1,77 @@
+<?xml version="1.0"  encoding="ISO-8859-1"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<!-- ==================================================================
+Configure and deploy the test web application in $(jetty.home)/webapps/test
+
+Note. If this file did not exist or used a context path other that /test
+then the default configuration of jetty.xml would discover the test
+webapplication with a WebAppDeployer.  By specifying a context in this
+directory, additional configuration may be specified and hot deployments 
+detected.
+===================================================================== -->
+
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <!-- Required minimal context configuration :                        -->
+  <!--  + contextPath                                                  -->
+  <!--  + war OR resourceBase                                          -->
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <Set name="contextPath">/wadi</Set>
+  <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/test</Set>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <!-- Optional context configuration                                  -->
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <Set name="extractWAR">false</Set>
+  <Set name="copyWebDir">false</Set>
+  <Set name="defaultsDescriptor"><SystemProperty name="jetty.home" default="."/>/etc/webdefault.xml</Set>
+
+  <New id="wadiCluster" class="org.mortbay.jetty.servlet.wadi.WadiCluster">
+    <Arg>CLUSTER</Arg>
+    <Arg><SystemProperty name="node.name" default="red"/></Arg>
+    <Arg>http://localhost:<SystemProperty name="jetty.port" default="8080"/>/test</Arg>
+    <Call name="start"/>
+  </New>
+
+  <Set name="SessionHandler">
+    <New class="org.mortbay.jetty.servlet.wadi.WadiSessionHandler">
+      <Arg>
+        <New id="wadiSessionManager" class="org.mortbay.jetty.servlet.wadi.WadiSessionManager">
+          <Arg><Ref id="wadiCluster"/></Arg>
+          <Arg type="int">2</Arg>
+          <Arg type="int">24</Arg>
+          <Arg type="int">360</Arg>
+          <Arg type="boolean">true</Arg>
+          <Arg type="boolean">false</Arg>
+    
+          <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+          <!-- Uncomment these elements to enable session persistence across   --> 
+          <!-- context or container restart.                                   -->
+          <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+          <!-- 
+          <Set name="SharedStore">
+            <New id="sharedStore" class="org.codehaus.wadi.core.store.DatabaseStore">
+              <Arg>
+                <New id="sharedStoreDatabase" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+                  <Set name="Url">jdbc:mysql://localhost:3306/TEST</Set>
+                  <Set name="User">wadi</Set>
+                  <Set name="Password">wadi_pass</Set>
+                </New>
+              </Arg>
+              <Arg type="java.lang.String">SESSION_TABLE</Arg>
+              <Arg type="java.lang.String">BYTEA</Arg>
+              <Arg type="boolean">true</Arg>
+              <Arg type="boolean">false</Arg>
+            </New>
+          </Set>
+           -->
+        </New>
+      </Arg>
+    </New>
+  </Set>
+
+</Configure>
+

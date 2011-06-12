@@ -1,0 +1,936 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_AU" lang="en_AU">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+<title>HttpGenerator xref</title>
+<link type="text/css" rel="stylesheet" href="../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../javadoc/org/mortbay/jetty/HttpGenerator.html">View Javadoc</a></div><pre>
+
+<a name="1" href="#1">1</a>   <em class="jxr_comment">//========================================================================</em>
+<a name="2" href="#2">2</a>   <em class="jxr_comment">//$Id: HttpGenerator.java,v 1.7 2005/11/25 21:17:12 gregwilkins Exp $</em>
+<a name="3" href="#3">3</a>   <em class="jxr_comment">//Copyright 2004-2005 Mort Bay Consulting Pty. Ltd.</em>
+<a name="4" href="#4">4</a>   <em class="jxr_comment">//------------------------------------------------------------------------</em>
+<a name="5" href="#5">5</a>   <em class="jxr_comment">//Licensed under the Apache License, Version 2.0 (the "License");</em>
+<a name="6" href="#6">6</a>   <em class="jxr_comment">//you may not use this file except in compliance with the License.</em>
+<a name="7" href="#7">7</a>   <em class="jxr_comment">//You may obtain a copy of the License at </em>
+<a name="8" href="#8">8</a>   <em class="jxr_comment">//http://www.apache.org/licenses/LICENSE-2.0</em>
+<a name="9" href="#9">9</a>   <em class="jxr_comment">//Unless required by applicable law or agreed to in writing, software</em>
+<a name="10" href="#10">10</a>  <em class="jxr_comment">//distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a name="11" href="#11">11</a>  <em class="jxr_comment">//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a name="12" href="#12">12</a>  <em class="jxr_comment">//See the License for the specific language governing permissions and</em>
+<a name="13" href="#13">13</a>  <em class="jxr_comment">//limitations under the License.</em>
+<a name="14" href="#14">14</a>  <em class="jxr_comment">//========================================================================</em>
+<a name="15" href="#15">15</a>  
+<a name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.mortbay.jetty;
+<a name="17" href="#17">17</a>  
+<a name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
+<a name="20" href="#20">20</a>  
+<a name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.Buffer;
+<a name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.BufferUtil;
+<a name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.Buffers;
+<a name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.EndPoint;
+<a name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.Portable;
+<a name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.mortbay.io.BufferCache.CachedBuffer;
+<a name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.mortbay.log.Log;
+<a name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.mortbay.util.QuotedStringTokenizer;
+<a name="29" href="#29">29</a>  
+<a name="30" href="#30">30</a>  <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="31" href="#31">31</a>  <em class="jxr_javadoccomment">/**</em>
+<a name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * HttpGenerator. Builds HTTP Messages.</em>
+<a name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * </em>
+<a name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * @author gregw</em>
+<a name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> * </em>
+<a name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> */</em>
+<a name="37" href="#37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/mortbay/jetty/HttpGenerator.html">HttpGenerator</a> <strong class="jxr_keyword">extends</strong> <a href="../../../org/mortbay/jetty/AbstractGenerator.html">AbstractGenerator</a>
+<a name="38" href="#38">38</a>  {
+<a name="39" href="#39">39</a>      <em class="jxr_comment">// common _content</em>
+<a name="40" href="#40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] LAST_CHUNK =
+<a name="41" href="#41">41</a>      { (byte) '0', (byte) '\015', (byte) '\012', (byte) '\015', (byte) '\012'};
+<a name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] CONTENT_LENGTH_0 = Portable.getBytes(<span class="jxr_string">"Content-Length: 0\015\012"</span>);
+<a name="43" href="#43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] CONNECTION_KEEP_ALIVE = Portable.getBytes(<span class="jxr_string">"Connection: keep-alive\015\012"</span>);
+<a name="44" href="#44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] CONNECTION_CLOSE = Portable.getBytes(<span class="jxr_string">"Connection: close\015\012"</span>);
+<a name="45" href="#45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] CONNECTION_ = Portable.getBytes(<span class="jxr_string">"Connection: "</span>);
+<a name="46" href="#46">46</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] CRLF = Portable.getBytes(<span class="jxr_string">"\015\012"</span>);
+<a name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] TRANSFER_ENCODING_CHUNKED = Portable.getBytes(<span class="jxr_string">"Transfer-Encoding: chunked\015\012"</span>);
+<a name="48" href="#48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] SERVER = Portable.getBytes(<span class="jxr_string">"Server: Jetty(6.0.x)\015\012"</span>);
+<a name="49" href="#49">49</a>  
+<a name="50" href="#50">50</a>      <em class="jxr_comment">// other statics</em>
+<a name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> CHUNK_SPACE = 12;
+<a name="52" href="#52">52</a>      
+<a name="53" href="#53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setServerVersion(String version)
+<a name="54" href="#54">54</a>      {
+<a name="55" href="#55">55</a>          SERVER=Portable.getBytes(<span class="jxr_string">"Server: Jetty("</span>+version+<span class="jxr_string">")\015\012"</span>);
+<a name="56" href="#56">56</a>      }
+<a name="57" href="#57">57</a>  
+<a name="58" href="#58">58</a>      <em class="jxr_comment">// data</em>
+<a name="59" href="#59">59</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> _bypass = false; <em class="jxr_comment">// True if _content buffer can be written directly to endp and bypass the content buffer</em>
+<a name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> _needCRLF = false;
+<a name="61" href="#61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> _needEOC = false;
+<a name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> _bufferChunked = false;
+<a name="63" href="#63">63</a>  
+<a name="64" href="#64">64</a>      
+<a name="65" href="#65">65</a>      <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------------------------- */</em></em>
+<a name="66" href="#66">66</a>      <em class="jxr_javadoccomment">/**</em>
+<a name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
+<a name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     * </em>
+<a name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     * @param buffers buffer pool</em>
+<a name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * @param headerBufferSize Size of the buffer to allocate for HTTP header</em>
+<a name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     * @param contentBufferSize Size of the buffer to allocate for HTTP content</em>
+<a name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     */</em>
+<a name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/mortbay/jetty/HttpGenerator.html">HttpGenerator</a>(<a href="../../../org/mortbay/io/Buffers.html">Buffers</a> buffers, <a href="../../../org/mortbay/io/EndPoint.html">EndPoint</a> io, <strong class="jxr_keyword">int</strong> headerBufferSize, <strong class="jxr_keyword">int</strong> contentBufferSize)
+<a name="74" href="#74">74</a>      {
+<a name="75" href="#75">75</a>          <strong class="jxr_keyword">super</strong>(buffers,io,headerBufferSize,contentBufferSize);
+<a name="76" href="#76">76</a>      }
+<a name="77" href="#77">77</a>  
+<a name="78" href="#78">78</a>      <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------------------------- */</em></em>
+<a name="79" href="#79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> reset(<strong class="jxr_keyword">boolean</strong> returnBuffers)
+<a name="80" href="#80">80</a>      {
+<a name="81" href="#81">81</a>          <strong class="jxr_keyword">super</strong>.reset(returnBuffers);
+<a name="82" href="#82">82</a>          _bypass = false;
+<a name="83" href="#83">83</a>          _needCRLF = false;
+<a name="84" href="#84">84</a>          _needEOC = false;
+<a name="85" href="#85">85</a>          _bufferChunked=false;
+<a name="86" href="#86">86</a>          _method=<strong class="jxr_keyword">null</strong>;
+<a name="87" href="#87">87</a>          _uri=<strong class="jxr_keyword">null</strong>;
+<a name="88" href="#88">88</a>          _noContent=false;
+<a name="89" href="#89">89</a>      }
+<a name="90" href="#90">90</a>  
+<a name="91" href="#91">91</a>  
+<a name="92" href="#92">92</a>  
+<a name="93" href="#93">93</a>      <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="94" href="#94">94</a>      <em class="jxr_javadoccomment">/**</em>
+<a name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * Add content.</em>
+<a name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * </em>
+<a name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     * @param content</em>
+<a name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     * @param last</em>
+<a name="99" href="#99">99</a>  <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if &lt;code&gt;content&lt;/code&gt; is {@link Buffer#isImmutable immutable}.</em>
+<a name="100" href="#100">100</a> <em class="jxr_javadoccomment">     * @throws IllegalStateException If the request is not expecting any more content,</em>
+<a name="101" href="#101">101</a> <em class="jxr_javadoccomment">     *   or if the buffers are full and cannot be flushed.</em>
+<a name="102" href="#102">102</a> <em class="jxr_javadoccomment">     * @throws IOException if there is a problem flushing the buffers.</em>
+<a name="103" href="#103">103</a> <em class="jxr_javadoccomment">     */</em>
+<a name="104" href="#104">104</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addContent(<a href="../../../org/mortbay/io/Buffer.html">Buffer</a> content, <strong class="jxr_keyword">boolean</strong> last) <strong class="jxr_keyword">throws</strong> IOException
+<a name="105" href="#105">105</a>     {
+<a name="106" href="#106">106</a>         <strong class="jxr_keyword">if</strong> (_noContent)
+<a name="107" href="#107">107</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"NO CONTENT"</span>);
+<a name="108" href="#108">108</a> 
+<a name="109" href="#109">109</a>         <strong class="jxr_keyword">if</strong> (_last || _state==STATE_END) 
+<a name="110" href="#110">110</a>         {
+<a name="111" href="#111">111</a>             Log.debug(<span class="jxr_string">"Ignoring extra content {}"</span>,content);
+<a name="112" href="#112">112</a>             content.clear();
+<a name="113" href="#113">113</a>             <strong class="jxr_keyword">return</strong>;
+<a name="114" href="#114">114</a>         }
+<a name="115" href="#115">115</a>         _last = last;
+<a name="116" href="#116">116</a> 
+<a name="117" href="#117">117</a>         <em class="jxr_comment">// Handle any unfinished business?</em>
+<a name="118" href="#118">118</a>         <strong class="jxr_keyword">if</strong> (_content!=<strong class="jxr_keyword">null</strong> &amp;&amp; _content.length()&gt;0 || _bufferChunked)
+<a name="119" href="#119">119</a>         {
+<a name="120" href="#120">120</a>             <strong class="jxr_keyword">if</strong> (!_endp.isOpen())
+<a name="121" href="#121">121</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/mortbay/jetty/EofException.html">EofException</a>();
+<a name="122" href="#122">122</a>             flush();
+<a name="123" href="#123">123</a>             <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length()&gt;0 || _bufferChunked) 
+<a name="124" href="#124">124</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"FULL"</span>);
+<a name="125" href="#125">125</a>         }
+<a name="126" href="#126">126</a> 
+<a name="127" href="#127">127</a>         _content = content;
+<a name="128" href="#128">128</a>         _contentWritten += content.length();
+<a name="129" href="#129">129</a> 
+<a name="130" href="#130">130</a>         <em class="jxr_comment">// Handle the _content</em>
+<a name="131" href="#131">131</a>         <strong class="jxr_keyword">if</strong> (_head)
+<a name="132" href="#132">132</a>         {
+<a name="133" href="#133">133</a>             content.clear();
+<a name="134" href="#134">134</a>             _content=<strong class="jxr_keyword">null</strong>;
+<a name="135" href="#135">135</a>         }
+<a name="136" href="#136">136</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (_endp != <strong class="jxr_keyword">null</strong> &amp;&amp; _buffer == <strong class="jxr_keyword">null</strong> &amp;&amp; content.length() &gt; 0 &amp;&amp; _last)
+<a name="137" href="#137">137</a>         {
+<a name="138" href="#138">138</a>             <em class="jxr_comment">// TODO - use bypass in more cases.</em>
+<a name="139" href="#139">139</a>             <em class="jxr_comment">// Make _content a direct buffer</em>
+<a name="140" href="#140">140</a>             _bypass = <strong class="jxr_keyword">true</strong>;
+<a name="141" href="#141">141</a>         }
+<a name="142" href="#142">142</a>         <strong class="jxr_keyword">else</strong>
+<a name="143" href="#143">143</a>         {
+<a name="144" href="#144">144</a>             <em class="jxr_comment">// Yes - so we better check we have a buffer</em>
+<a name="145" href="#145">145</a>             <strong class="jxr_keyword">if</strong> (_buffer == <strong class="jxr_keyword">null</strong>) 
+<a name="146" href="#146">146</a>                 _buffer = _buffers.getBuffer(_contentBufferSize);
+<a name="147" href="#147">147</a> 
+<a name="148" href="#148">148</a>             <em class="jxr_comment">// Copy _content to buffer;</em>
+<a name="149" href="#149">149</a>             <strong class="jxr_keyword">int</strong> len=_buffer.put(_content);
+<a name="150" href="#150">150</a>             _content.skip(len);
+<a name="151" href="#151">151</a>             <strong class="jxr_keyword">if</strong> (_content.length() == 0) 
+<a name="152" href="#152">152</a>                 _content = <strong class="jxr_keyword">null</strong>;
+<a name="153" href="#153">153</a>         }
+<a name="154" href="#154">154</a>     }
+<a name="155" href="#155">155</a> 
+<a name="156" href="#156">156</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="157" href="#157">157</a>     <em class="jxr_javadoccomment">/**</em>
+<a name="158" href="#158">158</a> <em class="jxr_javadoccomment">     * send complete response.</em>
+<a name="159" href="#159">159</a> <em class="jxr_javadoccomment">     * </em>
+<a name="160" href="#160">160</a> <em class="jxr_javadoccomment">     * @param response</em>
+<a name="161" href="#161">161</a> <em class="jxr_javadoccomment">     */</em>
+<a name="162" href="#162">162</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> sendResponse(<a href="../../../org/mortbay/io/Buffer.html">Buffer</a> response) <strong class="jxr_keyword">throws</strong> IOException
+<a name="163" href="#163">163</a>     {
+<a name="164" href="#164">164</a>         <strong class="jxr_keyword">if</strong> (_noContent || _state!=STATE_HEADER || _content!=<strong class="jxr_keyword">null</strong> &amp;&amp; _content.length()&gt;0 || _bufferChunked || _head )
+<a name="165" href="#165">165</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException();
+<a name="166" href="#166">166</a> 
+<a name="167" href="#167">167</a>         _last = <strong class="jxr_keyword">true</strong>;
+<a name="168" href="#168">168</a> 
+<a name="169" href="#169">169</a>         _content = response;
+<a name="170" href="#170">170</a>         _bypass = <strong class="jxr_keyword">true</strong>;
+<a name="171" href="#171">171</a>         _state = STATE_FLUSHING;
+<a name="172" href="#172">172</a> 
+<a name="173" href="#173">173</a>         <em class="jxr_comment">// TODO this is not exactly right, but should do.</em>
+<a name="174" href="#174">174</a>         _contentLength =_contentWritten = response.length();
+<a name="175" href="#175">175</a>         
+<a name="176" href="#176">176</a>     }
+<a name="177" href="#177">177</a> 
+<a name="178" href="#178">178</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="179" href="#179">179</a>     <em class="jxr_javadoccomment">/**</em>
+<a name="180" href="#180">180</a> <em class="jxr_javadoccomment">     * Add content.</em>
+<a name="181" href="#181">181</a> <em class="jxr_javadoccomment">     * </em>
+<a name="182" href="#182">182</a> <em class="jxr_javadoccomment">     * @param b byte</em>
+<a name="183" href="#183">183</a> <em class="jxr_javadoccomment">     * @return true if the buffers are full</em>
+<a name="184" href="#184">184</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
+<a name="185" href="#185">185</a> <em class="jxr_javadoccomment">     */</em>
+<a name="186" href="#186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> addContent(byte b) <strong class="jxr_keyword">throws</strong> IOException
+<a name="187" href="#187">187</a>     {
+<a name="188" href="#188">188</a>         <strong class="jxr_keyword">if</strong> (_noContent)
+<a name="189" href="#189">189</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"NO CONTENT"</span>);
+<a name="190" href="#190">190</a>         
+<a name="191" href="#191">191</a>         <strong class="jxr_keyword">if</strong> (_last || _state==STATE_END) 
+<a name="192" href="#192">192</a>         {
+<a name="193" href="#193">193</a>             Log.debug(<span class="jxr_string">"Ignoring extra content {}"</span>,<strong class="jxr_keyword">new</strong> Byte(b));
+<a name="194" href="#194">194</a>             <strong class="jxr_keyword">return</strong> false;
+<a name="195" href="#195">195</a>         }
+<a name="196" href="#196">196</a> 
+<a name="197" href="#197">197</a>         <em class="jxr_comment">// Handle any unfinished business?</em>
+<a name="198" href="#198">198</a>         <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length()&gt;0 || _bufferChunked)
+<a name="199" href="#199">199</a>         {
+<a name="200" href="#200">200</a>             flush();
+<a name="201" href="#201">201</a>             <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length()&gt;0 || _bufferChunked) 
+<a name="202" href="#202">202</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"FULL"</span>);
+<a name="203" href="#203">203</a>         }
+<a name="204" href="#204">204</a> 
+<a name="205" href="#205">205</a>         _contentWritten++;
+<a name="206" href="#206">206</a>         
+<a name="207" href="#207">207</a>         <em class="jxr_comment">// Handle the _content</em>
+<a name="208" href="#208">208</a>         <strong class="jxr_keyword">if</strong> (_head)
+<a name="209" href="#209">209</a>             <strong class="jxr_keyword">return</strong> false;
+<a name="210" href="#210">210</a>         
+<a name="211" href="#211">211</a>         <em class="jxr_comment">// we better check we have a buffer</em>
+<a name="212" href="#212">212</a>         <strong class="jxr_keyword">if</strong> (_buffer == <strong class="jxr_keyword">null</strong>) 
+<a name="213" href="#213">213</a>             _buffer = _buffers.getBuffer(_contentBufferSize);
+<a name="214" href="#214">214</a>         
+<a name="215" href="#215">215</a>         <em class="jxr_comment">// Copy _content to buffer;</em>
+<a name="216" href="#216">216</a>         _buffer.put(b);
+<a name="217" href="#217">217</a>         
+<a name="218" href="#218">218</a>         <strong class="jxr_keyword">return</strong> _buffer.space()&lt;=(_contentLength == HttpTokens.CHUNKED_CONTENT?CHUNK_SPACE:0);
+<a name="219" href="#219">219</a>     }
+<a name="220" href="#220">220</a> 
+<a name="221" href="#221">221</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="222" href="#222">222</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Prepare buffer for unchecked writes.</em>
+<a name="223" href="#223">223</a> <em class="jxr_javadoccomment">     * Prepare the generator buffer to receive unchecked writes</em>
+<a name="224" href="#224">224</a> <em class="jxr_javadoccomment">     * @return the available space in the buffer.</em>
+<a name="225" href="#225">225</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
+<a name="226" href="#226">226</a> <em class="jxr_javadoccomment">     */</em>
+<a name="227" href="#227">227</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> prepareUncheckedAddContent() <strong class="jxr_keyword">throws</strong> IOException
+<a name="228" href="#228">228</a>     {
+<a name="229" href="#229">229</a>         <strong class="jxr_keyword">if</strong> (_noContent)
+<a name="230" href="#230">230</a>             <strong class="jxr_keyword">return</strong> -1;
+<a name="231" href="#231">231</a>         
+<a name="232" href="#232">232</a>         <strong class="jxr_keyword">if</strong> (_last || _state==STATE_END) 
+<a name="233" href="#233">233</a>             <strong class="jxr_keyword">return</strong> -1;
+<a name="234" href="#234">234</a> 
+<a name="235" href="#235">235</a>         <em class="jxr_comment">// Handle any unfinished business?</em>
+<a name="236" href="#236">236</a>         <a href="../../../org/mortbay/io/Buffer.html">Buffer</a> content = _content;
+<a name="237" href="#237">237</a>         <strong class="jxr_keyword">if</strong> (content != <strong class="jxr_keyword">null</strong> &amp;&amp; content.length()&gt;0 || _bufferChunked)
+<a name="238" href="#238">238</a>         {
+<a name="239" href="#239">239</a>             flush();
+<a name="240" href="#240">240</a>             <strong class="jxr_keyword">if</strong> (content != <strong class="jxr_keyword">null</strong> &amp;&amp; content.length()&gt;0 || _bufferChunked) 
+<a name="241" href="#241">241</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"FULL"</span>);
+<a name="242" href="#242">242</a>         }
+<a name="243" href="#243">243</a> 
+<a name="244" href="#244">244</a>         <em class="jxr_comment">// we better check we have a buffer</em>
+<a name="245" href="#245">245</a>         <strong class="jxr_keyword">if</strong> (_buffer == <strong class="jxr_keyword">null</strong>) 
+<a name="246" href="#246">246</a>             _buffer = _buffers.getBuffer(_contentBufferSize);
+<a name="247" href="#247">247</a> 
+<a name="248" href="#248">248</a>         _contentWritten-=_buffer.length();
+<a name="249" href="#249">249</a>         
+<a name="250" href="#250">250</a>         <em class="jxr_comment">// Handle the _content</em>
+<a name="251" href="#251">251</a>         <strong class="jxr_keyword">if</strong> (_head)
+<a name="252" href="#252">252</a>             <strong class="jxr_keyword">return</strong> Integer.MAX_VALUE;
+<a name="253" href="#253">253</a>         
+<a name="254" href="#254">254</a>         <strong class="jxr_keyword">return</strong> _buffer.space()-(_contentLength == HttpTokens.CHUNKED_CONTENT?CHUNK_SPACE:0);
+<a name="255" href="#255">255</a>     }
+<a name="256" href="#256">256</a>     
+<a name="257" href="#257">257</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="258" href="#258">258</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isBufferFull()
+<a name="259" href="#259">259</a>     {
+<a name="260" href="#260">260</a>         <em class="jxr_comment">// Should we flush the buffers?</em>
+<a name="261" href="#261">261</a>         <strong class="jxr_keyword">boolean</strong> full = <strong class="jxr_keyword">super</strong>.isBufferFull() || _bufferChunked || _bypass  || (_contentLength == HttpTokens.CHUNKED_CONTENT &amp;&amp; _buffer != <strong class="jxr_keyword">null</strong> &amp;&amp; _buffer.space() &lt; CHUNK_SPACE);
+<a name="262" href="#262">262</a>         <strong class="jxr_keyword">return</strong> full;
+<a name="263" href="#263">263</a>     }
+<a name="264" href="#264">264</a>     
+<a name="265" href="#265">265</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="266" href="#266">266</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> completeHeader(<a href="../../../org/mortbay/jetty/HttpFields.html">HttpFields</a> fields, <strong class="jxr_keyword">boolean</strong> allContentAdded) <strong class="jxr_keyword">throws</strong> IOException
+<a name="267" href="#267">267</a>     {
+<a name="268" href="#268">268</a>         <strong class="jxr_keyword">if</strong> (_state != STATE_HEADER) 
+<a name="269" href="#269">269</a>             <strong class="jxr_keyword">return</strong>;
+<a name="270" href="#270">270</a>         
+<a name="271" href="#271">271</a>         <em class="jxr_comment">// handle a reset </em>
+<a name="272" href="#272">272</a>         <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong> &amp;&amp; _status==0)
+<a name="273" href="#273">273</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/mortbay/jetty/EofException.html">EofException</a>();
+<a name="274" href="#274">274</a> 
+<a name="275" href="#275">275</a>         <strong class="jxr_keyword">if</strong> (_last &amp;&amp; !allContentAdded) 
+<a name="276" href="#276">276</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"last?"</span>);
+<a name="277" href="#277">277</a>         _last = _last | allContentAdded;
+<a name="278" href="#278">278</a> 
+<a name="279" href="#279">279</a>         <em class="jxr_comment">// get a header buffer</em>
+<a name="280" href="#280">280</a>         <strong class="jxr_keyword">if</strong> (_header == <strong class="jxr_keyword">null</strong>) 
+<a name="281" href="#281">281</a>             _header = _buffers.getBuffer(_headerBufferSize);
+<a name="282" href="#282">282</a>         
+<a name="283" href="#283">283</a>         <strong class="jxr_keyword">boolean</strong> has_server = false;
+<a name="284" href="#284">284</a>         
+<a name="285" href="#285">285</a>         <strong class="jxr_keyword">if</strong> (_method!=<strong class="jxr_keyword">null</strong>)
+<a name="286" href="#286">286</a>         {
+<a name="287" href="#287">287</a>             _close = false;
+<a name="288" href="#288">288</a>             <em class="jxr_comment">// Request</em>
+<a name="289" href="#289">289</a>             <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_0_9_ORDINAL)
+<a name="290" href="#290">290</a>             {
+<a name="291" href="#291">291</a>                 _contentLength = HttpTokens.NO_CONTENT;
+<a name="292" href="#292">292</a>                 _header.put(_method);
+<a name="293" href="#293">293</a>                 _header.put((byte)' ');
+<a name="294" href="#294">294</a>                 _header.put(_uri.getBytes(<span class="jxr_string">"utf-8"</span>)); <em class="jxr_comment">// TODO WRONG!</em>
+<a name="295" href="#295">295</a>                 _header.put(HttpTokens.CRLF);
+<a name="296" href="#296">296</a>                 _state = STATE_FLUSHING;
+<a name="297" href="#297">297</a>                 _noContent=<strong class="jxr_keyword">true</strong>;
+<a name="298" href="#298">298</a>                 <strong class="jxr_keyword">return</strong>;
+<a name="299" href="#299">299</a>             }
+<a name="300" href="#300">300</a>             <strong class="jxr_keyword">else</strong>
+<a name="301" href="#301">301</a>             {
+<a name="302" href="#302">302</a>                 _header.put(_method);
+<a name="303" href="#303">303</a>                 _header.put((byte)' ');
+<a name="304" href="#304">304</a>                 _header.put(_uri.getBytes(<span class="jxr_string">"utf-8"</span>)); <em class="jxr_comment">// TODO WRONG!</em>
+<a name="305" href="#305">305</a>                 _header.put((byte)' ');
+<a name="306" href="#306">306</a>                 _header.put(_version==HttpVersions.HTTP_1_0_ORDINAL?HttpVersions.HTTP_1_0_BUFFER:HttpVersions.HTTP_1_1_BUFFER);
+<a name="307" href="#307">307</a>                 _header.put(HttpTokens.CRLF);
+<a name="308" href="#308">308</a>             }
+<a name="309" href="#309">309</a>         }
+<a name="310" href="#310">310</a>         <strong class="jxr_keyword">else</strong>
+<a name="311" href="#311">311</a>         {
+<a name="312" href="#312">312</a>             <em class="jxr_comment">// Response</em>
+<a name="313" href="#313">313</a>             <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_0_9_ORDINAL)
+<a name="314" href="#314">314</a>             {
+<a name="315" href="#315">315</a>                 _close = <strong class="jxr_keyword">true</strong>;
+<a name="316" href="#316">316</a>                 _contentLength = HttpTokens.EOF_CONTENT;
+<a name="317" href="#317">317</a>                 _state = STATE_CONTENT;
+<a name="318" href="#318">318</a>                 <strong class="jxr_keyword">return</strong>;
+<a name="319" href="#319">319</a>             }
+<a name="320" href="#320">320</a>             <strong class="jxr_keyword">else</strong>
+<a name="321" href="#321">321</a>             {
+<a name="322" href="#322">322</a>                 <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_1_0_ORDINAL) 
+<a name="323" href="#323">323</a>                     _close = <strong class="jxr_keyword">true</strong>;
+<a name="324" href="#324">324</a> 
+<a name="325" href="#325">325</a>                 <em class="jxr_comment">// add response line</em>
+<a name="326" href="#326">326</a>                 <a href="../../../org/mortbay/io/Buffer.html">Buffer</a> line = HttpStatus.getResponseLine(_status);
+<a name="327" href="#327">327</a> 
+<a name="328" href="#328">328</a>                 
+<a name="329" href="#329">329</a>                 <strong class="jxr_keyword">if</strong> (line==<strong class="jxr_keyword">null</strong>)
+<a name="330" href="#330">330</a>                 {
+<a name="331" href="#331">331</a>                     <strong class="jxr_keyword">if</strong> (_reason==<strong class="jxr_keyword">null</strong>)
+<a name="332" href="#332">332</a>                         _reason=getReasonBuffer(_status);
+<a name="333" href="#333">333</a> 
+<a name="334" href="#334">334</a>                     _header.put(HttpVersions.HTTP_1_1_BUFFER);
+<a name="335" href="#335">335</a>                     _header.put((byte) ' ');
+<a name="336" href="#336">336</a>                     _header.put((byte) ('0' + _status / 100));
+<a name="337" href="#337">337</a>                     _header.put((byte) ('0' + (_status % 100) / 10));
+<a name="338" href="#338">338</a>                     _header.put((byte) ('0' + (_status % 10)));
+<a name="339" href="#339">339</a>                     _header.put((byte) ' ');
+<a name="340" href="#340">340</a>                     <strong class="jxr_keyword">if</strong> (_reason==<strong class="jxr_keyword">null</strong>)
+<a name="341" href="#341">341</a>                     {
+<a name="342" href="#342">342</a>                         _header.put((byte) ('0' + _status / 100));
+<a name="343" href="#343">343</a>                         _header.put((byte) ('0' + (_status % 100) / 10));
+<a name="344" href="#344">344</a>                         _header.put((byte) ('0' + (_status % 10)));
+<a name="345" href="#345">345</a>                     }
+<a name="346" href="#346">346</a>                     <strong class="jxr_keyword">else</strong>
+<a name="347" href="#347">347</a>                         _header.put(_reason);
+<a name="348" href="#348">348</a>                     _header.put(HttpTokens.CRLF);
+<a name="349" href="#349">349</a>                 }
+<a name="350" href="#350">350</a>                 <strong class="jxr_keyword">else</strong>
+<a name="351" href="#351">351</a>                 {
+<a name="352" href="#352">352</a>                     <strong class="jxr_keyword">if</strong> (_reason==<strong class="jxr_keyword">null</strong>)
+<a name="353" href="#353">353</a>                         _header.put(line);
+<a name="354" href="#354">354</a>                     <strong class="jxr_keyword">else</strong>
+<a name="355" href="#355">355</a>                     {
+<a name="356" href="#356">356</a>                         _header.put(line.array(), 0, HttpVersions.HTTP_1_1_BUFFER.length() + 5);
+<a name="357" href="#357">357</a>                         _header.put(_reason);
+<a name="358" href="#358">358</a>                         _header.put(HttpTokens.CRLF);
+<a name="359" href="#359">359</a>                     }
+<a name="360" href="#360">360</a>                 }
+<a name="361" href="#361">361</a> 
+<a name="362" href="#362">362</a>                 <strong class="jxr_keyword">if</strong> (_status&lt;200 &amp;&amp; _status&gt;=100 )
+<a name="363" href="#363">363</a>                 {
+<a name="364" href="#364">364</a>                     _noContent=<strong class="jxr_keyword">true</strong>;
+<a name="365" href="#365">365</a>                     _content=<strong class="jxr_keyword">null</strong>;
+<a name="366" href="#366">366</a>                     <strong class="jxr_keyword">if</strong> (_buffer!=<strong class="jxr_keyword">null</strong>)
+<a name="367" href="#367">367</a>                         _buffer.clear();
+<a name="368" href="#368">368</a>                     <em class="jxr_comment">// end the header.</em>
+<a name="369" href="#369">369</a>                     _header.put(HttpTokens.CRLF);
+<a name="370" href="#370">370</a>                     _state = STATE_CONTENT;
+<a name="371" href="#371">371</a>                     <strong class="jxr_keyword">return</strong>;
+<a name="372" href="#372">372</a>                 }
+<a name="373" href="#373">373</a> 
+<a name="374" href="#374">374</a>                 <strong class="jxr_keyword">if</strong> (_status==204 || _status==304)
+<a name="375" href="#375">375</a>                 {
+<a name="376" href="#376">376</a>                     _noContent=<strong class="jxr_keyword">true</strong>;
+<a name="377" href="#377">377</a>                     _content=<strong class="jxr_keyword">null</strong>;
+<a name="378" href="#378">378</a>                     <strong class="jxr_keyword">if</strong> (_buffer!=<strong class="jxr_keyword">null</strong>)
+<a name="379" href="#379">379</a>                         _buffer.clear();
+<a name="380" href="#380">380</a>                 }
+<a name="381" href="#381">381</a>             }
+<a name="382" href="#382">382</a>         }
+<a name="383" href="#383">383</a>         
+<a name="384" href="#384">384</a>         <em class="jxr_comment">// Add headers</em>
+<a name="385" href="#385">385</a> 
+<a name="386" href="#386">386</a>         <em class="jxr_comment">// key field values</em>
+<a name="387" href="#387">387</a>         HttpFields.Field content_length = <strong class="jxr_keyword">null</strong>;
+<a name="388" href="#388">388</a>         HttpFields.Field transfer_encoding = <strong class="jxr_keyword">null</strong>;
+<a name="389" href="#389">389</a>         <strong class="jxr_keyword">boolean</strong> keep_alive = false;
+<a name="390" href="#390">390</a>         <strong class="jxr_keyword">boolean</strong> close=false;
+<a name="391" href="#391">391</a>         <strong class="jxr_keyword">boolean</strong> content_type =false;
+<a name="392" href="#392">392</a>         StringBuffer connection = <strong class="jxr_keyword">null</strong>;
+<a name="393" href="#393">393</a> 
+<a name="394" href="#394">394</a>         <strong class="jxr_keyword">if</strong> (fields != <strong class="jxr_keyword">null</strong>)
+<a name="395" href="#395">395</a>         {
+<a name="396" href="#396">396</a>             Iterator iter = fields.getFields();
+<a name="397" href="#397">397</a> 
+<a name="398" href="#398">398</a>             <strong class="jxr_keyword">while</strong> (iter.hasNext())
+<a name="399" href="#399">399</a>             {
+<a name="400" href="#400">400</a>                 HttpFields.Field field = (HttpFields.Field) iter.next();
+<a name="401" href="#401">401</a> 
+<a name="402" href="#402">402</a>                 <strong class="jxr_keyword">switch</strong> (field.getNameOrdinal())
+<a name="403" href="#403">403</a>                 {
+<a name="404" href="#404">404</a>                     <strong class="jxr_keyword">case</strong> HttpHeaders.CONTENT_LENGTH_ORDINAL:
+<a name="405" href="#405">405</a>                         content_length = field;
+<a name="406" href="#406">406</a>                         _contentLength = field.getLongValue();
+<a name="407" href="#407">407</a> 
+<a name="408" href="#408">408</a>                         <strong class="jxr_keyword">if</strong> (_contentLength &lt; _contentWritten || _last &amp;&amp; _contentLength != _contentWritten)
+<a name="409" href="#409">409</a>                             content_length = <strong class="jxr_keyword">null</strong>;
+<a name="410" href="#410">410</a> 
+<a name="411" href="#411">411</a>                         <em class="jxr_comment">// write the field to the header buffer</em>
+<a name="412" href="#412">412</a>                         field.put(_header);
+<a name="413" href="#413">413</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="414" href="#414">414</a> 
+<a name="415" href="#415">415</a>                     <strong class="jxr_keyword">case</strong> HttpHeaders.CONTENT_TYPE_ORDINAL:
+<a name="416" href="#416">416</a>                         <strong class="jxr_keyword">if</strong> (BufferUtil.isPrefix(MimeTypes.MULTIPART_BYTERANGES_BUFFER, field.getValueBuffer())) 
+<a name="417" href="#417">417</a>                             _contentLength = HttpTokens.SELF_DEFINING_CONTENT;
+<a name="418" href="#418">418</a>                         content_type=<strong class="jxr_keyword">true</strong>;
+<a name="419" href="#419">419</a>                         <em class="jxr_comment">// write the field to the header buffer</em>
+<a name="420" href="#420">420</a>                         field.put(_header);
+<a name="421" href="#421">421</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="422" href="#422">422</a> 
+<a name="423" href="#423">423</a>                     <strong class="jxr_keyword">case</strong> HttpHeaders.TRANSFER_ENCODING_ORDINAL:
+<a name="424" href="#424">424</a>                         <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_1_1_ORDINAL) transfer_encoding = field;
+<a name="425" href="#425">425</a>                         <em class="jxr_comment">// Do NOT add yet!</em>
+<a name="426" href="#426">426</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="427" href="#427">427</a> 
+<a name="428" href="#428">428</a>                     <strong class="jxr_keyword">case</strong> HttpHeaders.CONNECTION_ORDINAL:
+<a name="429" href="#429">429</a>                         <strong class="jxr_keyword">if</strong> (_method!=<strong class="jxr_keyword">null</strong>)
+<a name="430" href="#430">430</a>                             field.put(_header);
+<a name="431" href="#431">431</a>                         
+<a name="432" href="#432">432</a>                         <strong class="jxr_keyword">int</strong> connection_value = field.getValueOrdinal();
+<a name="433" href="#433">433</a>                         <strong class="jxr_keyword">switch</strong> (connection_value)
+<a name="434" href="#434">434</a>                         {
+<a name="435" href="#435">435</a>                             <strong class="jxr_keyword">case</strong> -1:
+<a name="436" href="#436">436</a>                             { 
+<a name="437" href="#437">437</a> 
+<a name="438" href="#438">438</a>                                 <a href="../../../org/mortbay/util/QuotedStringTokenizer.html">QuotedStringTokenizer</a> tok = <strong class="jxr_keyword">new</strong> <a href="../../../org/mortbay/util/QuotedStringTokenizer.html">QuotedStringTokenizer</a>(field.getValue(), <span class="jxr_string">","</span>);
+<a name="439" href="#439">439</a>                                 <strong class="jxr_keyword">while</strong>(tok.hasMoreTokens())
+<a name="440" href="#440">440</a>                                 {
+<a name="441" href="#441">441</a>                                 	String token=tok.nextToken().trim();
+<a name="442" href="#442">442</a>                                     <a href="../../../org/mortbay/io/BufferCache.html">CachedBuffer</a> cb = HttpHeaderValues.CACHE.get(token);
+<a name="443" href="#443">443</a>                                     <strong class="jxr_keyword">if</strong> (cb!=<strong class="jxr_keyword">null</strong>)
+<a name="444" href="#444">444</a>                                     {
+<a name="445" href="#445">445</a>                                         <strong class="jxr_keyword">switch</strong>(cb.getOrdinal())
+<a name="446" href="#446">446</a>                                         {
+<a name="447" href="#447">447</a>                                             <strong class="jxr_keyword">case</strong> HttpHeaderValues.CLOSE_ORDINAL:
+<a name="448" href="#448">448</a>                                                 close=<strong class="jxr_keyword">true</strong>;
+<a name="449" href="#449">449</a>                                                 <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong>)
+<a name="450" href="#450">450</a>                                                     _close=<strong class="jxr_keyword">true</strong>;
+<a name="451" href="#451">451</a>                                                 keep_alive=false;
+<a name="452" href="#452">452</a>                                                 <strong class="jxr_keyword">if</strong> (_close &amp;&amp; _method==<strong class="jxr_keyword">null</strong> &amp;&amp; _contentLength == HttpTokens.UNKNOWN_CONTENT) 
+<a name="453" href="#453">453</a>                                                     _contentLength = HttpTokens.EOF_CONTENT;
+<a name="454" href="#454">454</a>                                                 <strong class="jxr_keyword">break</strong>;
+<a name="455" href="#455">455</a> 
+<a name="456" href="#456">456</a>                                             <strong class="jxr_keyword">case</strong> HttpHeaderValues.KEEP_ALIVE_ORDINAL:
+<a name="457" href="#457">457</a>                                                 <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_1_0_ORDINAL)
+<a name="458" href="#458">458</a>                                                 {
+<a name="459" href="#459">459</a>                                                     keep_alive = <strong class="jxr_keyword">true</strong>;
+<a name="460" href="#460">460</a>                                                     <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong>) 
+<a name="461" href="#461">461</a>                                                         _close = false;
+<a name="462" href="#462">462</a>                                                 }
+<a name="463" href="#463">463</a>                                                 <strong class="jxr_keyword">break</strong>;
+<a name="464" href="#464">464</a>                                             
+<a name="465" href="#465">465</a>                                             <strong class="jxr_keyword">default</strong>:
+<a name="466" href="#466">466</a>                                                 <strong class="jxr_keyword">if</strong> (connection==<strong class="jxr_keyword">null</strong>)
+<a name="467" href="#467">467</a>                                                     connection=<strong class="jxr_keyword">new</strong> StringBuffer();
+<a name="468" href="#468">468</a>                                                 <strong class="jxr_keyword">else</strong>
+<a name="469" href="#469">469</a>                                                     connection.append(',');
+<a name="470" href="#470">470</a>                                                 connection.append(token);
+<a name="471" href="#471">471</a>                                         }
+<a name="472" href="#472">472</a>                                     }
+<a name="473" href="#473">473</a>                                     <strong class="jxr_keyword">else</strong>
+<a name="474" href="#474">474</a>                                     {
+<a name="475" href="#475">475</a>                                         <strong class="jxr_keyword">if</strong> (connection==<strong class="jxr_keyword">null</strong>)
+<a name="476" href="#476">476</a>                                             connection=<strong class="jxr_keyword">new</strong> StringBuffer();
+<a name="477" href="#477">477</a>                                         <strong class="jxr_keyword">else</strong>
+<a name="478" href="#478">478</a>                                             connection.append(',');
+<a name="479" href="#479">479</a>                                         connection.append(token);
+<a name="480" href="#480">480</a>                                     }
+<a name="481" href="#481">481</a>                                 }
+<a name="482" href="#482">482</a>                                 
+<a name="483" href="#483">483</a>                                 <strong class="jxr_keyword">break</strong>;
+<a name="484" href="#484">484</a>                             }
+<a name="485" href="#485">485</a>                             <strong class="jxr_keyword">case</strong> HttpHeaderValues.CLOSE_ORDINAL:
+<a name="486" href="#486">486</a>                             {
+<a name="487" href="#487">487</a>                                 close=<strong class="jxr_keyword">true</strong>;
+<a name="488" href="#488">488</a>                                 <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong>)
+<a name="489" href="#489">489</a>                                     _close=<strong class="jxr_keyword">true</strong>;
+<a name="490" href="#490">490</a>                                 <strong class="jxr_keyword">if</strong> (_close &amp;&amp; _method==<strong class="jxr_keyword">null</strong> &amp;&amp; _contentLength == HttpTokens.UNKNOWN_CONTENT) 
+<a name="491" href="#491">491</a>                                     _contentLength = HttpTokens.EOF_CONTENT;
+<a name="492" href="#492">492</a>                                 <strong class="jxr_keyword">break</strong>;
+<a name="493" href="#493">493</a>                             }
+<a name="494" href="#494">494</a>                             <strong class="jxr_keyword">case</strong> HttpHeaderValues.KEEP_ALIVE_ORDINAL:
+<a name="495" href="#495">495</a>                             {
+<a name="496" href="#496">496</a>                                 <strong class="jxr_keyword">if</strong> (_version == HttpVersions.HTTP_1_0_ORDINAL)
+<a name="497" href="#497">497</a>                                 {
+<a name="498" href="#498">498</a>                                     keep_alive = <strong class="jxr_keyword">true</strong>;
+<a name="499" href="#499">499</a>                                     <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong>) 
+<a name="500" href="#500">500</a>                                         _close = false;
+<a name="501" href="#501">501</a>                                 }
+<a name="502" href="#502">502</a>                                 <strong class="jxr_keyword">break</strong>;
+<a name="503" href="#503">503</a>                             }
+<a name="504" href="#504">504</a>                             <strong class="jxr_keyword">default</strong>:
+<a name="505" href="#505">505</a>                             {
+<a name="506" href="#506">506</a>                                 <strong class="jxr_keyword">if</strong> (connection==<strong class="jxr_keyword">null</strong>)
+<a name="507" href="#507">507</a>                                     connection=<strong class="jxr_keyword">new</strong> StringBuffer();
+<a name="508" href="#508">508</a>                                 <strong class="jxr_keyword">else</strong>
+<a name="509" href="#509">509</a>                                     connection.append(',');
+<a name="510" href="#510">510</a>                                 connection.append(field.getValue());
+<a name="511" href="#511">511</a>                             }
+<a name="512" href="#512">512</a>                         }
+<a name="513" href="#513">513</a> 
+<a name="514" href="#514">514</a>                         <em class="jxr_comment">// Do NOT add yet!</em>
+<a name="515" href="#515">515</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="516" href="#516">516</a> 
+<a name="517" href="#517">517</a>                     <strong class="jxr_keyword">case</strong> HttpHeaders.SERVER_ORDINAL:
+<a name="518" href="#518">518</a>                         <strong class="jxr_keyword">if</strong> (getSendServerVersion()) 
+<a name="519" href="#519">519</a>                         {
+<a name="520" href="#520">520</a>                             has_server=<strong class="jxr_keyword">true</strong>;
+<a name="521" href="#521">521</a>                             field.put(_header);
+<a name="522" href="#522">522</a>                         }
+<a name="523" href="#523">523</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="524" href="#524">524</a> 
+<a name="525" href="#525">525</a>                     <strong class="jxr_keyword">default</strong>:
+<a name="526" href="#526">526</a>                         <em class="jxr_comment">// write the field to the header buffer</em>
+<a name="527" href="#527">527</a>                         field.put(_header);
+<a name="528" href="#528">528</a>                 }
+<a name="529" href="#529">529</a>             }
+<a name="530" href="#530">530</a>         }
+<a name="531" href="#531">531</a> 
+<a name="532" href="#532">532</a>         <em class="jxr_comment">// Calculate how to end _content and connection, _content length and transfer encoding</em>
+<a name="533" href="#533">533</a>         <em class="jxr_comment">// settings.</em>
+<a name="534" href="#534">534</a>         <em class="jxr_comment">// From RFC 2616 4.4:</em>
+<a name="535" href="#535">535</a>         <em class="jxr_comment">// 1. No body for 1xx, 204, 304 &amp; HEAD response</em>
+<a name="536" href="#536">536</a>         <em class="jxr_comment">// 2. Force _content-length?</em>
+<a name="537" href="#537">537</a>         <em class="jxr_comment">// 3. If Transfer-Encoding!=identity &amp;&amp; HTTP/1.1 &amp;&amp; !HttpConnection==close then chunk</em>
+<a name="538" href="#538">538</a>         <em class="jxr_comment">// 4. Content-Length</em>
+<a name="539" href="#539">539</a>         <em class="jxr_comment">// 5. multipart/byteranges</em>
+<a name="540" href="#540">540</a>         <em class="jxr_comment">// 6. close</em>
+<a name="541" href="#541">541</a>         <strong class="jxr_keyword">switch</strong> ((<strong class="jxr_keyword">int</strong>) _contentLength)
+<a name="542" href="#542">542</a>         {
+<a name="543" href="#543">543</a>             <strong class="jxr_keyword">case</strong> HttpTokens.UNKNOWN_CONTENT:
+<a name="544" href="#544">544</a>                 <em class="jxr_comment">// It may be that we have no _content, or perhaps _content just has not been</em>
+<a name="545" href="#545">545</a>                 <em class="jxr_comment">// written yet?</em>
+<a name="546" href="#546">546</a> 
+<a name="547" href="#547">547</a>                 <em class="jxr_comment">// Response known not to have a body</em>
+<a name="548" href="#548">548</a>                 <strong class="jxr_keyword">if</strong> (_contentWritten == 0 &amp;&amp; _method==<strong class="jxr_keyword">null</strong> &amp;&amp; (_status &lt; 200 || _status == 204 || _status == 304))
+<a name="549" href="#549">549</a>                     _contentLength = HttpTokens.NO_CONTENT;
+<a name="550" href="#550">550</a>                 <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (_last)
+<a name="551" href="#551">551</a>                 {
+<a name="552" href="#552">552</a>                     <em class="jxr_comment">// we have seen all the _content there is</em>
+<a name="553" href="#553">553</a>                     _contentLength = _contentWritten;
+<a name="554" href="#554">554</a>                     <strong class="jxr_keyword">if</strong> (content_length == <strong class="jxr_keyword">null</strong> &amp;&amp; (_method==<strong class="jxr_keyword">null</strong> || content_type || _contentLength&gt;0))
+<a name="555" href="#555">555</a>                     {
+<a name="556" href="#556">556</a>                         <em class="jxr_comment">// known length but not actually set.</em>
+<a name="557" href="#557">557</a>                         _header.put(HttpHeaders.CONTENT_LENGTH_BUFFER);
+<a name="558" href="#558">558</a>                         _header.put(HttpTokens.COLON);
+<a name="559" href="#559">559</a>                         _header.put((byte) ' ');
+<a name="560" href="#560">560</a>                         BufferUtil.putDecLong(_header, _contentLength);
+<a name="561" href="#561">561</a>                         _header.put(HttpTokens.CRLF);
+<a name="562" href="#562">562</a>                     }
+<a name="563" href="#563">563</a>                 }
+<a name="564" href="#564">564</a>                 <strong class="jxr_keyword">else</strong>
+<a name="565" href="#565">565</a>                 {
+<a name="566" href="#566">566</a>                     <em class="jxr_comment">// No idea, so we must assume that a body is coming</em>
+<a name="567" href="#567">567</a>                     _contentLength = (_close || _version &lt; HttpVersions.HTTP_1_1_ORDINAL ) ? HttpTokens.EOF_CONTENT : HttpTokens.CHUNKED_CONTENT;
+<a name="568" href="#568">568</a>                     <strong class="jxr_keyword">if</strong> (_method!=<strong class="jxr_keyword">null</strong> &amp;&amp; _contentLength==HttpTokens.EOF_CONTENT)
+<a name="569" href="#569">569</a>                     {
+<a name="570" href="#570">570</a>                         _contentLength=HttpTokens.NO_CONTENT;
+<a name="571" href="#571">571</a>                         _noContent=<strong class="jxr_keyword">true</strong>;
+<a name="572" href="#572">572</a>                     }
+<a name="573" href="#573">573</a>                 }
+<a name="574" href="#574">574</a>                 <strong class="jxr_keyword">break</strong>;
+<a name="575" href="#575">575</a> 
+<a name="576" href="#576">576</a>             <strong class="jxr_keyword">case</strong> HttpTokens.NO_CONTENT:
+<a name="577" href="#577">577</a>                 <strong class="jxr_keyword">if</strong> (content_length == <strong class="jxr_keyword">null</strong> &amp;&amp; _method==<strong class="jxr_keyword">null</strong> &amp;&amp; _status &gt;= 200 &amp;&amp; _status != 204 &amp;&amp; _status != 304) 
+<a name="578" href="#578">578</a>                     _header.put(CONTENT_LENGTH_0);
+<a name="579" href="#579">579</a>                 <strong class="jxr_keyword">break</strong>;
+<a name="580" href="#580">580</a> 
+<a name="581" href="#581">581</a>             <strong class="jxr_keyword">case</strong> HttpTokens.EOF_CONTENT:
+<a name="582" href="#582">582</a>                 _close = _method==<strong class="jxr_keyword">null</strong>;
+<a name="583" href="#583">583</a>                 <strong class="jxr_keyword">break</strong>;
+<a name="584" href="#584">584</a> 
+<a name="585" href="#585">585</a>             <strong class="jxr_keyword">case</strong> HttpTokens.CHUNKED_CONTENT:
+<a name="586" href="#586">586</a>                 <strong class="jxr_keyword">break</strong>;
+<a name="587" href="#587">587</a> 
+<a name="588" href="#588">588</a>             <strong class="jxr_keyword">default</strong>:
+<a name="589" href="#589">589</a>                 <em class="jxr_comment">// TODO - maybe allow forced chunking by setting te ???</em>
+<a name="590" href="#590">590</a>                 <strong class="jxr_keyword">break</strong>;
+<a name="591" href="#591">591</a>         }
+<a name="592" href="#592">592</a> 
+<a name="593" href="#593">593</a>         <em class="jxr_comment">// Add transfer_encoding if needed</em>
+<a name="594" href="#594">594</a>         <strong class="jxr_keyword">if</strong> (_contentLength == HttpTokens.CHUNKED_CONTENT)
+<a name="595" href="#595">595</a>         {
+<a name="596" href="#596">596</a>             <em class="jxr_comment">// try to use user supplied encoding as it may have other values.</em>
+<a name="597" href="#597">597</a>             <strong class="jxr_keyword">if</strong> (transfer_encoding != <strong class="jxr_keyword">null</strong> &amp;&amp; HttpHeaderValues.CHUNKED_ORDINAL != transfer_encoding.getValueOrdinal())
+<a name="598" href="#598">598</a>             {
+<a name="599" href="#599">599</a>                 String c = transfer_encoding.getValue();
+<a name="600" href="#600">600</a>                 <strong class="jxr_keyword">if</strong> (c.endsWith(HttpHeaderValues.CHUNKED))
+<a name="601" href="#601">601</a>                     transfer_encoding.put(_header);
+<a name="602" href="#602">602</a>                 <strong class="jxr_keyword">else</strong>
+<a name="603" href="#603">603</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"BAD TE"</span>);
+<a name="604" href="#604">604</a>             }
+<a name="605" href="#605">605</a>             <strong class="jxr_keyword">else</strong>
+<a name="606" href="#606">606</a>                 _header.put(TRANSFER_ENCODING_CHUNKED);
+<a name="607" href="#607">607</a>         }
+<a name="608" href="#608">608</a> 
+<a name="609" href="#609">609</a>         <em class="jxr_comment">// Handle connection if need be</em>
+<a name="610" href="#610">610</a>         <strong class="jxr_keyword">if</strong> (_contentLength==HttpTokens.EOF_CONTENT)
+<a name="611" href="#611">611</a>         {
+<a name="612" href="#612">612</a>             keep_alive=false;
+<a name="613" href="#613">613</a>             _close=<strong class="jxr_keyword">true</strong>;
+<a name="614" href="#614">614</a>         }
+<a name="615" href="#615">615</a>                
+<a name="616" href="#616">616</a>         <strong class="jxr_keyword">if</strong> (_method==<strong class="jxr_keyword">null</strong>)
+<a name="617" href="#617">617</a>         {
+<a name="618" href="#618">618</a>             <strong class="jxr_keyword">if</strong> (_close &amp;&amp; (close || _version &gt; HttpVersions.HTTP_1_0_ORDINAL))
+<a name="619" href="#619">619</a>             {
+<a name="620" href="#620">620</a>                 _header.put(CONNECTION_CLOSE);
+<a name="621" href="#621">621</a>                 <strong class="jxr_keyword">if</strong> (connection!=<strong class="jxr_keyword">null</strong>)
+<a name="622" href="#622">622</a>                 {
+<a name="623" href="#623">623</a>                     _header.setPutIndex(_header.putIndex()-2);
+<a name="624" href="#624">624</a>                     _header.put((byte)',');
+<a name="625" href="#625">625</a>                     _header.put(connection.toString().getBytes());
+<a name="626" href="#626">626</a>                     _header.put(CRLF);
+<a name="627" href="#627">627</a>                 }
+<a name="628" href="#628">628</a>             }
+<a name="629" href="#629">629</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (keep_alive)
+<a name="630" href="#630">630</a>             {
+<a name="631" href="#631">631</a>                 _header.put(CONNECTION_KEEP_ALIVE);
+<a name="632" href="#632">632</a>                 <strong class="jxr_keyword">if</strong> (connection!=<strong class="jxr_keyword">null</strong>)
+<a name="633" href="#633">633</a>                 {
+<a name="634" href="#634">634</a>                     _header.setPutIndex(_header.putIndex()-2);
+<a name="635" href="#635">635</a>                     _header.put((byte)',');
+<a name="636" href="#636">636</a>                     _header.put(connection.toString().getBytes());
+<a name="637" href="#637">637</a>                     _header.put(CRLF);
+<a name="638" href="#638">638</a>                 }
+<a name="639" href="#639">639</a>             }
+<a name="640" href="#640">640</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (connection!=<strong class="jxr_keyword">null</strong>)
+<a name="641" href="#641">641</a>             {
+<a name="642" href="#642">642</a>                 _header.put(CONNECTION_);
+<a name="643" href="#643">643</a>                 _header.put(connection.toString().getBytes());
+<a name="644" href="#644">644</a>                 _header.put(CRLF);
+<a name="645" href="#645">645</a>             }
+<a name="646" href="#646">646</a>         }
+<a name="647" href="#647">647</a>         
+<a name="648" href="#648">648</a>         <strong class="jxr_keyword">if</strong> (!has_server &amp;&amp; _status&gt;100 &amp;&amp; getSendServerVersion())
+<a name="649" href="#649">649</a>             _header.put(SERVER);
+<a name="650" href="#650">650</a> 
+<a name="651" href="#651">651</a>         <em class="jxr_comment">// end the header.</em>
+<a name="652" href="#652">652</a>         _header.put(HttpTokens.CRLF);
+<a name="653" href="#653">653</a> 
+<a name="654" href="#654">654</a>         _state = STATE_CONTENT;
+<a name="655" href="#655">655</a> 
+<a name="656" href="#656">656</a>     }
+<a name="657" href="#657">657</a> 
+<a name="658" href="#658">658</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="659" href="#659">659</a>     <em class="jxr_javadoccomment">/**</em>
+<a name="660" href="#660">660</a> <em class="jxr_javadoccomment">     * Complete the message.</em>
+<a name="661" href="#661">661</a> <em class="jxr_javadoccomment">     * </em>
+<a name="662" href="#662">662</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
+<a name="663" href="#663">663</a> <em class="jxr_javadoccomment">     */</em>
+<a name="664" href="#664">664</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> complete() <strong class="jxr_keyword">throws</strong> IOException
+<a name="665" href="#665">665</a>     {
+<a name="666" href="#666">666</a>         <strong class="jxr_keyword">if</strong> (_state == STATE_END) 
+<a name="667" href="#667">667</a>             <strong class="jxr_keyword">return</strong>;
+<a name="668" href="#668">668</a>         
+<a name="669" href="#669">669</a>         <strong class="jxr_keyword">super</strong>.complete();
+<a name="670" href="#670">670</a>         
+<a name="671" href="#671">671</a>         <strong class="jxr_keyword">if</strong> (_state &lt; STATE_FLUSHING)
+<a name="672" href="#672">672</a>         {
+<a name="673" href="#673">673</a>             _state = STATE_FLUSHING;
+<a name="674" href="#674">674</a>             <strong class="jxr_keyword">if</strong> (_contentLength == HttpTokens.CHUNKED_CONTENT) 
+<a name="675" href="#675">675</a>                 _needEOC = <strong class="jxr_keyword">true</strong>;
+<a name="676" href="#676">676</a>         }
+<a name="677" href="#677">677</a>         
+<a name="678" href="#678">678</a>         flush();
+<a name="679" href="#679">679</a>     }
+<a name="680" href="#680">680</a> 
+<a name="681" href="#681">681</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="682" href="#682">682</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> flush() <strong class="jxr_keyword">throws</strong> IOException
+<a name="683" href="#683">683</a>     {
+<a name="684" href="#684">684</a>         <strong class="jxr_keyword">try</strong>
+<a name="685" href="#685">685</a>         {   
+<a name="686" href="#686">686</a>             <strong class="jxr_keyword">if</strong> (_state == STATE_HEADER) 
+<a name="687" href="#687">687</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"State==HEADER"</span>);
+<a name="688" href="#688">688</a>             
+<a name="689" href="#689">689</a>             prepareBuffers();
+<a name="690" href="#690">690</a>             
+<a name="691" href="#691">691</a>             <strong class="jxr_keyword">if</strong> (_endp == <strong class="jxr_keyword">null</strong>)
+<a name="692" href="#692">692</a>             {
+<a name="693" href="#693">693</a>                 <strong class="jxr_keyword">if</strong> (_needCRLF &amp;&amp; _buffer!=<strong class="jxr_keyword">null</strong>) 
+<a name="694" href="#694">694</a>                     _buffer.put(HttpTokens.CRLF);
+<a name="695" href="#695">695</a>                 <strong class="jxr_keyword">if</strong> (_needEOC &amp;&amp; _buffer!=<strong class="jxr_keyword">null</strong> &amp;&amp; !_head) 
+<a name="696" href="#696">696</a>                     _buffer.put(LAST_CHUNK);
+<a name="697" href="#697">697</a>                 _needCRLF=false;
+<a name="698" href="#698">698</a>                 _needEOC=false;
+<a name="699" href="#699">699</a>                 <strong class="jxr_keyword">return</strong> 0;
+<a name="700" href="#700">700</a>             }
+<a name="701" href="#701">701</a>             
+<a name="702" href="#702">702</a>             <em class="jxr_comment">// Keep flushing while there is something to flush (except break below)</em>
+<a name="703" href="#703">703</a>             <strong class="jxr_keyword">int</strong> total= 0;
+<a name="704" href="#704">704</a>             <strong class="jxr_keyword">long</strong> last_len = -1;
+<a name="705" href="#705">705</a>             Flushing: <strong class="jxr_keyword">while</strong> (<strong class="jxr_keyword">true</strong>)
+<a name="706" href="#706">706</a>             {
+<a name="707" href="#707">707</a>                 <strong class="jxr_keyword">int</strong> len = -1;
+<a name="708" href="#708">708</a>                 <strong class="jxr_keyword">int</strong> to_flush = ((_header != <strong class="jxr_keyword">null</strong> &amp;&amp; _header.length() &gt; 0)?4:0) | ((_buffer != <strong class="jxr_keyword">null</strong> &amp;&amp; _buffer.length() &gt; 0)?2:0) | ((_bypass &amp;&amp; _content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length() &gt; 0)?1:0);
+<a name="709" href="#709">709</a>                 <strong class="jxr_keyword">switch</strong> (to_flush)
+<a name="710" href="#710">710</a>                 {
+<a name="711" href="#711">711</a>                     <strong class="jxr_keyword">case</strong> 7:
+<a name="712" href="#712">712</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(); <em class="jxr_comment">// should never happen!</em>
+<a name="713" href="#713">713</a>                     <strong class="jxr_keyword">case</strong> 6:
+<a name="714" href="#714">714</a>                         len = _endp.flush(_header, _buffer, <strong class="jxr_keyword">null</strong>);
+<a name="715" href="#715">715</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="716" href="#716">716</a>                     <strong class="jxr_keyword">case</strong> 5:
+<a name="717" href="#717">717</a>                         len = _endp.flush(_header, _content, <strong class="jxr_keyword">null</strong>);
+<a name="718" href="#718">718</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="719" href="#719">719</a>                     <strong class="jxr_keyword">case</strong> 4:
+<a name="720" href="#720">720</a>                         len = _endp.flush(_header);
+<a name="721" href="#721">721</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="722" href="#722">722</a>                     <strong class="jxr_keyword">case</strong> 3:
+<a name="723" href="#723">723</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(); <em class="jxr_comment">// should never happen!</em>
+<a name="724" href="#724">724</a>                     <strong class="jxr_keyword">case</strong> 2:
+<a name="725" href="#725">725</a>                         len = _endp.flush(_buffer);
+<a name="726" href="#726">726</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="727" href="#727">727</a>                     <strong class="jxr_keyword">case</strong> 1:
+<a name="728" href="#728">728</a>                         len = _endp.flush(_content);
+<a name="729" href="#729">729</a>                         <strong class="jxr_keyword">break</strong>;
+<a name="730" href="#730">730</a>                     <strong class="jxr_keyword">case</strong> 0:
+<a name="731" href="#731">731</a>                     {
+<a name="732" href="#732">732</a>                         <em class="jxr_comment">// Nothing more we can write now.</em>
+<a name="733" href="#733">733</a>                         <strong class="jxr_keyword">if</strong> (_header != <strong class="jxr_keyword">null</strong>) 
+<a name="734" href="#734">734</a>                             _header.clear();
+<a name="735" href="#735">735</a>                         
+<a name="736" href="#736">736</a>                         _bypass = false;
+<a name="737" href="#737">737</a>                         _bufferChunked = false;
+<a name="738" href="#738">738</a>                         
+<a name="739" href="#739">739</a>                         <strong class="jxr_keyword">if</strong> (_buffer != <strong class="jxr_keyword">null</strong>)
+<a name="740" href="#740">740</a>                         {
+<a name="741" href="#741">741</a>                             _buffer.clear();
+<a name="742" href="#742">742</a>                             <strong class="jxr_keyword">if</strong> (_contentLength == HttpTokens.CHUNKED_CONTENT)
+<a name="743" href="#743">743</a>                             {
+<a name="744" href="#744">744</a>                                 <em class="jxr_comment">// reserve some space for the chunk header</em>
+<a name="745" href="#745">745</a>                                 _buffer.setPutIndex(CHUNK_SPACE);
+<a name="746" href="#746">746</a>                                 _buffer.setGetIndex(CHUNK_SPACE);
+<a name="747" href="#747">747</a>                                 
+<a name="748" href="#748">748</a>                                 <em class="jxr_comment">// Special case handling for small left over buffer from</em>
+<a name="749" href="#749">749</a>                                 <em class="jxr_comment">// an addContent that caused a buffer flush.</em>
+<a name="750" href="#750">750</a>                                 <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length() &lt; _buffer.space() &amp;&amp; _state != STATE_FLUSHING)
+<a name="751" href="#751">751</a>                                 {
+<a name="752" href="#752">752</a>                                     _buffer.put(_content);
+<a name="753" href="#753">753</a>                                     _content.clear();
+<a name="754" href="#754">754</a>                                     _content = <strong class="jxr_keyword">null</strong>;
+<a name="755" href="#755">755</a>                                     <strong class="jxr_keyword">break</strong> Flushing;
+<a name="756" href="#756">756</a>                                 }
+<a name="757" href="#757">757</a>                             }
+<a name="758" href="#758">758</a>                         }
+<a name="759" href="#759">759</a>                         
+<a name="760" href="#760">760</a>                         <em class="jxr_comment">// Are we completely finished for now?</em>
+<a name="761" href="#761">761</a>                         <strong class="jxr_keyword">if</strong> (!_needCRLF &amp;&amp; !_needEOC &amp;&amp; (_content == <strong class="jxr_keyword">null</strong> || _content.length() == 0))
+<a name="762" href="#762">762</a>                         {
+<a name="763" href="#763">763</a>                             <strong class="jxr_keyword">if</strong> (_state == STATE_FLUSHING)
+<a name="764" href="#764">764</a>                                 _state = STATE_END;
+<a name="765" href="#765">765</a>                             <strong class="jxr_keyword">if</strong> (_state==STATE_END &amp;&amp; _close &amp;&amp; _status!=100) 
+<a name="766" href="#766">766</a>                                 _endp.shutdownOutput();
+<a name="767" href="#767">767</a>                             
+<a name="768" href="#768">768</a>                             <strong class="jxr_keyword">break</strong> Flushing;
+<a name="769" href="#769">769</a>                         }
+<a name="770" href="#770">770</a>                         
+<a name="771" href="#771">771</a>                         <em class="jxr_comment">// Try to prepare more to write.</em>
+<a name="772" href="#772">772</a>                         prepareBuffers();
+<a name="773" href="#773">773</a>                     }
+<a name="774" href="#774">774</a>                 }
+<a name="775" href="#775">775</a>                 
+<a name="776" href="#776">776</a>                 
+<a name="777" href="#777">777</a>                 <em class="jxr_comment">// break If we failed to flush</em>
+<a name="778" href="#778">778</a>                 <strong class="jxr_keyword">if</strong> (len &gt; 0)
+<a name="779" href="#779">779</a>                     total+=len;
+<a name="780" href="#780">780</a>                 <strong class="jxr_keyword">else</strong> 
+<a name="781" href="#781">781</a>                     <strong class="jxr_keyword">break</strong> Flushing;
+<a name="782" href="#782">782</a>           
+<a name="783" href="#783">783</a>                 last_len = len;
+<a name="784" href="#784">784</a>             }
+<a name="785" href="#785">785</a>             
+<a name="786" href="#786">786</a>             <strong class="jxr_keyword">return</strong> total;
+<a name="787" href="#787">787</a>         }
+<a name="788" href="#788">788</a>         <strong class="jxr_keyword">catch</strong> (IOException e)
+<a name="789" href="#789">789</a>         {
+<a name="790" href="#790">790</a>             Log.ignore(e);
+<a name="791" href="#791">791</a>             <strong class="jxr_keyword">throw</strong> (e instanceof EofException) ? e:<strong class="jxr_keyword">new</strong> EofException(e);
+<a name="792" href="#792">792</a>         }
+<a name="793" href="#793">793</a>     }
+<a name="794" href="#794">794</a> 
+<a name="795" href="#795">795</a>     <em class="jxr_comment">/*<em class="jxr_comment"> ------------------------------------------------------------ */</em></em>
+<a name="796" href="#796">796</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> prepareBuffers()
+<a name="797" href="#797">797</a>     {
+<a name="798" href="#798">798</a>         <em class="jxr_comment">// if we are not flushing an existing chunk</em>
+<a name="799" href="#799">799</a>         <strong class="jxr_keyword">if</strong> (!_bufferChunked)
+<a name="800" href="#800">800</a>         {
+<a name="801" href="#801">801</a>             <em class="jxr_comment">// Refill buffer if possible</em>
+<a name="802" href="#802">802</a>             <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length() &gt; 0 &amp;&amp; _buffer != <strong class="jxr_keyword">null</strong> &amp;&amp; _buffer.space() &gt; 0)
+<a name="803" href="#803">803</a>             {
+<a name="804" href="#804">804</a>                 <strong class="jxr_keyword">int</strong> len = _buffer.put(_content);
+<a name="805" href="#805">805</a>                 _content.skip(len);
+<a name="806" href="#806">806</a>                 <strong class="jxr_keyword">if</strong> (_content.length() == 0) 
+<a name="807" href="#807">807</a>                     _content = <strong class="jxr_keyword">null</strong>;
+<a name="808" href="#808">808</a>             }
+<a name="809" href="#809">809</a> 
+<a name="810" href="#810">810</a>             <em class="jxr_comment">// Chunk buffer if need be</em>
+<a name="811" href="#811">811</a>             <strong class="jxr_keyword">if</strong> (_contentLength == HttpTokens.CHUNKED_CONTENT)
+<a name="812" href="#812">812</a>             {
+<a name="813" href="#813">813</a>                 <strong class="jxr_keyword">int</strong> size = _buffer == <strong class="jxr_keyword">null</strong> ? 0 : _buffer.length();
+<a name="814" href="#814">814</a>                 <strong class="jxr_keyword">if</strong> (size &gt; 0)
+<a name="815" href="#815">815</a>                 {
+<a name="816" href="#816">816</a>                     <em class="jxr_comment">// Prepare a chunk!</em>
+<a name="817" href="#817">817</a>                     _bufferChunked = <strong class="jxr_keyword">true</strong>;
+<a name="818" href="#818">818</a> 
+<a name="819" href="#819">819</a>                     <em class="jxr_comment">// Did we leave space at the start of the buffer.</em>
+<a name="820" href="#820">820</a>                     <strong class="jxr_keyword">if</strong> (_buffer.getIndex() == CHUNK_SPACE)
+<a name="821" href="#821">821</a>                     {
+<a name="822" href="#822">822</a>                         <em class="jxr_comment">// Oh yes, goodie! let's use it then!</em>
+<a name="823" href="#823">823</a>                         _buffer.poke(_buffer.getIndex() - 2, HttpTokens.CRLF, 0, 2);
+<a name="824" href="#824">824</a>                         _buffer.setGetIndex(_buffer.getIndex() - 2);
+<a name="825" href="#825">825</a>                         BufferUtil.prependHexInt(_buffer, size);
+<a name="826" href="#826">826</a> 
+<a name="827" href="#827">827</a>                         <strong class="jxr_keyword">if</strong> (_needCRLF)
+<a name="828" href="#828">828</a>                         {
+<a name="829" href="#829">829</a>                             _buffer.poke(_buffer.getIndex() - 2, HttpTokens.CRLF, 0, 2);
+<a name="830" href="#830">830</a>                             _buffer.setGetIndex(_buffer.getIndex() - 2);
+<a name="831" href="#831">831</a>                             _needCRLF = false;
+<a name="832" href="#832">832</a>                         }
+<a name="833" href="#833">833</a>                     }
+<a name="834" href="#834">834</a>                     <strong class="jxr_keyword">else</strong>
+<a name="835" href="#835">835</a>                     {
+<a name="836" href="#836">836</a>                         <em class="jxr_comment">// No space so lets use the header buffer.</em>
+<a name="837" href="#837">837</a>                         <strong class="jxr_keyword">if</strong> (_needCRLF)
+<a name="838" href="#838">838</a>                         {
+<a name="839" href="#839">839</a>                             <strong class="jxr_keyword">if</strong> (_header.length() &gt; 0) <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"EOC"</span>);
+<a name="840" href="#840">840</a>                             _header.put(HttpTokens.CRLF);
+<a name="841" href="#841">841</a>                             _needCRLF = false;
+<a name="842" href="#842">842</a>                         }
+<a name="843" href="#843">843</a>                         BufferUtil.putHexInt(_header, size);
+<a name="844" href="#844">844</a>                         _header.put(HttpTokens.CRLF);
+<a name="845" href="#845">845</a>                     }
+<a name="846" href="#846">846</a> 
+<a name="847" href="#847">847</a>                     <em class="jxr_comment">// Add end chunk trailer.</em>
+<a name="848" href="#848">848</a>                     <strong class="jxr_keyword">if</strong> (_buffer.space() &gt;= 2)
+<a name="849" href="#849">849</a>                         _buffer.put(HttpTokens.CRLF);
+<a name="850" href="#850">850</a>                     <strong class="jxr_keyword">else</strong>
+<a name="851" href="#851">851</a>                         _needCRLF = <strong class="jxr_keyword">true</strong>;
+<a name="852" href="#852">852</a>                 }
+<a name="853" href="#853">853</a> 
+<a name="854" href="#854">854</a>                 <em class="jxr_comment">// If we need EOC and everything written</em>
+<a name="855" href="#855">855</a>                 <strong class="jxr_keyword">if</strong> (_needEOC &amp;&amp; (_content == <strong class="jxr_keyword">null</strong> || _content.length() == 0))
+<a name="856" href="#856">856</a>                 {
+<a name="857" href="#857">857</a>                     <strong class="jxr_keyword">if</strong> (_needCRLF)
+<a name="858" href="#858">858</a>                     {
+<a name="859" href="#859">859</a>                         <strong class="jxr_keyword">if</strong> (_buffer == <strong class="jxr_keyword">null</strong> &amp;&amp; _header.space() &gt;= 2)
+<a name="860" href="#860">860</a>                         {
+<a name="861" href="#861">861</a>                             _header.put(HttpTokens.CRLF);
+<a name="862" href="#862">862</a>                             _needCRLF = false;
+<a name="863" href="#863">863</a>                         }
+<a name="864" href="#864">864</a>                         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (_buffer!=<strong class="jxr_keyword">null</strong> &amp;&amp; _buffer.space() &gt;= 2)
+<a name="865" href="#865">865</a>                         {
+<a name="866" href="#866">866</a>                             _buffer.put(HttpTokens.CRLF);
+<a name="867" href="#867">867</a>                             _needCRLF = false;
+<a name="868" href="#868">868</a>                         }
+<a name="869" href="#869">869</a>                     }
+<a name="870" href="#870">870</a> 
+<a name="871" href="#871">871</a>                     <strong class="jxr_keyword">if</strong> (!_needCRLF &amp;&amp; _needEOC)
+<a name="872" href="#872">872</a>                     {
+<a name="873" href="#873">873</a>                         <strong class="jxr_keyword">if</strong> (_buffer == <strong class="jxr_keyword">null</strong> &amp;&amp; _header.space() &gt;= LAST_CHUNK.length)
+<a name="874" href="#874">874</a>                         {
+<a name="875" href="#875">875</a>                             <strong class="jxr_keyword">if</strong> (!_head)
+<a name="876" href="#876">876</a>                             {
+<a name="877" href="#877">877</a>                                 _header.put(LAST_CHUNK);
+<a name="878" href="#878">878</a>                                 _bufferChunked=<strong class="jxr_keyword">true</strong>;
+<a name="879" href="#879">879</a>                             }
+<a name="880" href="#880">880</a>                             _needEOC = false;
+<a name="881" href="#881">881</a>                         }
+<a name="882" href="#882">882</a>                         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (_buffer!=<strong class="jxr_keyword">null</strong> &amp;&amp; _buffer.space() &gt;= LAST_CHUNK.length)
+<a name="883" href="#883">883</a>                         {
+<a name="884" href="#884">884</a>                             <strong class="jxr_keyword">if</strong> (!_head)
+<a name="885" href="#885">885</a>                             {
+<a name="886" href="#886">886</a>                                 _buffer.put(LAST_CHUNK);
+<a name="887" href="#887">887</a>                                 _bufferChunked=<strong class="jxr_keyword">true</strong>;
+<a name="888" href="#888">888</a>                             }
+<a name="889" href="#889">889</a>                             _needEOC = false;
+<a name="890" href="#890">890</a>                         }
+<a name="891" href="#891">891</a>                     }
+<a name="892" href="#892">892</a>                 }
+<a name="893" href="#893">893</a>             }
+<a name="894" href="#894">894</a>         }
+<a name="895" href="#895">895</a> 
+<a name="896" href="#896">896</a>         <strong class="jxr_keyword">if</strong> (_content != <strong class="jxr_keyword">null</strong> &amp;&amp; _content.length() == 0) 
+<a name="897" href="#897">897</a>             _content = <strong class="jxr_keyword">null</strong>;
+<a name="898" href="#898">898</a> 
+<a name="899" href="#899">899</a>     }
+<a name="900" href="#900">900</a> 
+<a name="901" href="#901">901</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getBytesBuffered()
+<a name="902" href="#902">902</a>     {
+<a name="903" href="#903">903</a>         <strong class="jxr_keyword">return</strong>(_header==<strong class="jxr_keyword">null</strong>?0:_header.length())+
+<a name="904" href="#904">904</a>         (_buffer==<strong class="jxr_keyword">null</strong>?0:_buffer.length())+
+<a name="905" href="#905">905</a>         (_content==<strong class="jxr_keyword">null</strong>?0:_content.length());
+<a name="906" href="#906">906</a>     }
+<a name="907" href="#907">907</a> 
+<a name="908" href="#908">908</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isEmpty()
+<a name="909" href="#909">909</a>     {
+<a name="910" href="#910">910</a>         <strong class="jxr_keyword">return</strong> (_header==<strong class="jxr_keyword">null</strong>||_header.length()==0) &amp;&amp;
+<a name="911" href="#911">911</a>         (_buffer==<strong class="jxr_keyword">null</strong>||_buffer.length()==0) &amp;&amp;
+<a name="912" href="#912">912</a>         (_content==<strong class="jxr_keyword">null</strong>||_content.length()==0);
+<a name="913" href="#913">913</a>     }
+<a name="914" href="#914">914</a>     
+<a name="915" href="#915">915</a>     <strong class="jxr_keyword">public</strong> String toString()
+<a name="916" href="#916">916</a>     {
+<a name="917" href="#917">917</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"HttpGenerator s="</span>+_state+
+<a name="918" href="#918">918</a>         <span class="jxr_string">" h="</span>+(_header==<strong class="jxr_keyword">null</strong>?<span class="jxr_string">"null"</span>:(<span class="jxr_string">""</span>+_header.length()))+
+<a name="919" href="#919">919</a>         <span class="jxr_string">" b="</span>+(_buffer==<strong class="jxr_keyword">null</strong>?<span class="jxr_string">"null"</span>:(<span class="jxr_string">""</span>+_buffer.length()))+
+<a name="920" href="#920">920</a>         <span class="jxr_string">" c="</span>+(_content==<strong class="jxr_keyword">null</strong>?<span class="jxr_string">"null"</span>:(<span class="jxr_string">""</span>+_content.length()));
+<a name="921" href="#921">921</a>     }
+<a name="922" href="#922">922</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.mortbay.jetty.serveradaptor"
+      label="Jetty Generic Server Adaptor"
+      version="1.0.2"
+      provider-name="Mort Bay Consulting"
+      image="jetty.gif">
+
+   <description>
+      This feature provides a Jetty implementation for the WST Server
+functionality to allow control of a Jetty server instance as
+well as deployment of Eclipse webapp projects to it.
+   </description>
+
+   <copyright>
+      Copyright 2007 Mort Bay Consulting Pty Ltd
+   </copyright>
+
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Licensed under the Apache License, Version 2.0 (the &amp;quot;License&amp;quot;); you may not use this file except in compliance with the License. You may obtain a copy of the License at 
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &amp;quot;AS IS&amp;quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and imitations under the License.
+   </license>
+
+   <url>
+      <update label="Webtide" url="http://www.webtide.com/eclipse"/>
+   </url>
+
+   <plugin
+         id="org.mortbay.jetty.serveradaptor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

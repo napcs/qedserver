@@ -1,0 +1,712 @@
+Index: examples/test-webapp/pom.xml
+===================================================================
+--- examples/test-webapp/pom.xml	(revision 4810)
++++ examples/test-webapp/pom.xml	(working copy)
+@@ -69,39 +69,6 @@
+           </excludes>
+         </configuration>
+       </plugin>
+-      <plugin>
+-        <groupId>org.mortbay.jetty</groupId>
+-        <artifactId>maven-jetty-plugin</artifactId>
+-        <version>${project.version}</version>
+-        <configuration>
+-          <stopPort>8087</stopPort>
+-          <stopKey>foo</stopKey>
+-          <scanIntervalSeconds>1</scanIntervalSeconds>
+-          <!-- contextPath>/test</contextPath -->
+-          <systemProperties>
+-            <systemProperty>
+-              <name>fooprop</name>
+-              <value>222</value>
+-            </systemProperty>
+-          </systemProperties>
+-          <webAppConfig>
+-            <contextPath>/test</contextPath>
+-            <tempDirectory>${project.build.directory}/work</tempDirectory>
+-            <sessionHandler implementation="org.mortbay.jetty.servlet.SessionHandler">
+-              <sessionManager implementation="org.mortbay.jetty.servlet.HashSessionManager">
+-                <storeDirectory>${basedir}/target/sessions</storeDirectory>
+-                <!-- savePeriod>5</savePeriod -->
+-              </sessionManager>
+-            </sessionHandler>
+-          </webAppConfig>
+-          <userRealms>
+-            <userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
+-              <name>Test Realm</name>
+-              <config>../../etc/realm.properties</config>
+-            </userRealm>
+-          </userRealms>
+-        </configuration>
+-      </plugin>
+       <!-- uncomment to precompile jsps -->
+       <!--
+       <plugin>
+Index: extras/client/pom.xml
+===================================================================
+--- extras/client/pom.xml	(revision 4810)
++++ extras/client/pom.xml	(working copy)
+@@ -46,57 +46,6 @@
+           </execution>		  
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.client</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>*</Import-Package>
+-                <Export-Package>org.mortbay.jetty.client;version=${project.version}</Export-Package>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+-      <plugin>
+-        <artifactId>maven-assembly-plugin</artifactId>
+-        <version>2.2-beta-3</version>
+-        <configuration>
+-           <descriptors>
+-            <descriptor>src/main/assembly/assembly.xml</descriptor>
+-          </descriptors>
+-        </configuration>
+-        <executions>
+-          <execution>
+-            <phase>package</phase>
+-            <goals>
+-              <goal>single</goal>
+-            </goals>
+-          </execution>
+-        </executions>
+-      </plugin>
+ <!--
+        <plugin>
+          <artifactId>minijar-maven-plugin</artifactId>           <groupId>org.codehaus.mojo</groupId>  
+Index: extras/sslengine/pom.xml
+===================================================================
+--- extras/sslengine/pom.xml	(revision 4810)
++++ extras/sslengine/pom.xml	(working copy)
+@@ -57,38 +57,6 @@
+           </execution>		  
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.security</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>*</Import-Package>
+-                <Export-Package>org.mortbay.jetty.security;version=${project.version}</Export-Package>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <version>${maven-jar-plugin-version}</version>
+-        <configuration>
+-          <archive>
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+      </plugins>
+   </build>
+   <dependencies>
+Index: modules/annotations/pom.xml
+===================================================================
+--- modules/annotations/pom.xml	(revision 4810)
++++ modules/annotations/pom.xml	(working copy)
+@@ -51,31 +51,10 @@
+         </executions>
+       </plugin>
+       <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
++        <groupId>org.apache.maven.plugins</groupId>
++        <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.annotations</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-                <Import-Package>!org.mortbay.jetty.annotations.*,*</Import-Package>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <groupId>org.codehaus.mojo</groupId>
+-        <artifactId>dependency-maven-plugin</artifactId>
+-        <executions>
+-          <execution>
+             <id>copy-deps</id>
+             <phase>install</phase>
+             <goals>
+@@ -94,18 +73,6 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/jetty/pom.xml
+===================================================================
+--- modules/jetty/pom.xml	(revision 4810)
++++ modules/jetty/pom.xml	(working copy)
+@@ -92,53 +92,6 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.server</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-                <Import-Package>!org.mortbay.jetty.*,!org.mortbay.xml.*,!org.mortbay.resource.*,!org.mortbay.io.*,!org.mortbay.servlet.jetty.*,javax.servlet.resources;resolution:=optional,javax.servlet.jsp;resolution:=optional,org.apache.jasper.servlet;resolution:=optional,org.mortbay.jetty.handler.management;resolution:=optional,*</Import-Package>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <executions>
+-          <execution>
+-            <id>artifact-jar</id>
+-            <goals>
+-              <goal>jar</goal>
+-            </goals>
+-          </execution>
+-          <execution>
+-            <id>test-jar</id>
+-            <goals>
+-              <goal>test-jar</goal>
+-            </goals>
+-          </execution>
+-        </executions>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/jsp-2.1/pom.xml
+===================================================================
+--- modules/jsp-2.1/pom.xml	(revision 4810)
++++ modules/jsp-2.1/pom.xml	(working copy)
+@@ -76,25 +76,6 @@
+           </execution>
+           </executions>
+       </plugin>
+-       <plugin>
+-            <groupId>org.codehaus.mojo</groupId>
+-            <artifactId>build-helper-maven-plugin</artifactId>
+-            <version>1.1</version>
+-            <executions>
+-              <execution>
+-                <id>add-source</id>
+-                <phase>generate-sources</phase>
+-                <goals>
+-                  <goal>add-source</goal>
+-                </goals>
+-                <configuration>
+-                  <sources>
+-                    <source>${project.build.directory}/generated-sources</source>
+-                  </sources>
+-                </configuration>
+-              </execution>
+-            </executions>
+-      </plugin>
+       <plugin>
+         <artifactId>maven-antrun-plugin</artifactId>
+         <executions>
+@@ -124,36 +105,6 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>!com.sun.appserv.*,!com.sun.common.util.*,!com.sun.el.*,!com.sun.enterprise.web.*,!com.sun.org.apache.commons.*,!org.apache.jasper.*,*</Import-Package>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/naming/pom.xml
+===================================================================
+--- modules/naming/pom.xml	(revision 4810)
++++ modules/naming/pom.xml	(working copy)
+@@ -43,41 +43,8 @@
+         </executions>
+       </plugin>
+       <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>!org.mortbay.naming.*,*</Import-Package>
+-                <Bundle-SymbolicName>org.mortbay.naming</Bundle-SymbolicName>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+         <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+-      <plugin>
+-        <groupId>org.codehaus.mojo</groupId>
+-        <artifactId>dependency-maven-plugin</artifactId>
++        <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>copy-deps</id>
+@@ -133,8 +100,8 @@
+ 	  <build>
+ 	    <plugins>
+ 		  <plugin>
+-		    <groupId>org.codehaus.mojo</groupId>
+-			<artifactId>dependency-maven-plugin</artifactId>
++            <groupId>org.apache.maven.plugins</groupId>
++            <artifactId>maven-dependency-plugin</artifactId>
+ 			<executions>
+ 			  <execution>
+ 			    <id>copy-deps-below1.6</id>
+Index: modules/plus/pom.xml
+===================================================================
+--- modules/plus/pom.xml	(revision 4810)
++++ modules/plus/pom.xml	(working copy)
+@@ -45,65 +45,10 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Bundle-SymbolicName>org.mortbay.jetty.plus</Bundle-SymbolicName>
+-                <Import-Package>!org.mortbay.jetty.plus.*,*</Import-Package>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+     <dependency>
+-      <groupId>org.apache.derby</groupId>
+-      <artifactId>derby</artifactId>
+-      <version>10.1.1.0</version>
+-      <scope>test</scope>
+-    </dependency>
+-    <dependency>
+-      <groupId>junit</groupId>
+-      <artifactId>junit</artifactId>
+-      <scope>test</scope>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.codehaus.plexus</groupId>
+-      <artifactId>plexus-apacheds</artifactId>
+-      <version>1.0-alpha-1</version>
+-      <scope>test</scope>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.codehaus.plexus</groupId>
+-      <artifactId>plexus-container-default</artifactId>
+-      <version>1.0-alpha-20</version>
+-      <scope>test</scope>
+-    </dependency>
+-    <dependency>
+       <groupId>geronimo-spec</groupId>
+       <artifactId>geronimo-spec-jta</artifactId>
+     </dependency>
+Index: modules/util5/pom.xml
+===================================================================
+--- modules/util5/pom.xml	(revision 4810)
++++ modules/util5/pom.xml	(working copy)
+@@ -60,39 +60,6 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.util5</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>!org.mortbay.*,org.slf4j;resolution:=optional,*</Import-Package>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+Index: modules/util/pom.xml
+===================================================================
+--- modules/util/pom.xml	(revision 4810)
++++ modules/util/pom.xml	(working copy)
+@@ -55,39 +55,6 @@
+           </execution>
+         </executions>
+       </plugin>
+-      <plugin>
+-        <groupId>org.apache.felix</groupId>
+-        <artifactId>maven-bundle-plugin</artifactId>
+-        <version>${maven-bundle-plugin-version}</version>
+-        <extensions>true</extensions>
+-        <executions>
+-          <execution>
+-            <goals>
+-              <goal>manifest</goal>
+-            </goals>
+-            <configuration>
+-              <instructions>
+-                <Bundle-SymbolicName>org.mortbay.jetty.util</Bundle-SymbolicName>
+-                <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+-                <Import-Package>!org.mortbay.*,org.slf4j;resolution:=optional,*</Import-Package>
+-                <Bundle-DocURL>http://jetty.mortbay.org</Bundle-DocURL>
+-              </instructions>
+-            </configuration>
+-           </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+-        <!--
+-        Required for OSGI
+-        -->
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-jar-plugin</artifactId>
+-        <configuration>
+-          <archive>               
+-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+-          </archive>
+-        </configuration>
+-      </plugin>
+     </plugins>
+   </build>
+   <dependencies>
+Index: pom.xml
+===================================================================
+--- pom.xml	(revision 5169)
++++ pom.xml	(working copy)
+@@ -1,10 +1,5 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+-  <parent>
+-    <groupId>org.mortbay.jetty</groupId>
+-    <artifactId>jetty-parent</artifactId>
+-    <version>8</version>
+-  </parent>
+   <groupId>org.mortbay.jetty</groupId>
+   <artifactId>project</artifactId>
+   <packaging>pom</packaging>
+@@ -33,28 +28,6 @@
+     <defaultGoal>install</defaultGoal>
+     <plugins>
+       <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-enforcer-plugin</artifactId>
+-        <executions>
+-          <execution>
+-            <id>enforce-java</id>
+-            <goals>
+-              <goal>enforce</goal>
+-            </goals>
+-            <configuration>
+-              <rules>
+-                <requireMavenVersion>
+-                  <version>2.0.6</version>
+-                </requireMavenVersion>
+-                <requireJavaVersion>
+-                  <version>[1.4,)</version>
+-                </requireJavaVersion>
+-              </rules>
+-            </configuration>
+-          </execution>
+-        </executions>
+-      </plugin>
+-      <plugin>
+         <artifactId>maven-compiler-plugin</artifactId>
+         <configuration>
+           <source>1.4</source>
+@@ -62,12 +35,6 @@
+         </configuration>
+       </plugin>
+       <plugin>
+-        <artifactId>maven-release-plugin</artifactId>
+-        <configuration>
+-          <tagBase>https://svn.codehaus.org/jetty/jetty/tags</tagBase>
+-        </configuration>
+-      </plugin>
+-      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+         <version>2.1</version>
+@@ -76,25 +43,11 @@
+             <manifestEntries>
+               <mode>development</mode>
+               <url>${pom.url}</url>
+-	          <implementation-version>${pom.version}</implementation-version>
+ 	          <package>org.mortbay</package>
+             </manifestEntries>
+           </archive>
+         </configuration>
+       </plugin>
+-      <plugin>
+-	    <inherited>true</inherited>
+-	    <groupId>org.apache.maven.plugins</groupId>
+-	    <artifactId>maven-source-plugin</artifactId>
+-	    <executions>
+-	      <execution>
+-	        <id>attach-sources</id>
+-	        <goals>
+-	          <goal>jar</goal>
+-	        </goals>
+-	      </execution>
+-	    </executions>
+-      </plugin>
+     </plugins>
+     <pluginManagement>
+ 	  <plugins>
+@@ -111,43 +64,21 @@
+     <module>modules/util5</module>
+     <module>modules/jetty</module>
+     <module>modules/jsp-2.1</module>
+-    <module>modules/jsp-api-2.0</module>
+-    <module>modules/jsp-2.0</module>
+-    <module>modules/management</module>
+     <module>modules/start</module>
+-    <module>modules/maven-plugin</module>
+-    <module>modules/jspc-maven-plugin</module>
+     <module>modules/naming</module>
+     <module>modules/plus</module>
+     <module>modules/html</module>
+-    <module>modules/annotations</module>
+ 
+     <module>extras/servlet-tester</module>
+-    <module>extras/xbean</module>
+-    <module>extras/spring</module>
+     <module>extras/sslengine</module>
+     <module>extras/ajp</module>
+-    <module>extras/win32service</module>
+-    <!--module>extras/gwt</module-->
+-    <module>extras/threadpool</module>
+     <module>extras/client</module>
+ 
+     <module>examples/test-webapp</module>
+-    <module>examples/test-jaas-webapp</module>
+-    <module>examples/test-jndi-webapp</module>
+-    <module>examples/embedded</module>
+-    <!-- <module>examples/spring-ebj3-demo</module> -->
+     <module>examples/tests</module>
+ 
+ 
+-    <module>contrib/cometd</module>
+-    <module>contrib/jetty-ant</module>
+     <module>contrib/jetty-rewrite-handler</module>
+-    <!--module>contrib/grizzly</module-->
+-    <!--module>contrib/wadi</module-->
+-    <module>contrib/terracotta</module>
+-
+-    <module>extras/setuid</module>
+   </modules>
+   <dependencyManagement>
+     <dependencies>
+@@ -218,22 +149,13 @@
+       <build>
+       <plugins>
+         <plugin>
+-          <groupId>org.apache.maven.plugins</groupId>
+-          <artifactId>maven-remote-resources-plugin</artifactId>
+-          <configuration>
+-                <resourceBundles>
+-                  <resourceBundle>org.mortbay.jetty:jetty-build-resources:1.0.1</resourceBundle>
+-                </resourceBundles>
+-              </configuration>
+-        </plugin>
+-        <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-javadoc-plugin</artifactId>
+               <configuration>
+                 <excludePackageNames>org.apache.*:ebay.*:javax.*:com.sun.*:com.google.*:dojox.*:com.acme.*</excludePackageNames>
+                 <aggregate>true</aggregate>
+                 <debug>false</debug>
+-                <stylesheetfile>${project.build.directory}/maven-shared-archive-resources/org/mortbay/jetty/build/resources/javadoc.css</stylesheetfile>
++                <stylesheetfile>${basedir}/javadoc.css</stylesheetfile>
+                 <links>
+                   <link>http://java.sun.com/javaee/5/docs/api</link>
+                   <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+@@ -256,13 +178,4 @@
+       </build>
+     </profile>
+   </profiles>
+-  <reporting>
+-    <plugins>
+-      <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-project-info-reports-plugin</artifactId>
+-        <version>2.0</version>
+-      </plugin>
+-    </plugins>
+-  </reporting>
+ </project>

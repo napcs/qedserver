@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://www.webtide.com/eclipse">
+      Eclipse Update Site for Jetty Server Adaptor Plugin
+   </description>
+   <feature url="features/org.mortbay.jetty.serveradaptor_1.0.0.jar" id="org.mortbay.jetty.serveradaptor" version="1.0.0">
+      <category name="org.eclipse.wst.server.core.serverAdapter"/>
+   </feature>
+   <feature url="features/org.mortbay.jetty.serveradaptor_1.0.1.jar" id="org.mortbay.jetty.serveradaptor" version="1.0.1">
+      <category name="org.eclipse.wst.server.core.serverAdapter"/>
+   </feature>
+   <feature url="features/org.mortbay.jetty.serveradaptor_1.0.2.jar" id="org.mortbay.jetty.serveradaptor" version="1.0.2">
+      <category name="org.eclipse.wst.server.core.serverAdapter"/>
+   </feature>
+   <category-def name="org.eclipse.wst.server.core.serverAdapter" label="Jetty Server Adaptor"/>
+</site>

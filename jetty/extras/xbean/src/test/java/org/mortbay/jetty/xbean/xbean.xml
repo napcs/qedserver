@@ -1,0 +1,37 @@
+<beans>
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+  <jetty xmlns="http://mortbay.com/schemas/jetty/1.0">
+      <connectors>
+        <nioConnector port="0" />
+      </connectors>
+    <handlers>
+      <contexts>
+        <handlers>
+          <webAppContext contextPath="/test" 
+                         resourceBase="${java.io.tmpdir}/webapp" 
+                         parentLoaderPriority="false"
+                         logUrlOnStart="true"/>
+       </handlers>
+      </contexts>
+      <defaultHandler serveIcon="true"/>
+      <requestLogHandler>
+        <requestLog>
+          <ncsaLog filename="${java.io.tmpdir}/foo" 
+                   retainDays="90" 
+                   append="true" 
+                   extended="false" 
+                   logTimeZone="GMT"/>
+        </requestLog>
+      </requestLogHandler>
+    </handlers>
+    
+    <deployers>
+    	<hotDeployer directory="${java.io.tmpdir}/deploy" />
+    </deployers>
+
+    <userRealms>
+      <jaasUserRealm  name="xyzrealm" loginModuleName="xyz" />
+    </userRealms>
+  </jetty>
+</beans>

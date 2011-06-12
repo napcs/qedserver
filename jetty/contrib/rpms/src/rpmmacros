@@ -1,0 +1,14 @@
+%_topdir        %(echo ${HOME}/rpm)
+%_tmppath       %{_topdir}/tmp
+%packager       Webtide <info@webtide.com>
+%distribution JPackage
+%vendor jetty.mortbay.org
+
+# Uncomment to have built RPMs land in RPMS/ instead of RPMS/<arch>/
+#%_rpmfilename  %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
+
+# Uncomment for signing your packages with GPG
+#%_gpg_name FirstName LastName <email address>
+#%_gpg_path /path/to/keys
+
+

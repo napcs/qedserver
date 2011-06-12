@@ -1,0 +1,52 @@
+<HTML>
+  <HEAD>
+    <TITLE>Powered By Jetty</TITLE>
+    <META http-equiv="Pragma" content="no-cache">
+    <META http-equiv="Cache-Control" content="no-cache,no-store">
+  </HEAD>
+<BODY>
+<A HREF="http://jetty.mortbay.org/jetty6"><IMG SRC="http://jetty.mortbay.org/jetty/images/jetty_banner.gif"></A>
+<P>
+<h1>Jetty 6 and Annotations</h1>
+
+<p>
+This example shows how to use annotations.
+</p>
+
+<h2>Preparation</h2>
+<p>
+<ol>
+<li>Ensure that you have installed the jars for the transaction manager of your choice in $JETTY_HOME/lib/ext. This demo has been tested with <a href="http://jotm.objectweb.org/">JOTM</a> and <a href="http://www.atomikos.com">Atomikos</a>.
+
+<li>Make sure you have built this demo. Assuming your jetty src distro is installed at $JETTY_HOME:
+</p>
+<blockquote>
+<pre>
+  +  cd $JETTY_HOME/examples/test-annotations
+  +  mvn clean install
+</pre>
+</blockquote>
+<li> Set up the configuration files with the transaction manager of your choice:
+<blockquote>
+<pre>
+  +  cd $JETTY_HOME/contexts
+  +  edit annotations-context.xml and uncomment one of the transaction manager setups
+</pre>
+</blockquote>
+</ol>
+ 
+<p>
+Now you can start the demo:
+<blockquote>
+<pre>
+   java -jar start.jar 
+</pre>
+</blockquote>
+<h2>The Test</h2>
+<p>
+</p>
+<form action="test" method="post">
+  <button type="submit">Do It</button>
+</form>
+</BODY>
+</HTML>

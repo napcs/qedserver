@@ -1,0 +1,8 @@
+lib/servlet-api-*.jar	usr/share/jetty6/lib
+lib/jetty-util-${PROJECT.VERSION}.jar		usr/share/jetty6/lib
+lib/jetty-${PROJECT.VERSION}.jar		usr/share/jetty6/lib
+lib/jre1.5/jetty-util5-${PROJECT.VERSION}.jar usr/share/jetty6/lib/jre1.5
+README.txt					usr/share/doc/jetty6
+VERSION.txt					usr/share/doc/jetty6
+javadoc/*					usr/share/doc/jetty6/api
+LICENSES					usr/share/doc/jetty6

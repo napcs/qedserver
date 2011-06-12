@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>org.mortbay.jetty</groupId>
+    <version>6.1.26</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.mortbay.jetty</groupId>
+  <artifactId>jetty-grizzly</artifactId>
+  <name>Jetty Grizzly</name>
+  <url>http://jetty.mortbay.org</url>
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copyfiles</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy failonerror="false" file="target/${project.artifactId}-${project.version}.${project.packaging}" todir="../../lib/grizzly"></copy>
+                <copy failonerror="false" file="src/main/resources/jetty-grizzly.xml" todir="../../etc"></copy>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete failonerror="false" dir="../../lib/grizzly"></delete>
+                <delete failonerror="false" file="../../etc/jetty-grizzly.xml"></delete>
+              </tasks>
+            </configuration>
+          </execution>		  
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+               <artifactItem>
+		  <groupId>com.sun.grizzly</groupId>
+		  <artifactId>framework</artifactId>
+		  <version>${grizzly-version}</version>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${basedir}/../../lib/grizzly</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+        </configuration>
+    </plugin>      
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>module-repo</id>
+      <name>module repo</name>
+      <url>file:${basedir}/repository</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots />
+    </repository>
+    <repository>
+      <snapshots>
+      </snapshots>
+      <id>java.net repository</id>
+      <name>Maven 2.0 Repository</name>
+      <url>http://download.java.net/maven/2</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-plus</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.sun.grizzly</groupId>
+        <artifactId>framework</artifactId>
+        <version>${grizzly-version}</version>
+     </dependency>
+  </dependencies>
+  <properties>
+    <grizzly-version>1.6.1</grizzly-version>
+  </properties>
+</project>

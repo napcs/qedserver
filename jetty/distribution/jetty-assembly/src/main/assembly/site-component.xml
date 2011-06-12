@@ -1,0 +1,16 @@
+<assembly>
+  <id>site-component</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>../../</directory>
+      <outputDirectory>${artifactId}-${version}</outputDirectory>
+      <includes>
+        <include>javadoc/**</include>
+        <include>jxr/**</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>

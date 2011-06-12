@@ -1,0 +1,7 @@
+etc/default
+etc/jetty6
+etc/jetty6/contexts
+usr/share/jetty6
+var/lib/jetty6/webapps
+var/log/jetty6
+var/cache/jetty6

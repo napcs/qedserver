@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure id="Server" class="org.mortbay.jetty.Server">
+
+    <!-- =========================================================== -->
+    <!-- Configure jsp logging                                       -->
+    <!-- =========================================================== -->
+
+    <Call class="com.sun.org.apache.commons.logging.LogFactory" name="setLogImplClassName">
+      <Arg>com.sun.org.apache.commons.logging.impl.JettyLog</Arg>
+    </Call>
+
+</Configure>

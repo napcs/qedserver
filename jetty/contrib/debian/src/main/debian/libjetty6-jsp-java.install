@@ -1,0 +1,4 @@
+lib/jsp-2.1/core-3.1.1.jar usr/share/jetty6/lib/jsp-2.1
+lib/jsp-2.1/jsp-api-2.1-glassfish-*.jar usr/share/jetty6/lib/jsp-2.1
+lib/jsp-2.1/jsp-2.1-glassfish-*.jar usr/share/jetty6/lib/jsp-2.1
+lib/jsp-2.1/jsp-2.1-jetty-${PROJECT.VERSION}.jar

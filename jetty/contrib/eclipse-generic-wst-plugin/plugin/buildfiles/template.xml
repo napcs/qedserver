@@ -1,0 +1,18 @@
+<?xml version="1.0"  encoding="ISO-8859-1"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+  <Set name="configurationClasses">
+    <Array type="java.lang.String">
+      <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+      <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+      <Item>@ANNOTATION_CONFIG@</Item>
+      <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+      <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
+    </Array>
+  </Set>
+
+  <Set name="contextPath">@CONTEXT_PATH@</Set>
+  <Set name="war">@MODULE_WAR@</Set>
+  <Set name="extractWAR">true</Set>
+  <Set name="copyWebDir">false</Set>
+</Configure>

@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+
+<!-- =============================================================== -->
+<!-- Configure the test-annotations webapp                           -->
+<!-- =============================================================== -->
+
+<Configure id='wac' class="org.mortbay.jetty.webapp.WebAppContext">
+
+  <!-- =========================================================== -->
+  <!-- Configurations for WebAppContexts                          -->
+  <!-- Sequence of configurations to be applied to a webapp that  -->
+  <!-- wants to use Annotations                                   -->
+  <!-- ========================================================== -->
+  <Array id="annotationConfig" type="java.lang.String">
+    <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+    <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+    <Item>org.mortbay.jetty.annotations.Configuration</Item>
+    <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+    <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
+  </Array>
+
+
+  <!-- =============================================================== -->
+  <!-- Configure the webapp                                            -->
+  <!-- =============================================================== -->
+  <Set name="contextPath">/test-annotations</Set>
+  <Set name="war"><SystemProperty name="jetty.home"/>/contexts/test-annotations.d</Set>
+  <Set name="configurationClasses"><Ref id="annotationConfig"/></Set>
+
+  <Get name="securityHandler">
+    <Set name="userRealm">
+      <New class="org.mortbay.jetty.security.HashUserRealm">
+        <Set name="name">Test Realm</Set>
+        <Set name="config"><SystemProperty name="jetty.home" default="."/>/etc/realm.properties</Set>
+      </New>
+    </Set>
+  </Get>
+
+
+  <!-- =============================================================== -->
+  <!-- Set up some env entrys                                          -->
+  <!-- =============================================================== -->
+  <Call class="java.lang.System" name="setProperty">
+    <Arg>derby.system.home</Arg>
+    <Arg><SystemProperty name="java.io.tmpdir"/></Arg>
+  </Call>
+
+  <Call class="java.lang.System" name="setProperty">
+    <Arg>com.atomikos.icatch.file</Arg>
+    <Arg><SystemProperty name="jetty.home"/>/contexts/test-annotations.d/WEB-INF/classes/jta.properties</Arg>
+  </Call>
+
+
+  <New id="maxAmount"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+    <Arg><Ref id='wac'/></Arg>
+    <Arg>maxAmount</Arg>
+    <Arg type="java.lang.Double">100</Arg>
+    <Arg type="boolean">true</Arg>
+  </New>
+
+
+
+
+  <!-- =============================================================== -->
+  <!-- Configuring Transactions and XA Datasources                     -->
+  <!-- Uncomment EITHER the setup for Atomikos OR for Jotm             -->
+  <!-- =============================================================== -->
+
+  <!-- Atomikos        
+  @ATOMIKOS-TRANSACTIONMANAGER@
+
+  <New id="tx" class="org.mortbay.jetty.plus.naming.Transaction">
+   <Arg>
+     @ATOMIKOS-USERTRANSACTION@
+   </Arg>
+  </New>
+
+
+  @ATOMIKOS-DATASOURCE1-PRE@
+
+
+  <New id="mydatasource" class="org.mortbay.jetty.plus.naming.Resource">
+    <Arg><Ref id='wac'/></Arg>
+    <Arg>jdbc/mydatasource</Arg>
+    <Arg>
+     @ATOMIKOS-DATASOURCE1@
+    </Arg>
+   </New>
+   END OF ATOMIKOS -->
+
+  <!-- JOTM
+  @JOTM-TRANSACTIONMANAGER@
+
+  <New id="tx" class="org.mortbay.jetty.plus.naming.Transaction">
+   <Arg>
+     @JOTM-USERTRANSACTION@
+   </Arg>
+  </New>
+
+
+  @JOTM-DATASOURCE1-PRE@
+
+
+  <New id="mydatasource" class="org.mortbay.jetty.plus.naming.Resource">
+    <Arg><Ref id='wac'/></Arg>
+    <Arg>jdbc/mydatasource</Arg>
+    <Arg>
+     @JOTM-DATASOURCE1@
+    </Arg>
+   </New>
+
+
+  END OF JOTM -->
+
+</Configure>

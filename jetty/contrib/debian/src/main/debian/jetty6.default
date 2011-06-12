@@ -1,0 +1,7 @@
+# Defaults for jetty see /etc/init.d/jetty for more
+
+NO_START=1 # change to 0 to allow Jetty to start
+
+TMP=/var/cache/jetty6
+JAVA_OPTIONS="-Xmx256m -Djava.awt.headless=true $JETTY_OPTIONS"
+JETTY_USER=jetty

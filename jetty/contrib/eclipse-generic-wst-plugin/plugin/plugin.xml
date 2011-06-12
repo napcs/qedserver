@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.wst.server.core.runtimeTypes">
+	  <runtimeType 
+	    class="org.eclipse.jst.server.generic.core.internal.GenericServerRuntime"
+	    description="Jetty 6.x Server"
+	    id="org.mortbay.jetty.serveradaptor.runtime"
+	    name="Jetty 6" 
+	    vendor="Jetty" 
+	    vendorId="jetty" 
+	    version="6.1.x">	    
+	      <moduleType types="jst.web"  versions="2.2, 2.3, 2.4, 2.5"/>    
+	  </runtimeType>	  
+	</extension>
+	
+	<extension point="org.eclipse.wst.server.core.serverTypes">
+	  <serverType 
+	    id="org.mortbay.jetty.serveradaptor.server" 
+	    runtime="true"
+        runtimeTypeId="org.mortbay.jetty.serveradaptor.runtime"
+        name="Jetty 6" 
+        description="Jetty Server"
+        class="org.eclipse.jst.server.generic.core.internal.GenericServer"
+        behaviourClass="org.eclipse.jst.server.generic.core.internal.GenericServerBehaviour"
+        hasConfiguration="false" 
+        initialState="stopped" 
+        launchConfigId="org.eclipse.jst.server.generic.core.launchConfigurationType"
+        launchModes="run,debug,profile" 
+        startBeforePublish="true" 
+        startTimeout="120000"
+        stopTimeout="15000"
+        supportsRemoteHosts="false">
+      </serverType>
+    </extension>
+    
+	<extension point="org.eclipse.wst.server.ui.wizardFragments">
+	  <fragment id="org.eclipse.jst.server.generic.runtime"
+        typeIds="org.mortbay.jetty.serveradaptor.runtime"
+        class="org.eclipse.jst.server.generic.ui.internal.GenericServerRuntimeWizardFragment"/>
+      <fragment id="org.eclipse.jst.server.generic.server"
+         typeIds="org.mortbay.jetty.serveradaptor.server"
+         class= "org.eclipse.jst.server.generic.ui.internal.GenericServerWizardFragment"/>
+    </extension>
+    
+    <extension point="org.eclipse.jst.server.core.runtimeClasspathProviders">
+      <runtimeClasspathProvider 
+        class="org.eclipse.jst.server.generic.core.internal.GenericServerRuntimeTargetHandler"
+        id="org.mortbay.jetty.serveradaptor.runtimeClasspathProvider"
+        runtimeTypeIds="org.mortbay.jetty.serveradaptor.*"/>
+    </extension>
+    
+    <extension point="org.eclipse.jst.server.generic.core.serverdefinition">
+      <serverdefinition 
+	    id="org.mortbay.jetty.serveradaptor.runtime"
+	    definitionfile="/servers/jetty.serverdef" />
+    </extension>
+    
+    <extension point="org.eclipse.wst.server.ui.serverImages">
+      <image id="org.eclipse.jst.server.generic.image"
+        icon="icons/jetty_tiny.gif"
+        typeIds="org.mortbay.jetty.serveradaptor.runtime"/>
+      <image id="org.eclipse.jst.server.generic.image"
+        icon="icons/jetty_tiny.gif"
+        typeIds="org.mortbay.jetty.serveradaptor.server"/>
+    </extension>
+
+    <extension point="org.eclipse.wst.common.project.facet.ui.images">
+      <image runtime-component-type="org.mortbay.jetty.serveradaptor.runtime"
+        path="icons/jetty_tiny.gif"/>
+    </extension>
+</plugin>

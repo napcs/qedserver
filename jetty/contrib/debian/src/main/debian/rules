@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+# debian/rules for Jetty (uses CDBS)
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+
+build:
+
+

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project name="jetty-tasks">
+  <property name="project.outputDirectory" value="target" />
+  <property name="project.version" value="6.1.26" />
+  <property name="M2_REPO" value="${user.home}/.m2/repository/" />
+
+  <property name="jetty.version" value="6.1.26" />
+  <property name="servlet.version" value="2.5-20081211" />
+  <property name="glassfish.jsp.version" value="9.1.1.B51.25.p1" />
+
+  <path id="jetty.plugin.classpath">
+    <fileset dir="${M2_REPO}">
+      <include name="org/mortbay/jetty/jetty-ant/${project.version}/jetty-ant-${project.version}.jar" />
+      <include name="org/mortbay/jetty/jetty/${jetty.version}/jetty-${jetty.version}.jar" />
+      <include name="org/mortbay/jetty/jetty-util/${jetty.version}/jetty-util-${jetty.version}.jar" />
+      <include name="org/mortbay/jetty/jetty-plus/${jetty.version}/jetty-plus-${jetty.version}.jar" />
+      <include name="org/mortbay/jetty/jetty-naming/${jetty.version}/jetty-naming-${jetty.version}.jar" />
+      <include name="org/mortbay/jetty/servlet-api/${servlet.version}/servlet-api-${servlet.version}.jar" />
+      <include name="org/mortbay/jetty/jsp-api-2.1-glassfish/${glassfish.jsp.version}/jsp-api-2.1-glassfish-${glassfish.jsp.version}.jar" />
+      <include name="org/mortbay/jetty/jsp-2.1-glassfish/${glassfish.jsp.version}/jsp-2.1-glassfish-${glassfish.jsp.version}.jar" />
+      <include name="org/mortbay/jetty/jsp-2.1-jetty/${jetty.version}/jsp-2.1-jetty-${jetty.version}.jar" />
+      <include name="org/eclipse/jdt/core/3.1.1/core-3.1.1.jar" />
+    </fileset>
+  </path>
+
+
+  <taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" />
+  <typedef name="selectChannelConnector" classname="org.mortbay.jetty.nio.SelectChannelConnector" classpathref="jetty.plugin.classpath" loaderref="jetty.loader" />  
+</project>

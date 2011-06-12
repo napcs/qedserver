@@ -29,17 +29,30 @@ Then,
     
 This will run 'rackup' and load the server at http://localhost:9292. It's quicker to do this during development than it is to build the WAR file.
 
-When you want to build your own package, use
+To run QEDServer under Java, you can generate QEDServer as a war file:
     
-    rake war package_jetty
+    rake war
+    
+Then you can install the WAR file on any server you'd like.
 
-That will generate the sandbox. You can launch QEDServer from the sandbox folder.
+#### Building Standalone QED
+To build a cross-platform standalone distribution, build the war and get the sandbox created:
 
-    java -jar start.jar
+    rake war config_jetty install_qed
     
-This also creates the zip file for distribution.
+This creates the `sandbox/` folder where you can test things out. Run it with
+
+    server.bat
     
-That will also grab `END_USER_README.md` and throw it in the archive.
+on Windows or
+
+    sh server.sh
+
+To zip the whole thing up to make a release, simply use
+   
+    rake package_jetty
+
+This builds the war, rebuilds a fresh sandbox, and creates the zip file for distribution. It grabs `END_USER_README.md` and throw it in the archive.
 
 ### The files
 QED Server is just a Sinatra application wrapped by Warbler, so to customize it, just replace the guts. Add your own models, change the routes around, do what you need to do.

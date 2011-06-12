@@ -45,13 +45,13 @@ task :config_jetty  do
 end
 
 desc "inject QEDServer into Jetty"
-task :inject_qed do
+task :install_qed do
   FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
   FileUtils.cp "webserver.war", "sandbox/webserver/webapps/webserver.war"
 end
 
 desc "Package QEDServer as a zipfile"
-task :package_jetty => [:war, :config_jetty, :inject_qed] do
+task :package_jetty => [:war, :config_jetty, :install_qed] do
  
   FileUtils.cp "END_USER_README.md", "sandbox/README.txt"
   %w{LICENSE HISTORY.txt}.each do |f|

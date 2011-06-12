@@ -14,7 +14,7 @@ so you'll have a clean environment again.
 
 Setup
 --------
-You'll need the Java Runtime Environment version 1.6. 
+You'll need the Java Runtime Environment version 1.6.
     
 On Windows, you can run 
 
@@ -25,10 +25,6 @@ And on Mac OSX and Linux, you can run
     sh server.sh
     
 to start the server.
-
-You can also run it directly with Java by doing
-
-    java -jar webserver.war
     
 Finally, you can use `fresh_server.bat` on Windows and `fresh_server.sh` on Linux or OSX to delete the database file before starting the server so that you'll have a fresh environment when you star the server again.
 
@@ -51,3 +47,8 @@ Point your browser to http://localhost:8080/products to manage the database.
 
 Edit the startup scripts to specify the port you'd like to use. It's the `httpPort` option.
 
+License
+---------
+QEDServer Copyright (C) 2011 by Brian P. Hogan. See LICENSE for details.
+
+Licenses for Jetty and other Java components are in jetty/LICENSES

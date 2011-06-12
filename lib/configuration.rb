@@ -5,8 +5,11 @@ ENV['RACK_ENV'] ||= "development"
 
 puts "Using #{ENV['RACK_ENV']} environment"
 
-DBFILE =  File.expand_path(".", ENV_JAVA['user.dir'] + "/../products.sqlite3")
-PUBLIC_PATH = File.expand_path(".", ENV_JAVA['user.dir'] + ("/../public"))
+# Jetty is gonna be in its own folder so we need to go up one folder.
+QED_ROOT_FOLDER = ENV_JAVA["jetty.home"] ? ENV_JAVA['user.dir'] + "/.." : ENV_JAVA['user.dir']
+
+DBFILE =  File.expand_path(".", QED_ROOT_FOLDER + "/products.sqlite3")
+PUBLIC_PATH = File.expand_path(".", QED_ROOT_FOLDER + "/public")
 
 # Public Folder setup
 FileUtils.mkdir_p PUBLIC_PATH

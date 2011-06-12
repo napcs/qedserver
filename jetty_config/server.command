@@ -1,5 +1,5 @@
 #!/bin/sh
-rm products.sqlite3
-cd webserver 
+cd "`dirname "$0"`"
+cd webserver
 java -jar start.jar
 cd ..

@@ -108,14 +108,16 @@ describe "QED Server" do
       describe "with JSON in the body of the request" do
         it "displays the success message" do
           post "/products.json", {:name => "Foo"}.to_json
-          last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+          response = (Product.find_by_name("Foo").attributes.merge({:success => true, :message => "Created Foo"})).to_json
+          last_response.body.should == response
         end
       end
       
       describe "with JSON" do
         it "displays the success message" do
           post "/products.json", {:product => {:name => "Foo"}}
-          last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+          response = (Product.find_by_name("Foo").attributes.merge({:success => true, :message => "Created Foo"})).to_json
+          last_response.body.should == response
         end
         
 
@@ -182,14 +184,17 @@ describe "QED Server" do
       describe "with JSON in the request body" do
         it "displays the success message" do
           put "/products/#{@product.id}.json", {:name => "Bar"}.to_json
-          last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
+
+          response = (@product.reload.attributes.merge({:success => true, :message => "Updated Bar"})).to_json
+          last_response.body.should == response
         end
       end
       
       describe "with JSON" do
         it "displays the success message" do
           put "/products/#{@product.id}.json", {:product => {:name => "Bar"}}
-          last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
+          response = (@product.reload.attributes.merge({:success => true, :message => "Updated Bar"})).to_json
+          last_response.body.should == response
         end
 
         it "displays the error message when not created" do
@@ -313,7 +318,9 @@ describe "QED Server" do
       describe "with JSON in the request body" do
         it "displays the success message" do
            post "/categories.json", {:name => "Foo"}.to_json
-           last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+
+           response = (Category.find_by_name("Foo").attributes.merge({:success => true, :message => "Created Foo"})).to_json
+           last_response.body.should == response
          end
 
       end
@@ -321,7 +328,8 @@ describe "QED Server" do
       describe "with JSON" do
         it "displays the success message" do
           post "/categories.json", {:category => {:name => "Foo"}}
-          last_response.body.should == {:success => true, :message => "Created Foo"}.to_json
+          response = (Category.find_by_name("Foo").attributes.merge({:success => true, :message => "Created Foo"})).to_json
+          last_response.body.should == response
         end
 
         it "displays the error message when not created" do
@@ -384,10 +392,19 @@ describe "QED Server" do
         end
       end
       
+      describe "with JSON in the request body" do
+        it "displays the success message" do
+          put "/categories/#{@category.id}.json", {:name => "Bar"}.to_json
+          response = (@category.reload.attributes.merge({:success => true, :message => "Updated Bar"})).to_json
+          last_response.body.should == response
+        end
+      end
+      
       describe "with JSON" do
         it "displays the success message" do
           put "/categories/#{@category.id}.json", {:category => {:name => "Bar"}}
-          last_response.body.should == {:success => true, :message => "Updated Bar"}.to_json
+          response = (@category.reload.attributes.merge({:success => true, :message => "Updated Bar"})).to_json
+          last_response.body.should == response
         end
 
         it "displays the error message when not created" do

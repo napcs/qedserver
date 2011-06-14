@@ -73,7 +73,7 @@ put "/products/:id" do
         flash[:notice] = message
         redirect "/products"
       end
-      format.json { {:success => true, :message => message}.to_json }
+      format.json { (@product.attributes.merge({:success => true, :message => message})).to_json }
     end
   else
     message = "The product was not saved."
@@ -115,7 +115,7 @@ post "/products" do
         flash[:notice] = message
         redirect "/products"
       end
-      format.json { {:success => true, :message => message}.to_json }
+      format.json { (@product.attributes.merge({:success => true, :message => message})).to_json }
     end
   else
     message = "The product was not saved."

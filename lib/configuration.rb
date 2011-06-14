@@ -24,7 +24,8 @@ end
 # Database Configuration and setup
 ActiveRecord::Base.establish_connection(
 :adapter => "jdbcsqlite3",
-:database => DBFILE
+:database => DBFILE,
+:pool => 15
 )
 
 puts "Using database file at #{DBFILE}"

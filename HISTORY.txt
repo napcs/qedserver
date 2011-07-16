@@ -1,3 +1,4 @@
+* 0.6.2 - The ID for the textarea for product descriptions now matches the label. 
 * 0.6.1 - Changed POST and PUT api actions to return the newly-created object attributes along with the message and status boolean. This helps Backbone.js work out of the box with creates and retreiving the model ID.
 * 0.6.0 - Replaced Winstone with Jetty to fix the intermittent truncation errors.
 * 0.5.6 - Fixed update API to use a correct RESTful URL. Updated binary to use JRuby 1.6.2.

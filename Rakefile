@@ -55,7 +55,7 @@ task :install_qed do
   FileUtils.mkdir "sandbox/webserver/contexts"
   FileUtils.mkdir "sandbox/webserver/webapps"
   FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
-  FileUtils.cp "webserver.war", "sandbox/webserver/webapps/webserver.war"
+  FileUtils.cp "qedserver.war", "sandbox/webserver/webapps/webserver.war"
   puts "QEDServer copied into the webserver folder"
 end
 

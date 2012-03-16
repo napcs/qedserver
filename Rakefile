@@ -22,26 +22,26 @@ desc "Create customized version of Jetty for our use by copying only what we nee
 task :build_jetty do
   FileUtils.rm_rf "sandbox"
   FileUtils.mkdir "sandbox"
-  FileUtils.mkdir "sandbox/webserver"
-  FileUtils.mkdir "sandbox/webserver/etc"
-  FileUtils.mkdir "sandbox/webserver/resources"
-  FileUtils.cp "jetty/start.jar", "sandbox/webserver/start.jar"
-  FileUtils.cp_r "jetty/lib", "sandbox/webserver/lib"
-  FileUtils.cp_r "jetty/LICENSES", "sandbox/webserver/LICENSES"
-  FileUtils.cp "jetty/etc/jetty.xml", "sandbox/webserver/etc/jetty.xml"
-  FileUtils.cp "jetty/etc/webdefault.xml", "sandbox/webserver/etc/webdefault.xml"
-  FileUtils.cp "jetty/etc/realm.properties", "sandbox/webserver/etc/realm.properties"
-  FileUtils.mkdir_p "sandbox/webserver/logs"
+  FileUtils.mkdir "sandbox/qedserver"
+  FileUtils.mkdir "sandbox/qedserver/etc"
+  FileUtils.mkdir "sandbox/qedserver/resources"
+  FileUtils.cp "jetty/start.jar", "sandbox/qedserver/start.jar"
+  FileUtils.cp_r "jetty/lib", "sandbox/qedserver/lib"
+  FileUtils.cp_r "jetty/LICENSES", "sandbox/qedserver/LICENSES"
+  FileUtils.cp "jetty/etc/jetty.xml", "sandbox/qedserver/etc/jetty.xml"
+  FileUtils.cp "jetty/etc/webdefault.xml", "sandbox/qedserver/etc/webdefault.xml"
+  FileUtils.cp "jetty/etc/realm.properties", "sandbox/qedserver/etc/realm.properties"
+  FileUtils.mkdir_p "sandbox/qedserver/logs"
 end
 
 desc "inject QEDServer into Jetty"
 task :install_qed do
   puts "Configuring folders for QEDServer"
   puts "patching logger"
-  FileUtils.cp "jetty_config/slf4j-log4j12-1.6.1.jar", "sandbox/webserver/lib/slf4j-log4j12-1.6.1.jar"
-  FileUtils.cp "jetty_config/log4j-1.2.16.jar", "sandbox/webserver/lib/log4j-1.2.16.jar"
-  FileUtils.cp "jetty_config/slf4j-api-1.6.1.jar", "sandbox/webserver/lib/slf4j-api-1.6.1.jar"
-  FileUtils.cp "jetty_config/log4j.properties", "sandbox/webserver/resources/log4j.properties"
+  FileUtils.cp "jetty_config/slf4j-log4j12-1.6.1.jar", "sandbox/qedserver/lib/slf4j-log4j12-1.6.1.jar"
+  FileUtils.cp "jetty_config/log4j-1.2.16.jar", "sandbox/qedserver/lib/log4j-1.2.16.jar"
+  FileUtils.cp "jetty_config/slf4j-api-1.6.1.jar", "sandbox/qedserver/lib/slf4j-api-1.6.1.jar"
+  FileUtils.cp "jetty_config/log4j.properties", "sandbox/qedserver/resources/log4j.properties"
   puts "updating startup scripts"
   FileUtils.cp_r "jetty_config/server.bat", "sandbox"
   FileUtils.cp_r "jetty_config/fresh_server.bat", "sandbox"
@@ -50,18 +50,22 @@ task :install_qed do
   FileUtils.cp_r "jetty_config/server.sh", "sandbox"
   FileUtils.cp_r "jetty_config/fresh_server.sh", "sandbox"
   puts "Copying QEDServer..."
-  FileUtils.rm_rf "sandbox/webserver/contexts/"
-  FileUtils.rm_rf "sandbox/webserver/webapps/"
-  FileUtils.mkdir "sandbox/webserver/contexts"
-  FileUtils.mkdir "sandbox/webserver/webapps"
-  FileUtils.cp "jetty_config/webserver.xml", "sandbox/webserver/contexts/"
-  FileUtils.cp "qedserver.war", "sandbox/webserver/webapps/webserver.war"
-  puts "QEDServer copied into the webserver folder"
+  FileUtils.rm_rf "sandbox/qedserver/contexts/"
+  FileUtils.rm_rf "sandbox/qedserver/webapps/"
+  FileUtils.mkdir "sandbox/qedserver/contexts"
+  FileUtils.mkdir "sandbox/qedserver/webapps"
+  FileUtils.cp "jetty_config/qedserver.xml", "sandbox/qedserver/contexts/"
+  FileUtils.cp "qedserver.war", "sandbox/qedserver/webapps/qedserver.war"
+  puts "QEDServer copied into the sandbox/qedserver folder"
 end
 
-desc "Package QEDServer as a zipfile"
-task :package_jetty => [:war, :build_jetty, :install_qed] do
- 
+desc "Package QEDServer as a zipfile using Jetty"
+task :package_jetty => [:war, :build_jetty, :install_qed, :package] do
+  puts "Done" 
+end
+
+desc "Zips the sandbox, embeds readme files"
+task :package do
   FileUtils.cp "END_USER_README.md", "sandbox/README.txt"
   %w{LICENSE HISTORY.txt}.each do |f|
     FileUtils.cp f, "sandbox/#{f}"
@@ -75,7 +79,8 @@ task :package_jetty => [:war, :build_jetty, :install_qed] do
   puts "Done."
 end
 
-desc "Create the QEDServer war file"
+
+desc "Create the QEDServer war file for use with any servlet container"
 task :war do
   sh "jruby -S warble compiled gemjar war"
 end
@@ -95,28 +100,27 @@ namespace :release do
 
 end
 
-desc "DEPRECATED: Create a zip file for distribution to end users using the Winstone approach"
-task :package_winstone => :war_winstone do
-  FileUtils.cp "END_USER_README.md", "README.txt"
-  sh "zip -9 #{QEDZIPFILE} LICENSE HISTORY.txt README.txt server.sh server.bat fresh_server.sh fresh_server.bat webserver.war"
-  FileUtils.rm "README.txt"
+desc "Package QEDServer as a zipfile using Warbler and Winstone"
+task :package_winstone => [:war_winstone, :install_winstone_to_sandbox, :package] do
+  puts "Done"
 end
 
 desc "create the war file with the Winstone servlet container" 
 task :war_winstone do
-  FileUtils.rm_rf "public"
   sh "jruby -S warble compiled gemjar executable war"
 end
 
-desc "DEPRECATED: create customized version of Jetty for our use by copying the original and removing files"
-task :copy_and_fix_jetty  do
+task :install_winstone_to_sandbox do
   FileUtils.rm_rf "sandbox"
   FileUtils.mkdir "sandbox"
-  FileUtils.cp_r "jetty", "sandbox/webserver"
-  puts "removing unnecessary folders from Jetty"
-  files = ["examples", "javadoc", "project-website", "extras", "jxr", "patches", "contrib"]
-  files.each do |file|
-    puts "Removing #{file}"
-    FileUtils.rm_rf "sandbox/webserver/#{file}"
-  end
+  FileUtils.rm_rf "public"
+  FileUtils.cp_r "warbler_config/server.bat", "sandbox"
+  FileUtils.cp_r "warbler_config/fresh_server.bat", "sandbox"
+  FileUtils.cp_r "warbler_config/server.command", "sandbox"
+  FileUtils.cp_r "warbler_config/fresh_server.command", "sandbox"
+  FileUtils.cp_r "warbler_config/server.sh", "sandbox"
+  FileUtils.cp_r "warbler_config/fresh_server.sh", "sandbox"
+  FileUtils.cp "qedserver.war", "sandbox/qedserver.war"
+  
 end
+

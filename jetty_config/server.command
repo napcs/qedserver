@@ -1,5 +1,5 @@
 #!/bin/sh
 cd "`dirname "$0"`"
-cd webserver
+cd qedserver
 java -jar start.jar
 cd ..

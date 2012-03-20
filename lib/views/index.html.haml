@@ -1,18 +1,19 @@
-%p QEDServer solves many of the headaches that come with learning how to do client-side development. In one small package, you get a simple RESTlike web application with a database. You put your files in the "public" folder that QEDServer creates, visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend without worrying about server setup or same-origin-policy issues.
-
+%p QEDServer is a simple web server hosting the back-end for a fictional online store. It's designed so you can learn to develop single-page web applications against a working API without building your own server-side solution.
+%p You can use this interface to manage the products and categories for the items in the store and then access the API with JSON.
 %p 
   Place your static HTML pages in
   %code=PUBLIC_PATH
   and you can access them
   %a{:href=>"/index.html"} here.
   
+%p
+  The database is stored at
+  %code=DBFILE
+  and will remember everything you change. If you need to start over, just delete that file before you restart this server.
+
 %ul
   %li 
     %a{:href=>"/products"} Manage products
   %li
     %a{:href=>"/help"} See a quick tutorial
 
-%p
-  The database is stored at
-  %code=DBFILE
-  and will remember everything you change. If you need to start over, just delete that file before you restart this server.

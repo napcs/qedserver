@@ -23,7 +23,7 @@ require 'lib/extensions/jsonp'
 Sinatra::Application.register Sinatra::RespondTo
 enable :sessions
 use Rack::Flash
-set :public, PUBLIC_PATH
+set :public_folder, PUBLIC_PATH
 set :markdown, :layout_engine => :haml, :layout => :layout
 
 puts "Server started. Press CTRL+C to stop."

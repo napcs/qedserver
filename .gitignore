@@ -1,7 +1,6 @@
 .DS_Store
 public
 products.sqlite3
-Gemfile.lock
 *.war
 *.zip
 tmp

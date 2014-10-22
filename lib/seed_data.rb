@@ -1,12 +1,12 @@
 # Create some default categories and products in the database
 # so the user doesn't have to do anything.
   
-laptops = Category.find_or_create_by_name "Laptops"
-cameras = Category.find_or_create_by_name "Cameras"
-accessories = Category.find_or_create_by_name "Accessories"
-desktops = Category.find_or_create_by_name "Desktops"
-tablets = Category.find_or_create_by_name "Tablets"
-music = Category.find_or_create_by_name "Music Players"  
+laptops = Category.where(name: "Laptops").first_or_create
+cameras = Category.where(name: "Cameras").first_or_create
+accessories = Category.where(name: "Accessories").first_or_create
+desktops = Category.where(name: "Desktops").first_or_create
+tablets = Category.where(name: "Tablets").first_or_create
+music = Category.where(name: "Music Players").first_or_create
   
 unless Product.any?
     

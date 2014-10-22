@@ -5,7 +5,7 @@ require 'json'
 require 'active_record'
 require 'haml'
 require 'sass'
-require 'rack-flash'
+require 'sinatra/flash'
 require 'sinatra/respond_to'
 require 'builder'
 require 'maruku'
@@ -22,7 +22,6 @@ require 'lib/extensions/jsonp'
 # Sinatra setup
 Sinatra::Application.register Sinatra::RespondTo
 enable :sessions
-use Rack::Flash
 set :public_folder, PUBLIC_PATH
 set :markdown, :layout_engine => :haml, :layout => :layout
 

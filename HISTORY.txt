@@ -1,7 +1,8 @@
+* 1.0 - Updated to JRuby 1.7.19. Updated default data to be more current and generic. Removed SSL warning. Improved performance.
 * 1.0rc1 - Updated to JRuby 1.7.16 and Sinatra 1.4.5, updated ActiveRecord to 4.1. Updated Rack and other dependencies to latest version.
 * 0.6.3 - Updated components to JRuby 1.7 and Sinatra 1.3.2, updated ActiveRecord to 3.2.2.
 * 0.6.2.1 - Not a public release - just internal changes to prepare for the next major version. Merged Jetty branch and Winstone branch together, created Rake tasks to build both versions for side-by-side testing
-* 0.6.2 - The ID for the textarea for product descriptions now matches the label. 
+* 0.6.2 - The ID for the textarea for product descriptions now matches the label.
 * 0.6.1 - Changed POST and PUT api actions to return the newly-created object attributes along with the message and status boolean. This helps Backbone.js work out of the box with creates and retreiving the model ID.
 * 0.6.0 - Replaced Winstone with Jetty to fix the intermittent truncation errors.
 * 0.5.6 - Fixed update API to use a correct RESTful URL. Updated binary to use JRuby 1.6.2.

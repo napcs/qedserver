@@ -60,8 +60,8 @@ task :install_qed do
 end
 
 desc "Package QEDServer as a zipfile using Jetty"
-task :package_jetty => [:war, :build_jetty, :install_qed, :package] do
-  puts "Done" 
+task :build_release => [:war, :build_jetty, :install_qed, :package] do
+  puts "Done"
 end
 
 desc "Zips the sandbox, embeds readme files"
@@ -70,7 +70,7 @@ task :package do
   %w{LICENSE HISTORY.txt}.each do |f|
     FileUtils.cp f, "sandbox/#{f}"
   end
-  
+
   puts "Creating #{QEDZIPFILE}..."
   Dir.chdir "sandbox" do
      `zip -9 -r #{QEDZIPFILE} *`
@@ -86,15 +86,15 @@ task :war do
 end
 
 
-namespace :release do 
-  
+namespace :release do
+
   desc "update the web site"
   task :website do
     `scp html/* #{SERVER}`
   end
 
   desc "release new version"
-  task :qed => :package_jetty do
+  task :qed => :build_release do
     `scp #{QEDZIPFILE} #{SERVER}/#{QEDZIPFILE}`
   end
 
@@ -105,7 +105,7 @@ task :package_winstone => [:war_winstone, :install_winstone_to_sandbox, :package
   puts "Done"
 end
 
-desc "create the war file with the Winstone servlet container" 
+desc "create the war file with the Winstone servlet container"
 task :war_winstone do
   sh "jruby -S warble compiled gemjar executable war"
 end
@@ -121,6 +121,6 @@ task :install_winstone_to_sandbox do
   FileUtils.cp_r "warbler_config/server.sh", "sandbox"
   FileUtils.cp_r "warbler_config/fresh_server.sh", "sandbox"
   FileUtils.cp "qedserver.war", "sandbox/qedserver.war"
-  
+
 end
 

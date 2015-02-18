@@ -50,7 +50,7 @@ on Windows or
 
 To zip the whole thing up to make a release, simply use
    
-    rake package_jetty
+    rake build_release
 
 This builds the war, rebuilds a fresh sandbox, and creates the zip file for distribution. It grabs `END_USER_README.md` and throw it in the archive.
 
@@ -77,7 +77,7 @@ Roadmap
 
 History
 ------
-See HISTORY for the change log.
+See HISTORY.txt for the change log.
 
 License
 --------

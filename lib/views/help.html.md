@@ -1,18 +1,20 @@
 Quick Tutorial
 -------
-Let's make a simple page that fetches the products from our database using jQuery. Create a file called product_list.html in the "public" folder with this content:
+Let's make a simple page that fetches the products from our database using jQuery. Create a file called `product_list.html` in the `public` folder with this content:
 
     <!DOCTYPE html>
     <html lang='en'>
       <head>
-        <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+        <meta charset="utf-8">
         <title>Simple Product List</title>
-        <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js' type='text/javascript'></script>
       </head>
       <body>
         <div id="products">
           <p>Click to load products</p>
         </div>
+        
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+
       </body>
     </html>
 
@@ -21,31 +23,30 @@ the products in our database.
 
     [
       {
-        "created_at":"2011-05-23T09:10:57-05:00",
+        "created_at":"2015-01-23T09:10:57-05:00",
         "description":"Description of Camera",
         "id":1,
         "image_url":null,
         "name":"Nikon D90 Digial Camera",
         "price":"500.0",
-        "updated_at":"2011-05-23T09:10:57-05:00"
+        "updated_at":"2015-01-23T09:10:57-05:00"
       },
       {
-        "created_at":"2011-05-23T09:10:57-05:00",
+        "created_at":"2015-01-23T09:10:57-05:00",
         "description":"Description of the Macbook 13",
         "id":2,
         "image_url":null,
         "name":"Macbook 13 inch",
         "price":"999.0",
-        "updated_at":"2011-05-23T09:10:57-05:00"
+        "updated_at":"2015-01-23T09:10:57-05:00"
       }
     ]
 
-Within the `head` tags of our page, let's add another script block that fetches 
+Right below the closing `body` tag of our page, let's add another script block that fetches 
 products into the page using the JSON feed we just inspected. We'll need to add a click event
 to our products region that triggers the AJAX request.
 
     <script>
-    $(function(){
       $("#products").click(function(e){
       $.get("/products.json",
          function(data){
@@ -60,16 +61,14 @@ to our products region that triggers the AJAX request.
            $("#products").html(ul); // replace the products div with the ul
          }, "json");
       });
-    });
     </script>
   
-We fetch the data using the `.ajax()` method in jQuery, which takes the URL, a function, and
-the content type we expect to get back. 
+We fetch the data using the `.get()` method in jQuery, which takes the URL and a callback that gets fired on success. The data from the server is passed to the callback.
 
 In our function, we construct an unordered list, iterate over the results we get back,
 append each result to the unordered list as a list item, and then we replace the contents of our projects div with the unordered list.
 
-If you visit http://localhost:8080/product_list.html, you'll see our demo, which will pull records from our database.
+If you visit <http://localhost:8080/product_list.html>, you'll see our demo, which will pull records from our database.
 
 That was just a short demo. You can use the other pieces of the API to add and delete records, or even perform searches against the data, which is perfect for testing out those fun auto-complete scripts everyone wants you to write.
 

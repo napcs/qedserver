@@ -9,7 +9,7 @@
       a.downloadbtton{
         background-color: #888;
       }
-    </style> 
+    </style>
 
     <![endif]-->
     <link href='http://fonts.googleapis.com/css?family=Gruppo' rel='stylesheet' type='text/css'>
@@ -25,338 +25,236 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-  </script> 
+  </script>
   </head>
   <body>
     <div id="wrapper">
       <header><h1>QEDServer</h1></header>
       <section id="subheading">
         <h2>A standalone simple web app and database</h2>
-        <h3>Want to learn Knockout.js,  Backbone, or Ember.js but need a web app with data to connect to?</h3>
-         <a class="downloadbtton" href="qedserver_0-6-3.zip">Download Now</a>
+        <h3>Want to learn Knockout.js, Angular, React, Backbone, or Ember.js but need a web app with data to connect to?</h3>
+         <a class="downloadbtton" href="qedserver_1.0.zip">Download Now</a>
          <a class="downloadbtton" href="#tutorial">Quick Tutorial</a>
         <h3>No server setup, no database administration, no fuss.</h3>
         <div id="tweet">
-         <a href="http://twitter.com/share" class="twitter-share-button" 
+         <a href="http://twitter.com/share" class="twitter-share-button"
             data-count="horizontal" data-via="bphogan">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
         </div>
        </section>
       <section>
-       <h2>What is QEDServer?</h2>        
- 
-<p>You've just come across a great new client-side library that makes building richer client-side apps a breeze. It has support for client-side storage, but you're really interested in using 
+       <h2>What is QEDServer?</h2>
+
+<p>You've just come across a great new client-side library that makes building richer client-side apps a breeze. It has support for client-side storage, but you're really interested in using
 this with an existing server-side web application, so you decide to try it out. Then you realize that to test everything, you need a backend. That means you need to write some server side code, set up a database, and you need to deploy the thing on a web server so that all the AJAX requests work right. And of course, you need to populate that database with dummy data. That's a lot of work just to try out a new framework!</p>
-        
-<p>QEDServer solves those pesky problems for you so you can focus on sharpening your front-end skills. In one small package, you get a simple web server that hosts a  small "product catalog" web 
+
+<p>QEDServer solves those pesky problems for you so you can focus on sharpening your front-end skills. In one small package, you get a simple web server that hosts a  small "product catalog" web
 application and a database full of existing products. You can immediately start writing code against its RESTLike API that responds with JSON and XML.</p>
 
-      </section> 
+      </section>
       <section>
         <h2>How does it work?</h2>
 
         <p>Download the archive, extract it, and run the server. There's a <code>bat</code> file for Windows and a shell script for OSX and Linux.</p>
 
 	<p>When QEDServer starts,  a database file and a `public` folder will appear in the folder where you ran the server. You put your files in the <code>public</code> folder,
- visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend. Since QEDServer is serving your HTML files,  you avoid AJAX "same origin policy" issues while you write client-side code against the RESTLike backend that QEDServer provides through its <a href="#api">API</a>.</p>        
+ visit http://localhost:8080/index.html in your browser, and you can start coding against this simple backend. Since QEDServer is serving your HTML files,  you avoid AJAX "same origin policy" issues while you write client-side code against the RESTLike backend that QEDServer provides through its <a href="#api">API</a>.</p>
 
-<p>Additionally, QEDServer provides a web interface of its own that you can use to manage the stock data and add your own records.</p> 
+<p>Additionally, QEDServer provides a web interface of its own that you can use to manage the stock data and add your own records.</p>
 
 <p>And if you need a fresh start, just delete the `products.sqlite3` file and restart QEDServer. The database will be recreated
 so you'll have a clean environment again.</p>
 </section>
 
 <section id="tutorial">
-<h2>
-Quick Tutorial
-</h2>
-<p>
-Let's make a simple page that fetches the products from our database using jQuery. Download QEDServer and 
-extract the archive to a convenient location. Next, launch <code>server.sh</code> (or 
-<code>server.bat</code> for Windows) to start the server. </p>
-<p>Create a file called <code>product_list.html</code> in the <code>public</code> 
-folder with this content:</p>
 
-<pre>
-<code>
-&lt;!DOCTYPE html&gt;
-&lt;html lang='en'&gt;
-  &lt;head&gt;
-    &lt;meta content='text/html; charset=utf-8' http-equiv='Content-Type'&gt;
-    &lt;title&gt;Simple Product List&lt;/title&gt;
-    &lt;script 
-      src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js'
-      type='text/javascript'&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-     &lt;div id="products"&gt;
-       &lt;p&gt;Click to load products&lt;/p&gt;
-     &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code>
-</pre>
 
-<p>
-If we visit <a href='http://localhost:8080/products.json'>http://localhost:8080/products.json</a>
- we'll get a JSON representation of <br />
- the products in our database.
-</p>
+  <h2 id="toc_0">Quick Tutorial</h2>
 
-<pre><code>
-[
-  {
-    "created_at":"2011-05-23T09:10:57-05:00",
-    "description":"Description of Camera",
-    "id":1,
-    "image_url":null,
-    "name":"Nikon D90 Digial Camera",
-    "price":"500.0",
-    "updated_at":"2011-05-23T09:10:57-05:00"
-  },
-  {
-    "created_at":"2011-05-23T09:10:57-05:00",
-    "description":"Description of the Macbook 13",
-    "id":2,
-    "image_url":null,
-    "name":"Macbook 13 inch",
-    "price":"999.0",
-    "updated_at":"2011-05-23T09:10:57-05:00"
-  }
-]
-</code></pre>
+  <p>Let&#39;s make a simple page that fetches the products from our database using jQuery. Create a file called <code>product_list.html</code> in the <code>public</code> folder with this content:</p>
 
-<p>
-Within the <code>head</code>
- tags of our page, let's add another script block that fetches 
-products into the page using the JSON feed we just inspected. We'll need to add a click event
-to our products region that triggers the AJAX request.
-</p>
+  <pre><code>&lt;!DOCTYPE html&gt;
+  &lt;html lang=&#39;en&#39;&gt;
+    &lt;head&gt;
+      &lt;meta charset=&quot;utf-8&quot;&gt;
+      &lt;title&gt;Simple Product List&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+      &lt;div id=&quot;products&quot;&gt;
+        &lt;p&gt;Click to load products&lt;/p&gt;
+      &lt;/div&gt;
 
-<pre><code>
-&lt;script&gt;
-$(function(){
-  $("#products").click(function(e){
-  $.get("/products.json",
-     function(data){
-       var products = data;
-       var ul = $("&lt;ul&gt;&lt;/ul&gt;"); // create a new unordered list
+      &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js&quot;&gt;&lt;/script&gt;
 
-       $.each(products, function(index, product){
-         var li = $("&lt;li&gt;" + product["name"] + "&lt;/li&gt;");
-         ul.append(li);  // add the listitem to the unordered list
-       });
+    &lt;/body&gt;
+  &lt;/html&gt;
+  </code></pre>
 
-       $("#products").html(ul); // replace the products div with the ul
-     }, "json");
-  });
-});
-&lt;/script&gt;
-</code></pre>
+  <p>If we visit http://localhost:8080/products.json we&#39;ll get a JSON representation of
+  the products in our database.</p>
 
-<p>We fetch the data using the <code>.ajax()</code>
- method in jQuery, which takes the URL, a function, and
-the content type we expect to get back. 
-</p>
+  <pre><code>[
+    {
+      &quot;created_at&quot;:&quot;2015-01-23T09:10:57-05:00&quot;,
+      &quot;description&quot;:&quot;Description of Camera&quot;,
+      &quot;id&quot;:1,
+      &quot;image_url&quot;:null,
+      &quot;name&quot;:&quot;Nikon D90 Digial Camera&quot;,
+      &quot;price&quot;:&quot;500.0&quot;,
+      &quot;updated_at&quot;:&quot;2015-01-23T09:10:57-05:00&quot;
+    },
+    {
+      &quot;created_at&quot;:&quot;2015-01-23T09:10:57-05:00&quot;,
+      &quot;description&quot;:&quot;Description of the Macbook 13&quot;,
+      &quot;id&quot;:2,
+      &quot;image_url&quot;:null,
+      &quot;name&quot;:&quot;Macbook 13 inch&quot;,
+      &quot;price&quot;:&quot;999.0&quot;,
+      &quot;updated_at&quot;:&quot;2015-01-23T09:10:57-05:00&quot;
+    }
+  ]
+  </code></pre>
 
-<p>
-In our function, we construct an unordered list, iterate over the results we get back,
-append each result to the unordered list as a list item, and then we replace the contents of our projects div with the unordered list.
-</p>
+  <p>Right below the closing <code>body</code> tag of our page, let&#39;s add another script block that fetches
+  products into the page using the JSON feed we just inspected. We&#39;ll need to add a click event
+  to our products region that triggers the AJAX request.</p>
 
-<p>
-If you visit <a href='http://localhost:8080/product_list.html'>http://localhost:8080/product_list.html</a>
-, you'll see our demo, which will pull records from our database.
-</p>
+  <pre><code>&lt;script&gt;
+    $(&quot;#products&quot;).click(function(e){
+    $.get(&quot;/products.json&quot;,
+      function(data){
+        var products = data;
+        var ul = $(&quot;&lt;ul&gt;&lt;/ul&gt;&quot;); // create a new unordered list
 
-<p>You can stop QEDServer with  <code>CTRL+C</code>.</p>
-<p>That was just a short demo. You can use the other pieces of the API to add and delete records, or even perform searches against the data, which is perfect for testing out those fun auto-complete scripts everyone wants you to write.</p>
-      </section>
+        $.each(products, function(index, product){
+          var li = $(&quot;&lt;li&gt;&quot; + product[&quot;name&quot;] + &quot;&lt;/li&gt;&quot;);
+          ul.append(li);  // add the listitem to the unordered list
+        });
 
-    <section id="api">
+        $(&quot;#products&quot;).html(ul); // replace the products div with the ul
+      }, &quot;json&quot;);
+    });
+  &lt;/script&gt;
+  </code></pre>
 
-      <h2>The API</h2>
+  <p>We fetch the data using the <code>.get()</code> method in jQuery, which takes the URL and a callback that gets fired on success. The data from the server is passed to the callback.</p>
 
-       <p>The API that's currently implemented is:</p>
+  <p>In our function, we construct an unordered list, iterate over the results we get back,
+  append each result to the unordered list as a list item, and then we replace the contents of our projects div with the unordered list.</p>
 
-          <h3>Products</h3>
+  <p>If you visit <a href="http://localhost:8080/product_list.html">http://localhost:8080/product_list.html</a>, you&#39;ll see our demo, which will pull records from our database.</p>
 
-          <ul>
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/products.json'>http://localhost:8080/products.json</a>
-            fetches a JSON feed of the products</li>
+  <p>That was just a short demo. You can use the other pieces of the API to add and delete records, or even perform searches against the data, which is perfect for testing out those fun auto-complete scripts everyone wants you to write.</p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/products.xml'>http://localhost:8080/products.xml</a>
-            fetches an XML feed of the products</li>
+  <h2 id="toc_1">The API</h2>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/product/1.json'>http://localhost:8080/product/1.json</a>
-            fetches the product with the ID of 1 as JSON</li>
+  <p>The API that&#39;s currently implemented is:</p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/product/1.xml'>http://localhost:8080/product/1.xml</a>
-            fetches the product with the ID of 1 as XML</li>
+  <h3 id="toc_2">Products</h3>
 
-            <li><code>POST</code> <a href=
-            'http://localhost:8080/products.json'>http://localhost:8080/products.json</a>
-            creates a new product. The fields need to be nested if you form-encode the data, so name your form fields <code>product[name]</code>, etc. No nesting is required if you send the JSON in the request body.</li>
-            
+  <ul>
+  <li><code>GET</code> http://localhost:8080/products.json fetches a JSON feed of the products</li>
+  <li><code>GET</code> http://localhost:8080/products.xml fetches an XML feed of the products</li>
+  <li><code>GET</code> http://localhost:8080/product/1.json fetches the product with the ID of 1 as JSON</li>
+  <li><code>GET</code> http://localhost:8080/product/1.xml fetches the product with the ID of 1 as XML</li>
+  <li><code>POST</code> http://localhost:8080/products.json creates a new product. The fields need to be nested if you form-encode the data, so name your form fields <code>product[name]</code>, etc. No nesting is required if you send the JSON in the request body.</li>
+  <li><code>PUT</code> http://localhost:8080/products/1.json modifies the existing product with the id of 1. If you form-encode the data, you&#39;ll need to post data in the nested format <code>product[name]</code>, etc. If you send JSON in the request body, no nesting is required.</li>
+  <li><code>DELETE</code> http://localhost:8080/products/1.json deletes the product with the ID of 1.</li>
+  <li><code>GET</code> http://localhost:8080/products.rss fetches an RSS 2.0 feed of the products</li>
+  </ul>
 
-            <li><code>PUT</code> <a href=
-            'http://localhost:8080/products/1.json'>http://localhost:8080/products/1.json</a>
-            modifies the existing product with the id of 1. If you form-encode the data, you'll need
-            to post data in the nested format <code>product[name]</code>
-            , etc. If you send JSON in the request body, no nesting is required.</li>
+  <h4 id="toc_3">Creating and updating products</h4>
 
-            <li><code>DELETE</code> <a href=
-            'http://localhost:8080/products/1.json'>http://localhost:8080/products/1.json</a>
-            deletes the product with the ID of 1.</li>
+  <p>To create products, send a <code>POST</code> request to http://localhost:8080/products. The
+  web server expects to find the parameters nested. </p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/products.rss'>http://localhost:8080/products.rss</a>
-            fetches an RSS 2.0 feed of the products</li>
-          </ul>
+  <pre><code>&lt;input type=&quot;text&quot; name=&quot;product[name]&quot;&gt;
+  </code></pre>
 
-          <h4>Creating and updating products</h4>
+  <p>No nesting is required if you send the JSON in the request body.</p>
 
-          <p>To create products, send a <code>POST</code> request to
-          <a href=
-          'http://localhost:8080/products'>http://localhost:8080/products</a>
-          . The<br>
-          web server expects to find the parameters nested if you form-encode the data. </p>
-          <pre><code>&lt;input type="text" name="product[name]"&gt;</code></pre>
-          <p>No nesting is required if you send the JSON in the request body.</p>
-          <p>When a product is created successfully via JSON, you'll get
-          this response:</p>
-          <pre><code>{success: true, message: "Created Camera."}</code></pre>
+  <p>When a product is created successfully via JSON, you&#39;ll get this response:</p>
 
-          <h4>Deleting products</h4>
+  <pre><code>{success: true, message: &quot;Created Camera.&quot;}
+  </code></pre>
 
-          <p>You can delete products by constructing a
-          <code>DELETE</code> request to <a href=
-          'http://localhost:8080/products/1.json'>http://localhost:8080/products/1.json</a>
-          where <code>1</code> is the ID of the product you want to
-          remove. You'll get a JSON response back that looks like
-          this:</p>
-          <pre><code>{success: true, message: "Camera was deleted."}</code></pre>
+  <h4 id="toc_4">Deleting products</h4>
 
-          <h4>Searching for products</h4>
+  <p>You can delete products by constructing a <code>DELETE</code> request to  http://localhost:8080/products/1.json where <code>1</code> is the ID of the product you want to remove. You&#39;ll get a JSON response back that looks like this:</p>
 
-          <p>Searching for products is quite easy. You simply send a GET
-          request to <a href=
-          'http://localhost:8080/products.json'>http://localhost:8080/products.json</a>
-          with a query paramter called <code>q</code><br>
-          like this:</p>
-          <pre><code>http://localhost:8080/products.json?q=camera</code></pre>
+  <pre><code>{success: true, message: &quot;Camera was deleted.&quot;}
+  </code></pre>
 
-          <p>You'll get back only products that have "camera" in the name
-          or description.</p>
+  <h4 id="toc_5">Searching for products</h4>
 
-          <h4>Pagination</h4>
+  <p>Searching for products is quite easy. You simply send a GET request to http://localhost:8080/products.json with a query paramter called <code>q</code>
+  like this:</p>
 
-          <p>Results come back 10 pages at a time. Use the
-          <code>page</code> query parameter to get additional
-          results.</p>
-          <pre><code>http://localhost:8080/products.json?page=2</code></pre>
+  <pre><code>http://localhost:8080/products.json?q=camera
+  </code></pre>
 
-          <p>This works with RSS, XML, and JSON, with or without
-          keywords.</p>
+  <p>You&#39;ll get back only products that have &quot;camera&quot; in the name or description.</p>
 
-          <h3>Categories</h3>
+  <h4 id="toc_6">Pagination</h4>
 
-          <ul>
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories.json'>http://localhost:8080/categories.json</a>
-            fetches a JSON feed of the categories</li>
+  <p>Results come back 10 pages at a time. Use the <code>page</code> query parameter to get additional results.</p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories.xml'>http://localhost:8080/categories.xml</a>
-            fetches an XML feed of the categories</li>
+  <pre><code>`http://localhost:8080/products.json?page=2
+  </code></pre>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories/1.json'>http://localhost:8080/categories/1.json</a>
-            fetches the categoy with the ID of 1 as JSON</li>
+  <p>This works with RSS, XML, and JSON, with or without keywords.</p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories/1.xml'>http://localhost:8080/categories/1.xml</a>
-            fetches the category with the ID of 1 as XML</li>
+  <h3 id="toc_7">Categories</h3>
 
-            <li><code>POST</code> <a href=
-            'http://localhost:8080/categories.json'>http://localhost:8080/categories.json</a>
-            creates a new category. The fields need to be nested if you form-encode the data, so name
-            your form fields <code>category[name]</code> , etc. No nesting is required if you send the JSON data in the request body.</li>
+  <ul>
+  <li><code>GET</code> http://localhost:8080/categories.json fetches a JSON feed of the categories</li>
+  <li><code>GET</code> http://localhost:8080/categories.xml fetches an XML feed of the categories</li>
+  <li><code>GET</code> http://localhost:8080/categories/1.json fetches the categoy with the ID of 1 as JSON</li>
+  <li><code>GET</code> http://localhost:8080/categories/1.xml fetches the category with the ID of 1 as XML</li>
+  <li><code>POST</code> http://localhost:8080/categories.json creates a new category. The fields need to be nested if you form-encode the data, so name your form fields <code>category[name]</code>, etc. No nesting is required if you send the JSON in the request body.</li>
+  <li><code>PUT</code> http://localhost:8080/categories/1.json modifies the existing category with the id of 1. If you form-encode the data, you&#39;ll need to post data in the nested format <code>category[name]</code>, etc. If you send JSON in the request body, no nesting is required.</li>
+  <li><code>DELETE</code> http://localhost:8080/categories/1.json deletes the category with the ID of 1.</li>
+  <li><code>GET</code> http://localhost:8080/categories.rss fetches an RSS 2.0 feed of the categories</li>
+  <li><code>GET</code> http://localhost:8080/categories/1/products.json fetches products in the category with the ID of 1</li>
+  <li><code>GET</code> http://localhost:8080/categories/1/products.xml fetches products in the category with the ID of 1</li>
+  </ul>
 
-            <li><code>PUT</code> <a href=
-            'http://localhost:8080/categories/1.json'>http://localhost:8080/categories/1.json</a>
-            modifies the existing category with the id of 1. If you form-encode the data, you'll need
-            to post data in the nested format <code>category[name]</code>
-            , etc. Nesting of data is not required if you send the JSON data in the request body.</li>
+  <p>Creating, updating, deleting, pagination, and searching work the same as with Products.</p>
 
-            <li><code>DELETE</code> <a href=
-            'http://localhost:8080/categories/1.json'>http://localhost:8080/categories/1.json</a>
-            deletes the category with the ID of 1.</li>
+  <h4 id="toc_8">Pagination and Searching</h4>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories.rss'>http://localhost:8080/categories.rss</a>
-            fetches an RSS 2.0 feed of the categories</li>
+  <p>When looking at products within categories, you can apply the same pagination and querying as you would with products.</p>
 
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories/1/products.json'>http://localhost:8080/categories/1/products.json</a>
-            fetches products in the category with the ID of 1</li>
-          </ul>
+  <ul>
+  <li><code>http://localhost:8080/categories/1/products.json?page=2</code></li>
+  <li><code>http://localhost:8080/categories/1/products.json?page=2&amp;q=iPad</code></li>
+  </ul>
 
-          <p>Creating, updating, deleting, pagination, and searching work
-          the same as with Products.</p>
+  <p>This works with RSS, XML, and JSON, with or without keywords.</p>
 
-          <h4>Pagination and Searching</h4>
+  <h3 id="toc_9">JSON-P Support</h3>
 
-          <p>When looking at products within categories, you can apply
-          the same pagination and querying as you would with
-          products.</p>
+  <p>You can get the JSON results back as JSON-P if you append a callback query parameter to the request. The result will be wrapped by the callback function you specify.</p>
 
-          <ul>
-            <li><code><a href=
-            'http://localhost:8080/categories/1/products.json?page=2'>http://localhost:8080/categories/1/products.json?page=2</a></code></li>
+  <p>Right now we only support this for the following API endpoints.</p>
 
-            <li><code><a href=
-            'http://localhost:8080/categories/1/products.json?page=2&amp;q=iPad'>
-            http://localhost:8080/categories/1/products.json?page=2&amp;q=iPad</a></code></li>
-          </ul>
+  <ul>
+  <li><code>GET</code> http://localhost:8080/products.json?callback=jsonpcallback</li>
+  <li><code>GET</code> http://localhost:8080/products/1.json?callback=jsonpcallback</li>
+  <li><code>GET</code> http://localhost:8080/categories.json?callback=jsonpcallback</li>
+  <li><code>GET</code> http://localhost:8080/categories/1/products.json?callback=jsonpcallback</li>
+  <li><code>GET</code> http://localhost:8080/categories/1/products/1.json?callback=jsonpcallback</li>
+  </ul>
 
-          <p>This works with RSS, XML, and JSON, with or without
-          keywords.</p>
-          
-          <h3 id="jsonp">JSON-P Support</h3>
-          <p>You can get the JSON results back as JSON-P if you append a <code>callback</code> query parameter to the request. The result will be wrapped by the callback function you specify.</p>
-          <p>Right now we only support this for the following API endpoints.</p>
-          
-          <ul>
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/products.json?callback=jsonpcallback'>http://localhost:8080/products.json?callback=jsonpcallback</a></li>
-            
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/products/1.json?callback=jsonpcallback'>http://localhost:8080/products/1.json?callback=jsonpcallback</a></li>
-            
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories.json?callback=jsonpcallback'>http://localhost:8080/categories.json?callback=jsonpcallback</a></li>
-  
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories/1/products.json?callback=jsonpcallback'>http://localhost:8080/categories/1/products.json?callback=jsonpcallback</a></li>
-            
-            <li><code>GET</code> <a href=
-            'http://localhost:8080/categories/1/products/1.json?callback=jsonpcallback'>http://localhost:8080/categories/1/products/1.json?callback=jsonpcallback</a></li>
-            
-    
-          </ul>
-          
+
+
     </section>
 
   <section id="opensource">
     <h2>Open Source</h2>
-    <p>QEDServer is open-source software. If you're comfortable working with Ruby, 
+    <p>QEDServer is open-source software. If you're comfortable working with Ruby,
 you can begin customizing QEDServer right now by <a href="https://github.com/napcs/qedserver/tree/jetty">forking the project</a> on Github.</p>
-   </section> 
-    <footer><h5>Copyright &copy; 2011 Brian P. Hogan</h5></footer>
+   </section>
+    <footer><h5>Copyright &copy; 2014 Brian P. Hogan</h5></footer>
     </div>
   </body>
 </html>

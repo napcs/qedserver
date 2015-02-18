@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'lib/server'
+require_relative 'lib/server'
 
   set :run,         false
-  
+
   run Sinatra::Application
 
 

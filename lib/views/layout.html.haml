@@ -19,23 +19,25 @@
             %a{:href => "/help" } Help
           %li
             %a{:href => "/index.html"} Public index
-            
+
       %section#main
         -if flash[:notice]
           #notice= flash[:notice]
         -if @message
           #message= @message
-      
+
         =yield
-    
+
       %footer
-        %h5 
+        %h5
           QEDServer v
           =QED_SERVER_VERSION
-          Copyright &copy; 2011-2014 Brian P. Hogan
-        %h5 
+          Copyright &copy; 2011-2015 Brian P. Hogan
+        %h5
           %a{:href=>"http://qedserver.napcs.com/"} QEDServer Home Page
           |
           %a{:href=>"http://github.com/napcs/qedserver/"} QEDServer Source
-          
-          
+          |
+          %a{:href => "/env" } View Environment Variables
+
+

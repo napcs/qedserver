@@ -82,7 +82,7 @@ See HISTORY for the change log.
 License
 --------
 
-QEDServer Copyright (C) 2011 by Brian P. Hogan. See LICENSE for details.
+QEDServer Copyright (C) 2011-2015 by Brian P. Hogan. See LICENSE for details.
 
 Licenses for Jetty and other Java components are in jetty/LICENSES
 

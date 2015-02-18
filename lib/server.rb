@@ -38,9 +38,7 @@ get "/help" do
   markdown :help
 end
 
-# using :provides to get around the respond_to plugin
-# per README for the gem.
-# https://github.com/cehoffman/sinatra-respond_to
+# css
 get '/style' do
   sass :style
 end

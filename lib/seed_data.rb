@@ -9,8 +9,8 @@ tablets = Category.where(name: "Tablets").first_or_create
 music = Category.where(name: "Music Players").first_or_create
 
 unless Product.any?
-  cameras.products.create :name => "Nikon D7100 Digial Camera", :price => 500.00, :description => "Description of D7100 Camera"
-  cameras.products.create :name => "Canon D7 Digial Camera", :price => 500.00, :description => "Description of D7 Camera"
+  cameras.products.create :name => "Nikon Digial Camera", :price => 600.00, :description => "Description of Nikon Digital Camera"
+  cameras.products.create :name => "Canon Digial Camera", :price => 600.00, :description => "Description of Canon Digital Camera"
   laptops.products.create :name => "Macbook Air 11 inch", :price => 999.00, :description => "Description of Macbook Air 11 inch"
   laptops.products.create :name => "Macbook Air 13 inch", :price => 1299.00, :description => "Description of Macbook Air 13 inch"
   laptops.products.create :name => "Macbook Pro 13 inch", :price => 1299.00, :description => "Description of Macbook Pro 13 inch"
@@ -35,8 +35,5 @@ unless Product.any?
   accessories.products.create :name => "Mini DisplayPort to DVI Adapter", :price => 29.00, :description => "Description of Mini DisplayPort to DVI Adapter"
   accessories.products.create :name => "Mini DVI to VGA Adapter", :price => 29.00, :description => "Description of Mini DVI to VGA Adapter"
   accessories.products.create :name => "DVI to VGA Adapter", :price => 29.00, :description => "Description of DVI to VGA Adapter"
-  cameras.products.create :name => "Canon Rebel XS Kit (Black)", :price => 549.95, :description => "Description of Canon Rebel XS Kit (Black)"
   accessories.products.create :name => "AirPort Express", :price => 99.00, :description => "Description of AirPort Express"
-  accessories.products.create :name => "Time Capsule - 2TB", :price => 299.00, :description => "Description of Time Capsule - 2TB"
-  accessories.products.create :name => "Time Capsule - 3TB", :price => 499.00, :description => "Description of Time Capsule - 3TB"
 end
